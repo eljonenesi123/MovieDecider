@@ -240,19 +240,39 @@ async function runSearch() {
     const multi = multiRes.ok ? await multiRes.json() : { results: [] };
     const kw = kwRes.ok ? await kwRes.json() : { results: [] };
 
-    const titles = multi.results.filter((r) => r.media_type === "movie" || r.media_type === "tv");
-    const people = multi.results.filter((r) => r.media_type === "person");
+    // Titles: filter for real content with posters and enough votes, sort by popularity
+    const titles = multi.results
+      .filter((r) =>
+        (r.media_type === "movie" || r.media_type === "tv") &&
+        r.poster_path &&
+        (r.vote_count || 0) >= 10
+      )
+      .sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
 
+    // People: skip low-relevance folks with no profession
+    const people = multi.results
+      .filter((r) =>
+        r.media_type === "person" &&
+        (r.popularity || 0) > 2 &&
+        r.known_for_department
+      )
+      .sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+
+    // Themes: try up to top 3 keywords until one returns real results
     let themes = [];
-    if (kw.results.length > 0) {
-      // grab the top keyword and pull discover results for it
-      const topKeyword = kw.results[0];
+    let matchedKeyword = null;
+    for (let i = 0; i < Math.min(3, kw.results.length); i++) {
+      const keyword = kw.results[i];
       const discoverRes = await fetch(
-        `${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&with_keywords=${topKeyword.id}&sort_by=popularity.desc&vote_count.gte=50`
+        `${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&with_keywords=${keyword.id}&sort_by=popularity.desc&vote_count.gte=50`
       );
       if (discoverRes.ok) {
         const disc = await discoverRes.json();
-        themes = disc.results.slice(0, 12).map((m) => ({ ...m, __theme: topKeyword.name }));
+        if (disc.results.length > 0) {
+          matchedKeyword = keyword.name;
+          themes = disc.results.slice(0, 12).map((m) => ({ ...m, __theme: keyword.name }));
+          break;
+        }
       }
     }
 
@@ -775,10 +795,13 @@ function renderTickets(items) {
 }
 
 // ============================================
-// MOVIE BATTLES — tournament bracket
+// MOVIE BATTLES — tournament with random + custom modes
 // ============================================
 let battle = {
-  size: 8,
+  mode: "random",         // "random" or "custom"
+  size: 8,                // random mode default
+  customSize: 2,          // custom mode default
+  customPicks: [],        // {id, title, poster_path, vote_average, release_date, whyYes, whyNo}
   currentRound: [],
   nextRound: [],
   matchIndex: 0,
@@ -792,8 +815,23 @@ const battleSetupEl = document.getElementById("battle-setup");
 const battleStageEl = document.getElementById("battle-stage");
 const battleChampionEl = document.getElementById("battle-champion");
 const battleArenaEl = document.getElementById("battle-arena");
+const battleStartBtn = document.getElementById("battle-start");
+const setupRandomEl = document.getElementById("setup-random");
+const setupCustomEl = document.getElementById("setup-custom");
 
-// size toggle
+// mode toggle
+document.querySelectorAll(".battle-mode").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".battle-mode").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    battle.mode = btn.dataset.mode;
+    setupRandomEl.hidden = battle.mode !== "random";
+    setupCustomEl.hidden = battle.mode !== "custom";
+    updateStartButton();
+  });
+});
+
+// random size toggle
 document.querySelectorAll(".battle-size").forEach((btn) => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".battle-size").forEach((b) => b.classList.remove("active"));
@@ -802,12 +840,163 @@ document.querySelectorAll(".battle-size").forEach((btn) => {
   });
 });
 
-document.getElementById("battle-start").addEventListener("click", startBattle);
+// custom size toggle
+document.querySelectorAll(".battle-size-custom").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".battle-size-custom").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    battle.customSize = parseInt(btn.dataset.size, 10);
+    // if user shrinks bracket size below current picks, trim
+    if (battle.customPicks.length > battle.customSize) {
+      battle.customPicks = battle.customPicks.slice(0, battle.customSize);
+    }
+    renderCustomPicks();
+    updateStartButton();
+  });
+});
+
+// custom search — debounced
+const customSearchInput = document.getElementById("custom-search-input");
+const customSearchResults = document.getElementById("custom-search-results");
+let customSearchTimer = null;
+
+customSearchInput.addEventListener("input", () => {
+  clearTimeout(customSearchTimer);
+  customSearchTimer = setTimeout(runCustomSearch, 400);
+});
+
+async function runCustomSearch() {
+  const q = customSearchInput.value.trim();
+  if (q.length < 2) { customSearchResults.innerHTML = ""; return; }
+  try {
+    const res = await fetch(
+      `${TMDB_BASE}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(q)}&include_adult=false`
+    );
+    if (!res.ok) return;
+    const data = await res.json();
+    const items = data.results
+      .filter((m) => m.poster_path && (m.vote_count || 0) >= 5)
+      .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
+      .slice(0, 8);
+    customSearchResults.innerHTML = "";
+    items.forEach((m) => {
+      const card = document.createElement("button");
+      card.className = "custom-search-result";
+      const year = (m.release_date || "").slice(0, 4);
+      card.innerHTML = `
+        <img src="${IMG_BASE_SM}${m.poster_path}" alt="">
+        <div>
+          <div class="csr-title">${m.title}</div>
+          <div class="csr-year">${year}</div>
+        </div>
+      `;
+      card.addEventListener("click", () => addCustomPick(m));
+      customSearchResults.appendChild(card);
+    });
+  } catch (err) { console.error(err); }
+}
+
+function addCustomPick(movie) {
+  // dedupe
+  if (battle.customPicks.some((p) => p.id === movie.id)) {
+    toast("fetch", `${movie.title} is already in the bracket`);
+    return;
+  }
+  if (battle.customPicks.length >= battle.customSize) {
+    toast("fetch", `Bracket full — bump the size up or drop one`);
+    return;
+  }
+  battle.customPicks.push({
+    id: movie.id,
+    title: movie.title,
+    poster_path: movie.poster_path,
+    vote_average: movie.vote_average,
+    release_date: movie.release_date,
+    overview: movie.overview,
+    whyYes: "",
+    whyNo: ""
+  });
+  customSearchInput.value = "";
+  customSearchResults.innerHTML = "";
+  renderCustomPicks();
+  updateStartButton();
+}
+
+function renderCustomPicks() {
+  const container = document.getElementById("custom-picks");
+  const label = document.getElementById("picks-label");
+  label.textContent = `YOUR FIGHTERS — ${battle.customPicks.length} / ${battle.customSize}`;
+
+  container.innerHTML = "";
+  battle.customPicks.forEach((pick, idx) => {
+    const el = document.createElement("div");
+    el.className = "custom-pick";
+    const year = (pick.release_date || "").slice(0, 4);
+    el.innerHTML = `
+      <div class="custom-pick-row">
+        <img src="${IMG_BASE_SM}${pick.poster_path}" alt="">
+        <div class="custom-pick-body">
+          <div class="custom-pick-title">${pick.title}</div>
+          <div class="custom-pick-year">${year || "—"}</div>
+          <div class="custom-pick-actions">
+            <button class="custom-pick-btn notes-toggle">+ NOTES</button>
+            <button class="custom-pick-btn remove">✕ REMOVE</button>
+          </div>
+        </div>
+      </div>
+      <div class="custom-pick-notes">
+        <label>WHY YES</label>
+        <textarea class="pick-yes" placeholder="Reasons to pick this one...">${pick.whyYes}</textarea>
+        <label>WHY NO</label>
+        <textarea class="pick-no" placeholder="Reasons against...">${pick.whyNo}</textarea>
+      </div>
+    `;
+    // wire actions
+    el.querySelector(".remove").addEventListener("click", () => {
+      battle.customPicks.splice(idx, 1);
+      renderCustomPicks();
+      updateStartButton();
+    });
+    const notesToggle = el.querySelector(".notes-toggle");
+    const notesEl = el.querySelector(".custom-pick-notes");
+    notesToggle.addEventListener("click", () => {
+      notesEl.classList.toggle("open");
+      notesToggle.textContent = notesEl.classList.contains("open") ? "− NOTES" : "+ NOTES";
+    });
+    // if user had notes already, keep the pane open
+    if (pick.whyYes || pick.whyNo) {
+      notesEl.classList.add("open");
+      notesToggle.textContent = "− NOTES";
+    }
+    el.querySelector(".pick-yes").addEventListener("input", (e) => {
+      battle.customPicks[idx].whyYes = e.target.value;
+    });
+    el.querySelector(".pick-no").addEventListener("input", (e) => {
+      battle.customPicks[idx].whyNo = e.target.value;
+    });
+    container.appendChild(el);
+  });
+}
+
+function updateStartButton() {
+  if (battle.mode === "random") {
+    battleStartBtn.disabled = false;
+    battleStartBtn.textContent = "START BATTLE ▶";
+  } else {
+    const ready = battle.customPicks.length === battle.customSize;
+    battleStartBtn.disabled = !ready;
+    battleStartBtn.textContent = ready
+      ? "START BATTLE ▶"
+      : `NEED ${battle.customSize - battle.customPicks.length} MORE`;
+  }
+}
+updateStartButton();
+
+battleStartBtn.addEventListener("click", startBattle);
 document.getElementById("battle-cancel").addEventListener("click", resetBattle);
 document.getElementById("battle-a").addEventListener("click", () => pickWinner("a"));
 document.getElementById("battle-b").addEventListener("click", () => pickWinner("b"));
 
-// keyboard: only when battle is active and modal isn't open
 document.addEventListener("keydown", (e) => {
   if (!battle.active || !modalBackdrop.hidden) return;
   if (e.key === "ArrowLeft") pickWinner("a");
@@ -815,41 +1004,50 @@ document.addEventListener("keydown", (e) => {
 });
 
 async function startBattle() {
-  toast("fetch", "Building the bracket...");
   battleSetupEl.hidden = true;
 
-  try {
-    // pull two pages of popular to get a diverse pool
-    const [p1, p2] = await Promise.all([
-      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=1`).then((r) => r.json()),
-      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=2`).then((r) => r.json())
-    ]);
-    const pool = [...p1.results, ...p2.results]
-      .filter((m) => m.poster_path && m.title)
-      .sort(() => 0.5 - Math.random())
-      .slice(0, battle.size);
+  let pool = [];
+  let bracketSize;
 
-    if (pool.length < battle.size) {
-      toast("fetch", "Couldn't build a full bracket. Try again.");
+  if (battle.mode === "custom") {
+    pool = battle.customPicks.slice().sort(() => 0.5 - Math.random());
+    bracketSize = battle.customSize;
+  } else {
+    toast("fetch", "Building the bracket...");
+    bracketSize = battle.size;
+    try {
+      const [p1, p2] = await Promise.all([
+        fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=1`).then((r) => r.json()),
+        fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=2`).then((r) => r.json())
+      ]);
+      pool = [...p1.results, ...p2.results]
+        .filter((m) => m.poster_path && m.title)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, bracketSize);
+    } catch (err) {
+      console.error(err);
+      toast("fetch", "Bracket failed. Check your API key.");
       battleSetupEl.hidden = false;
       return;
     }
-
-    battle.currentRound = pool;
-    battle.nextRound = [];
-    battle.matchIndex = 0;
-    battle.roundNumber = 1;
-    battle.totalRounds = Math.log2(battle.size);
-    battle.active = true;
-
-    battleStageEl.hidden = false;
-    battleChampionEl.hidden = true;
-    showNextMatch();
-  } catch (err) {
-    console.error(err);
-    toast("fetch", "Bracket failed. Check your API key.");
-    battleSetupEl.hidden = false;
   }
+
+  if (pool.length < bracketSize) {
+    toast("fetch", "Couldn't build a full bracket.");
+    battleSetupEl.hidden = false;
+    return;
+  }
+
+  battle.currentRound = pool;
+  battle.nextRound = [];
+  battle.matchIndex = 0;
+  battle.roundNumber = 1;
+  battle.totalRounds = Math.log2(bracketSize);
+  battle.active = true;
+
+  battleStageEl.hidden = false;
+  battleChampionEl.hidden = true;
+  showNextMatch();
 }
 
 function showNextMatch() {
@@ -858,19 +1056,15 @@ function showNextMatch() {
   battle.currentPair = { a, b };
 
   updateBattleProgress();
-
-  // fill both cards
   setBattleCard("a", a);
   setBattleCard("b", b);
 
-  // reset animation classes
   battleArenaEl.classList.remove("transitioning");
   document.getElementById("battle-a").classList.remove("winning", "losing");
   document.getElementById("battle-b").classList.remove("winning", "losing");
 
-  // trigger enter animation
   battleArenaEl.classList.remove("entering");
-  void battleArenaEl.offsetWidth; // reflow to restart animation
+  void battleArenaEl.offsetWidth;
   battleArenaEl.classList.add("entering");
 }
 
@@ -878,12 +1072,32 @@ function setBattleCard(side, movie) {
   const img = document.getElementById(`battle-${side}-img`);
   const title = document.getElementById(`battle-${side}-title`);
   const meta = document.getElementById(`battle-${side}-meta`);
+  const chip = document.getElementById(`battle-${side}-notes-chip`);
+  const notes = document.getElementById(`battle-${side}-notes`);
+
   img.src = `${IMG_BASE}${movie.poster_path}`;
   img.alt = movie.title;
   title.textContent = movie.title;
   const year = (movie.release_date || "").slice(0, 4);
   const rating = movie.vote_average ? `★ ${movie.vote_average.toFixed(1)}` : "";
   meta.textContent = [year, rating].filter(Boolean).join(" · ");
+
+  // show pros/cons notes if this movie has any
+  const hasNotes = movie.whyYes || movie.whyNo;
+  chip.hidden = !hasNotes;
+  notes.hidden = !hasNotes;
+  if (hasNotes) {
+    let html = "";
+    if (movie.whyYes) html += `<p><strong>WHY YES</strong>${escapeHTML(movie.whyYes)}</p>`;
+    if (movie.whyNo) html += `<p><strong>WHY NO</strong>${escapeHTML(movie.whyNo)}</p>`;
+    notes.innerHTML = html;
+  }
+}
+
+function escapeHTML(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 function updateBattleProgress() {
@@ -892,9 +1106,9 @@ function updateBattleProgress() {
   document.getElementById("battle-round-label").textContent = `ROUND ${battle.roundNumber} OF ${battle.totalRounds}`;
   document.getElementById("battle-match-label").textContent = `MATCH ${matchNum} OF ${totalMatchesInRound}`;
 
-  // overall progress = matches decided / total matches to reach champion
-  const totalMatches = battle.size - 1;
-  const decidedMatches = (battle.size - battle.currentRound.length) + battle.matchIndex;
+  const bracketSize = battle.mode === "custom" ? battle.customSize : battle.size;
+  const totalMatches = bracketSize - 1;
+  const decidedMatches = (bracketSize - battle.currentRound.length) + battle.matchIndex;
   const pct = (decidedMatches / totalMatches) * 100;
   document.getElementById("battle-progress-fill").style.width = `${pct}%`;
 }
@@ -914,15 +1128,11 @@ function pickWinner(side) {
   battle.matchIndex++;
 
   setTimeout(() => {
-    // check if round is over
     if (battle.matchIndex * 2 >= battle.currentRound.length) {
-      // round complete
       if (battle.nextRound.length === 1) {
-        // champion!
         showChampion(battle.nextRound[0]);
         return;
       }
-      // advance to next round
       battle.currentRound = battle.nextRound;
       battle.nextRound = [];
       battle.matchIndex = 0;
@@ -948,7 +1158,6 @@ function showChampion(movie) {
     ? movie.overview.slice(0, 220) + (movie.overview.length > 220 ? "..." : "")
     : "";
 
-  // wire actions
   const detailsBtn = document.getElementById("champion-details");
   const saveBtn = document.getElementById("champion-save");
   const rematchBtn = document.getElementById("champion-rematch");
@@ -968,7 +1177,6 @@ function showChampion(movie) {
 
   rematchBtn.onclick = () => resetBattle();
 
-  // confetti
   launchConfetti(document.getElementById("champion-confetti"));
 }
 

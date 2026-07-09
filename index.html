@@ -74,11 +74,40 @@
 
     <!-- Setup -->
     <div class="battle-setup" id="battle-setup">
-      <p class="battle-setup-label">How many movies in the bracket?</p>
-      <div class="battle-size-toggle">
-        <button class="battle-size active" data-size="8">8 MOVIES · 3 ROUNDS</button>
-        <button class="battle-size" data-size="16">16 MOVIES · 4 ROUNDS</button>
+      <div class="battle-mode-toggle">
+        <button class="battle-mode active" data-mode="random">RANDOM BRACKET</button>
+        <button class="battle-mode" data-mode="custom">CUSTOM PICKS</button>
       </div>
+
+      <!-- Random mode -->
+      <div class="battle-mode-pane" id="setup-random">
+        <p class="battle-setup-label">How many movies in the bracket?</p>
+        <div class="battle-size-toggle">
+          <button class="battle-size active" data-size="8">8 MOVIES · 3 ROUNDS</button>
+          <button class="battle-size" data-size="16">16 MOVIES · 4 ROUNDS</button>
+        </div>
+      </div>
+
+      <!-- Custom mode -->
+      <div class="battle-mode-pane" id="setup-custom" hidden>
+        <p class="battle-setup-label">Bracket size — pick before you add</p>
+        <div class="battle-size-toggle" id="custom-size-toggle">
+          <button class="battle-size-custom active" data-size="2">2</button>
+          <button class="battle-size-custom" data-size="4">4</button>
+          <button class="battle-size-custom" data-size="8">8</button>
+          <button class="battle-size-custom" data-size="16">16</button>
+        </div>
+
+        <p class="battle-setup-label">Search and add your fighters</p>
+        <div class="custom-search-row">
+          <input type="text" id="custom-search-input" placeholder="Search a movie to add..." />
+        </div>
+        <div class="custom-search-results" id="custom-search-results"></div>
+
+        <p class="battle-setup-label" id="picks-label">YOUR FIGHTERS — 0 / 2</p>
+        <div class="custom-picks" id="custom-picks"></div>
+      </div>
+
       <button class="battle-start" id="battle-start">START BATTLE ▶</button>
     </div>
 
@@ -91,18 +120,22 @@
       </div>
       <div class="battle-arena" id="battle-arena">
         <button class="battle-card" id="battle-a" data-side="a">
+          <span class="battle-notes-chip" id="battle-a-notes-chip" hidden>💭 NOTES</span>
           <img id="battle-a-img" src="" alt="">
           <div class="battle-info">
             <div class="battle-title" id="battle-a-title"></div>
             <div class="battle-meta" id="battle-a-meta"></div>
+            <div class="battle-notes" id="battle-a-notes" hidden></div>
           </div>
         </button>
         <div class="battle-vs">VS</div>
         <button class="battle-card" id="battle-b" data-side="b">
+          <span class="battle-notes-chip" id="battle-b-notes-chip" hidden>💭 NOTES</span>
           <img id="battle-b-img" src="" alt="">
           <div class="battle-info">
             <div class="battle-title" id="battle-b-title"></div>
             <div class="battle-meta" id="battle-b-meta"></div>
+            <div class="battle-notes" id="battle-b-notes" hidden></div>
           </div>
         </button>
       </div>
