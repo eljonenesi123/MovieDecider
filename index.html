@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Just Pick Something | Movie & TV Roulette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="poster-wall" id="poster-wall" aria-hidden="true"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-inner">
+    <p class="eyebrow" id="hero-eyebrow">FOR PEOPLE WHO CAN'T DECIDE —</p>
+    <h1 id="flip-headline" class="flip-headline">TONIGHT?</h1>
+    <p class="hero-sub">Stop scrolling. Tell us the mood, we'll hand you the pick.</p>
+    <div class="hero-ctas">
+      <a href="#mood-section" class="cta-primary">FIND MY PICK</a>
+      <a href="#whopicks-section" class="cta-secondary">WHO PICKS TONIGHT? →</a>
+    </div>
+  </div>
+  <div class="ticket-edge"></div>
+</header>
+
+<main>
+  <section class="trending-section">
+    <div class="trending-header">
+      <h2>HOT RIGHT NOW</h2>
+      <span class="trending-sub">trending this week — tap any poster for details</span>
+    </div>
+    <div class="trending-strip" id="trending-strip"></div>
+  </section>
+
+  <section class="curated-section">
+    <h2 class="section-title">HAND-PICKED, NO ALGORITHM</h2>
+    <p class="section-sub">Lists I actually made. Opinions may bite.</p>
+    <div class="collection-tabs" id="collection-tabs"></div>
+    <p class="collection-intro" id="collection-intro"></p>
+    <div class="collection-grid" id="collection-grid"></div>
+  </section>
+
+  <section class="mood-section" id="mood-section">
+    <h2 class="section-title">HOW DO WE PICK?</h2>
+    <div class="type-toggle">
+      <button class="type-btn active" data-type="movie">MOVIES</button>
+      <button class="type-btn" data-type="tv">TV SHOWS</button>
+    </div>
+
+    <div class="picker-tabs">
+      <button class="picker-tab active" data-pane="wheel">SPIN THE WHEEL</button>
+      <button class="picker-tab" data-pane="mood">PICK A MOOD</button>
+      <button class="picker-tab" data-pane="feeling">TELL ME HOW YOU FEEL</button>
+    </div>
+
+    <div class="picker-pane" id="pane-wheel">
+      <div class="wheel-wrap">
+        <canvas id="wheel-canvas" width="360" height="360"></canvas>
+        <div class="wheel-pointer">▼</div>
+      </div>
+      <button class="spin-btn" id="spin-wheel-btn">SPIN</button>
+    </div>
+
+    <div class="picker-pane" id="pane-mood" hidden>
+      <div class="mood-grid" id="mood-grid"></div>
+    </div>
+
+    <div class="picker-pane" id="pane-feeling" hidden>
+      <p class="feeling-prompt">Type how you're feeling, or what kind of thing you're in the mood for:</p>
+      <div class="feeling-input-row">
+        <input type="text" id="feeling-input" placeholder="e.g. stressed, bored, want to laugh, need romance..." />
+        <button id="feeling-submit">FIND IT</button>
+      </div>
+      <p class="feeling-hint" id="feeling-hint"></p>
+    </div>
+  </section>
+
+  <section class="results-section" id="results-section" hidden>
+    <div class="results-header">
+      <h2 id="results-title">HERE'S THE PICK</h2>
+      <button class="spin-again" id="spin-again">NO, NEXT ↻</button>
+    </div>
+    <div class="results-meta">
+      <p class="results-tip">Tap any ticket for the full breakdown — trailer, cast, where to stream.</p>
+      <p class="streak-line" id="streak-line" hidden></p>
+    </div>
+    <div class="ticket-grid" id="ticket-grid"></div>
+  </section>
+
+  <section class="watchlist-section" id="watchlist-section" hidden>
+    <div class="watchlist-header">
+      <h2 class="section-title" style="margin-bottom: 0;">YOUR WATCHLIST</h2>
+      <button class="clear-watchlist" id="clear-watchlist">CLEAR ALL</button>
+    </div>
+    <p class="section-sub">Saved on this device. No account, no cloud, nobody watching.</p>
+    <div class="watchlist-grid" id="watchlist-grid"></div>
+  </section>
+
+  <section class="whopicks-section" id="whopicks-section">
+    <div class="whopicks-inner">
+      <h2 class="section-title">WHO PICKS TONIGHT?</h2>
+      <p class="whopicks-sub">Watching with family, friends, or your other half? Add everyone's name and let fate settle the argument. Winner picks. No appeals.</p>
+
+      <div class="player-input-row">
+        <input type="text" id="player-input" placeholder="Add a name..." maxlength="20" />
+        <button id="player-add">ADD</button>
+      </div>
+      <div class="player-chips" id="player-chips"></div>
+
+      <button class="decide-btn" id="decide-btn" disabled>DECIDE ▶</button>
+      <div class="decide-stage" id="decide-stage"></div>
+      <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <h3>JUST PICK SOMETHING</h3>
+      <p>A tiny tool for the eternal question: "what should we watch?" Built for the indecisive, by one of them.</p>
+    </div>
+    <div>
+      <h3>HOW IT WORKS</h3>
+      <p>Spin the wheel, pick a mood, or just type how you feel. We match it against thousands of movies and shows and hand you a shortlist. Tap anything for trailers, cast, and where to stream.</p>
+    </div>
+    <div>
+      <h3>REGION</h3>
+      <p>Streaming availability changes by country. Set yours here:</p>
+      <select id="region-select" class="region-select">
+        <option value="US">United States</option>
+        <option value="GB">United Kingdom</option>
+        <option value="AL">Albania</option>
+        <option value="DE">Germany</option>
+        <option value="FR">France</option>
+        <option value="IT">Italy</option>
+        <option value="ES">Spain</option>
+        <option value="CA">Canada</option>
+        <option value="AU">Australia</option>
+      </select>
+    </div>
+    <div>
+      <h3>CREDITS</h3>
+      <p>Site coded and posters ranked by <strong>Eljon</strong> in Tirana. Film &amp; TV data from <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- DETAILS MODAL -->
+<div class="modal-backdrop" id="modal-backdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    <div class="modal-backdrop-img" id="modal-backdrop-img"></div>
+    <div class="modal-body">
+      <div class="modal-title-row">
+        <h2 id="modal-title"></h2>
+        <button class="save-btn" id="modal-save" aria-label="Save to watchlist" hidden>☆ SAVE</button>
+      </div>
+      <p class="modal-tagline" id="modal-tagline"></p>
+      <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-genres" id="modal-genres"></div>
+      <p class="modal-overview" id="modal-overview"></p>
+
+      <div class="modal-block" id="modal-providers-block" hidden>
+        <h3 class="modal-block-title">WHERE TO STREAM</h3>
+        <div class="providers-strip" id="modal-providers"></div>
+      </div>
+
+      <div class="modal-block" id="modal-cast-block" hidden>
+        <h3 class="modal-block-title">CAST</h3>
+        <div class="cast-strip" id="modal-cast"></div>
+      </div>
+
+      <a class="modal-trailer" id="modal-trailer" href="#" target="_blank" rel="noopener" hidden>▶ WATCH TRAILER</a>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
