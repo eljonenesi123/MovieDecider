@@ -18,8 +18,8 @@
     <h1 id="flip-headline" class="flip-headline">TONIGHT?</h1>
     <p class="hero-sub">Stop scrolling. Tell us the mood, we'll hand you the pick.</p>
     <div class="hero-ctas">
-      <a href="#mood-section" class="cta-primary">FIND MY PICK</a>
-      <a href="#whopicks-section" class="cta-secondary">WHO PICKS TONIGHT? →</a>
+      <a href="#search-section" class="cta-primary">SEARCH ANYTHING</a>
+      <a href="#mood-section" class="cta-secondary">SPIN THE WHEEL →</a>
     </div>
   </div>
   <div class="ticket-edge"></div>
@@ -34,12 +34,100 @@
     <div class="trending-strip" id="trending-strip"></div>
   </section>
 
+  <section class="search-section" id="search-section">
+    <h2 class="section-title">FIND ANYTHING</h2>
+    <p class="section-sub">
+      Search for a movie, an actor, a director, or just a vibe. Can't remember the name?
+      Describe what you remember — "kid alone at christmas," "ww2 pianist," "car chase in France."
+      We'll try.
+    </p>
+    <div class="search-row">
+      <input type="text" id="search-input" placeholder="Search titles, people, themes..." />
+      <button id="search-btn">SEARCH</button>
+    </div>
+    <div class="search-tabs" id="search-tabs" hidden>
+      <button class="search-tab active" data-tab="titles">TITLES</button>
+      <button class="search-tab" data-tab="people">PEOPLE</button>
+      <button class="search-tab" data-tab="themes">THEMES</button>
+    </div>
+    <p class="search-context" id="search-context"></p>
+    <div class="search-results" id="search-results"></div>
+  </section>
+
+  <section class="genres-section">
+    <h2 class="section-title">BROWSE BY GENRE</h2>
+    <p class="section-sub">Straight to the point. Pick a lane.</p>
+    <div class="genre-grid" id="genre-grid"></div>
+  </section>
+
   <section class="curated-section">
     <h2 class="section-title">HAND-PICKED, NO ALGORITHM</h2>
     <p class="section-sub">Lists I actually made. Opinions may bite.</p>
     <div class="collection-tabs" id="collection-tabs"></div>
     <p class="collection-intro" id="collection-intro"></p>
     <div class="collection-grid" id="collection-grid"></div>
+  </section>
+
+  <section class="battles-section" id="battles-section">
+    <h2 class="section-title">MOVIE BATTLES</h2>
+    <p class="section-sub">Two movies enter, one movie leaves. Tap the one you'd actually watch tonight — the winner faces the next challenger until one movie takes the crown.</p>
+
+    <!-- Setup -->
+    <div class="battle-setup" id="battle-setup">
+      <p class="battle-setup-label">How many movies in the bracket?</p>
+      <div class="battle-size-toggle">
+        <button class="battle-size active" data-size="8">8 MOVIES · 3 ROUNDS</button>
+        <button class="battle-size" data-size="16">16 MOVIES · 4 ROUNDS</button>
+      </div>
+      <button class="battle-start" id="battle-start">START BATTLE ▶</button>
+    </div>
+
+    <!-- Battle stage -->
+    <div class="battle-stage" id="battle-stage" hidden>
+      <div class="battle-progress">
+        <span id="battle-round-label">ROUND 1</span>
+        <span class="battle-progress-bar"><span id="battle-progress-fill"></span></span>
+        <span id="battle-match-label">MATCH 1 OF 4</span>
+      </div>
+      <div class="battle-arena" id="battle-arena">
+        <button class="battle-card" id="battle-a" data-side="a">
+          <img id="battle-a-img" src="" alt="">
+          <div class="battle-info">
+            <div class="battle-title" id="battle-a-title"></div>
+            <div class="battle-meta" id="battle-a-meta"></div>
+          </div>
+        </button>
+        <div class="battle-vs">VS</div>
+        <button class="battle-card" id="battle-b" data-side="b">
+          <img id="battle-b-img" src="" alt="">
+          <div class="battle-info">
+            <div class="battle-title" id="battle-b-title"></div>
+            <div class="battle-meta" id="battle-b-meta"></div>
+          </div>
+        </button>
+      </div>
+      <p class="battle-hint">Tap a poster · or use ← → arrow keys</p>
+      <button class="battle-cancel" id="battle-cancel">END BATTLE ✕</button>
+    </div>
+
+    <!-- Champion -->
+    <div class="battle-champion" id="battle-champion" hidden>
+      <p class="champion-eyebrow">🏆 TONIGHT'S CHAMPION —</p>
+      <div class="champion-card" id="champion-card">
+        <img id="champion-img" src="" alt="">
+        <div class="champion-info">
+          <h3 id="champion-title"></h3>
+          <p id="champion-meta"></p>
+          <p id="champion-overview"></p>
+        </div>
+      </div>
+      <div class="champion-actions">
+        <button id="champion-details" class="champ-primary">SEE FULL DETAILS →</button>
+        <button id="champion-save" class="champ-secondary">☆ SAVE</button>
+        <button id="champion-rematch" class="champ-secondary">RUN IT BACK ↻</button>
+      </div>
+      <div class="confetti-layer" id="champion-confetti" aria-hidden="true"></div>
+    </div>
   </section>
 
   <section class="mood-section" id="mood-section">
@@ -56,11 +144,16 @@
     </div>
 
     <div class="picker-pane" id="pane-wheel">
-      <div class="wheel-wrap">
-        <canvas id="wheel-canvas" width="360" height="360"></canvas>
-        <div class="wheel-pointer">▼</div>
+      <div class="wheel-stage">
+        <div class="wheel-frame">
+          <canvas id="wheel-canvas" width="400" height="400"></canvas>
+          <div class="wheel-hub" aria-hidden="true">
+            <span>🎬</span>
+          </div>
+          <div class="wheel-pointer" aria-hidden="true"></div>
+        </div>
       </div>
-      <button class="spin-btn" id="spin-wheel-btn">SPIN</button>
+      <button class="spin-btn" id="spin-wheel-btn">SPIN THE REEL</button>
     </div>
 
     <div class="picker-pane" id="pane-mood" hidden>
@@ -124,7 +217,7 @@
     </div>
     <div>
       <h3>HOW IT WORKS</h3>
-      <p>Spin the wheel, pick a mood, or just type how you feel. We match it against thousands of movies and shows and hand you a shortlist. Tap anything for trailers, cast, and where to stream.</p>
+      <p>Search anything, spin the wheel, pick a mood, or type how you feel. We match it against thousands of movies and shows and hand you a shortlist. Tap anything for trailers, cast, and where to stream.</p>
     </div>
     <div>
       <h3>REGION</h3>
@@ -143,7 +236,7 @@
     </div>
     <div>
       <h3>CREDITS</h3>
-      <p>Site coded and posters ranked by <strong>Eljon</strong> in Tirana. Film &amp; TV data from <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+      <p>Site coded and posters ranked by <a href="https://www.linkedin.com/in/eljonenesi/" target="_blank" rel="noopener"><strong>Eljon</strong></a> in Tirana. Film &amp; TV data from <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
     </div>
   </div>
 </footer>
@@ -177,6 +270,9 @@
     </div>
   </div>
 </div>
+
+<!-- TOAST POPUP -->
+<div class="toast" id="toast" aria-live="polite"></div>
 
 <script src="script.js"></script>
 </body>
