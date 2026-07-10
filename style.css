@@ -1834,6 +1834,27 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+.group-genre-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.7rem;
+  margin: 1.6rem 0 0.4rem;
+}
+
+.group-genre-chip {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  background: var(--espresso-2);
+  border: 2px solid var(--espresso-2);
+  color: var(--cream);
+  padding: 0.9rem 0.6rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.group-genre-chip:hover { border-color: var(--gold); }
+.group-genre-chip.active { background: var(--gold); color: var(--espresso); border-color: var(--gold); }
+
 /* Pass-the-phone screen */
 .group-pass-eyebrow {
   font-family: var(--mono);
@@ -1947,6 +1968,16 @@ body {
   color: var(--gold);
   margin-top: 0.3rem;
 }
+.group-card .group-card-overview {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--cream-dim);
+  margin-top: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 .group-stamp {
   position: absolute;
@@ -2059,6 +2090,9 @@ body {
   .group-nope-btn, .group-like-btn { width: 54px; height: 54px; font-size: 1.4rem; }
   .group-match-card { flex-direction: column; align-items: center; text-align: center; }
   .group-match-card img { width: 140px; }
+  .group-card-overview { -webkit-line-clamp: 2; font-size: 0.72rem; }
+  .group-genre-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  .group-genre-chip { font-size: 0.75rem; padding: 0.75rem 0.5rem; }
 }
 
 .confetti-layer {

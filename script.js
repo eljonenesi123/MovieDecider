@@ -1752,6 +1752,7 @@ decideBtn.addEventListener("click", () => {
 // ============================================
 const groupSwipeBtn = document.getElementById("group-swipe-btn");
 const groupSection = document.getElementById("group-section");
+const groupGenrePane = document.getElementById("group-genre-pane");
 const groupPassPane = document.getElementById("group-pass-pane");
 const groupDeckPane = document.getElementById("group-deck-pane");
 const groupRevealPane = document.getElementById("group-reveal-pane");
@@ -1760,15 +1761,57 @@ const groupDeckStack = document.getElementById("group-deck-stack");
 const groupDeckPlayer = document.getElementById("group-deck-player");
 const groupDeckProgress = document.getElementById("group-deck-progress");
 const groupRevealInner = document.getElementById("group-reveal-inner");
+const groupGenreGrid = document.getElementById("group-genre-grid");
+
+const GROUP_GENRES = [
+  { label: "SURPRISE ME", id: null },
+  { label: "ACTION", id: 28 },
+  { label: "COMEDY", id: 35 },
+  { label: "HORROR", id: 27 },
+  { label: "ROMANCE", id: 10749 },
+  { label: "SCI-FI", id: 878 },
+  { label: "THRILLER", id: 53 },
+  { label: "ANIMATION", id: 16 },
+  { label: "DRAMA", id: 18 }
+];
 
 const groupSwipe = {
   deck: [],
   playerIndex: 0,
   cardIndex: 0,
+  genreId: null,
   likes: {} // { playerName: Set of movie ids }
 };
 
-groupSwipeBtn.addEventListener("click", startGroupSwipe);
+renderGroupGenreChips();
+
+function renderGroupGenreChips() {
+  groupGenreGrid.innerHTML = "";
+  GROUP_GENRES.forEach((g) => {
+    const chip = document.createElement("button");
+    chip.className = "group-genre-chip";
+    if (g.id === groupSwipe.genreId) chip.classList.add("active");
+    chip.textContent = g.label;
+    chip.addEventListener("click", () => {
+      groupSwipe.genreId = g.id;
+      launchGroupDeckLoad();
+    });
+    groupGenreGrid.appendChild(chip);
+  });
+}
+
+groupSwipeBtn.addEventListener("click", () => {
+  if (players.length < 2) return;
+  groupSection.hidden = false;
+  groupGenrePane.hidden = false;
+  groupPassPane.hidden = true;
+  groupDeckPane.hidden = true;
+  groupRevealPane.hidden = true;
+  renderGroupGenreChips();
+  groupSection.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+document.getElementById("group-cancel-btn-genre").addEventListener("click", cancelGroupSwipe);
 document.getElementById("group-cancel-btn-pass").addEventListener("click", cancelGroupSwipe);
 document.getElementById("group-cancel-btn-deck").addEventListener("click", cancelGroupSwipe);
 document.getElementById("group-restart-btn").addEventListener("click", () => {
@@ -1777,21 +1820,39 @@ document.getElementById("group-restart-btn").addEventListener("click", () => {
   playerChips.scrollIntoView({ behavior: "smooth" });
 });
 
-async function startGroupSwipe() {
-  if (players.length < 2) return;
-
+async function launchGroupDeckLoad() {
   groupSwipe.playerIndex = 0;
   groupSwipe.cardIndex = 0;
   groupSwipe.likes = {};
   players.forEach((p) => { groupSwipe.likes[p] = new Set(); });
 
-  groupSwipeBtn.disabled = true;
-  groupSwipeBtn.textContent = "LOADING DECK...";
+  groupGenreGrid.querySelectorAll(".group-genre-chip").forEach((c) => c.disabled = true);
+  toast("fetch", "Building the deck...");
 
   try {
+    const endpoint = groupSwipe.genreId
+      ? `${TMDB_BASE}/discover/movie`
+      : `${TMDB_BASE}/movie/popular`;
+    const paramsA = new URLSearchParams({
+      api_key: TMDB_API_KEY,
+      page: String(Math.floor(Math.random() * 4) + 1)
+    });
+    const paramsB = new URLSearchParams({
+      api_key: TMDB_API_KEY,
+      page: String(Math.floor(Math.random() * 4) + 1)
+    });
+    if (groupSwipe.genreId) {
+      paramsA.append("with_genres", groupSwipe.genreId);
+      paramsB.append("with_genres", groupSwipe.genreId);
+      paramsA.append("sort_by", "popularity.desc");
+      paramsB.append("sort_by", "popularity.desc");
+      paramsA.append("vote_count.gte", "50");
+      paramsB.append("vote_count.gte", "50");
+    }
+
     const [p1, p2] = await Promise.all([
-      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=${Math.floor(Math.random() * 4) + 1}`).then((r) => r.json()),
-      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=${Math.floor(Math.random() * 4) + 1}`).then((r) => r.json())
+      fetch(`${endpoint}?${paramsA.toString()}`).then((r) => r.json()),
+      fetch(`${endpoint}?${paramsB.toString()}`).then((r) => r.json())
     ]);
     const pool = [...(p1.results || []), ...(p2.results || [])]
       .filter((m) => m.poster_path && m.title)
@@ -1804,20 +1865,17 @@ async function startGroupSwipe() {
   } catch (err) {
     console.error(err);
     toast("fetch", "Couldn't load the deck. Check the API key.");
-    groupSwipeBtn.disabled = false;
-    groupSwipeBtn.textContent = "SWIPE TOGETHER 💕";
+    groupGenreGrid.querySelectorAll(".group-genre-chip").forEach((c) => c.disabled = false);
     return;
   }
 
-  groupSwipeBtn.disabled = false;
-  groupSwipeBtn.textContent = "SWIPE TOGETHER 💕";
+  groupGenreGrid.querySelectorAll(".group-genre-chip").forEach((c) => c.disabled = false);
 
-  groupSection.hidden = false;
+  groupGenrePane.hidden = true;
   groupPassPane.hidden = false;
   groupDeckPane.hidden = true;
   groupRevealPane.hidden = true;
   showPassScreen();
-  groupSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function cancelGroupSwipe() {
@@ -1831,6 +1889,7 @@ function showPassScreen() {
     groupSwipe.playerIndex === 0
       ? "Swipe right on anything you'd watch. Left on anything you wouldn't."
       : "Your turn. Swipe right on anything you'd watch, left on anything you wouldn't.";
+  groupGenrePane.hidden = true;
   groupPassPane.hidden = false;
   groupDeckPane.hidden = true;
   groupRevealPane.hidden = true;
@@ -1871,6 +1930,9 @@ function renderGroupDeck() {
 
     const year = (movie.release_date || "").slice(0, 4);
     const rating = movie.vote_average ? `★ ${movie.vote_average.toFixed(1)}` : "";
+    const overview = movie.overview
+      ? movie.overview.slice(0, 150) + (movie.overview.length > 150 ? "..." : "")
+      : "No synopsis available.";
     card.innerHTML = `
       <span class="group-stamp like" id="group-stamp-like">LIKE</span>
       <span class="group-stamp nope" id="group-stamp-nope">NOPE</span>
@@ -1878,6 +1940,7 @@ function renderGroupDeck() {
       <div class="group-card-info">
         <div class="group-card-title">${movie.title}</div>
         <div class="group-card-meta">${[year, rating].filter(Boolean).join(" · ")}</div>
+        <p class="group-card-overview">${overview}</p>
       </div>
     `;
 
