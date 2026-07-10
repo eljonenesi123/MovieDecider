@@ -117,6 +117,51 @@ body {
   flex-wrap: wrap;
 }
 
+@media (max-width: 600px) {
+  .hero-ctas {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.6rem;
+    margin-right: -8vw;
+    padding-right: 8vw;
+  }
+  .hero-ctas::-webkit-scrollbar { display: none; }
+  .cta-primary, .cta-secondary {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 0.78rem;
+    padding: 0.75rem 1.2rem;
+  }
+}
+
+.lang-toggle {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  z-index: 5;
+  display: flex;
+  gap: 0.3rem;
+  background: rgba(0,0,0,0.25);
+  border-radius: 999px;
+  padding: 0.3rem;
+}
+.lang-btn {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: none;
+  color: var(--cream-dim);
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.lang-btn:hover { color: var(--cream); }
+.lang-btn.active { background: var(--gold); color: var(--espresso); }
+
 .cta-primary, .cta-secondary {
   font-family: var(--mono);
   font-size: 0.9rem;

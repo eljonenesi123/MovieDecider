@@ -1,4 +1,143 @@
 // ============================================
+// LANGUAGE
+// ============================================
+const SUPPORTED_LANGS = ["en", "sq", "de"];
+function detectLang() {
+  const saved = localStorage.getItem("jps_lang");
+  if (saved && SUPPORTED_LANGS.includes(saved)) return saved;
+  const nav = (navigator.language || "en").slice(0, 2).toLowerCase();
+  return SUPPORTED_LANGS.includes(nav) ? nav : "en";
+}
+const LANG = detectLang();
+document.documentElement.lang = LANG;
+
+const STATIC_I18N = {
+  hero_eyebrow: { en: "FOR PEOPLE WHO CAN'T DECIDE —", sq: "PËR ATA QË S'VENDOSIN DOT —", de: "FÜR LEUTE, DIE SICH NICHT ENTSCHEIDEN KÖNNEN —" },
+  hero_sub: { en: "Stop scrolling. Tell us the mood, we'll hand you the pick.", sq: "Mos rrëshqit më. Na thuaj gjendjen, ne të japim zgjedhjen.", de: "Hör auf zu scrollen. Sag uns die Stimmung, wir liefern die Wahl." },
+  cta_search: { en: "SEARCH ANYTHING", sq: "KËRKO ÇDO GJË", de: "ALLES DURCHSUCHEN" },
+  cta_wheel: { en: "SPIN THE WHEEL →", sq: "RROTULLO ROTËN →", de: "RAD DREHEN →" },
+  cta_swipe: { en: "SWIPE 💕", sq: "FËRKO 💕", de: "SWIPEN 💕" },
+  trending_title: { en: "HOT RIGHT NOW", sq: "TRENDI I TANI", de: "GERADE ANGESAGT" },
+  trending_sub: { en: "trending this week — tap any poster for details", sq: "trendi këtë javë — prek çdo poster për detaje", de: "diese Woche im Trend — für Details antippen" },
+  search_title: { en: "FIND ANYTHING", sq: "GJEJ ÇDO GJË", de: "ALLES FINDEN" },
+  search_sub: {
+    en: "Search for a movie, an actor, a director, or just a vibe. Can't remember the name? Describe what you remember — \"kid alone at christmas,\" \"ww2 pianist,\" \"car chase in France.\" We'll try.",
+    sq: "Kërko një film, aktor, regjisor, ose thjesht një ndjesi. S'e mban mend emrin? Përshkruaj çfarë mban mend — \"fëmijë vetëm në krishtlindje,\" \"pianist i luftës II botërore,\" \"ndjekje me makina në Francë.\" Do provojmë.",
+    de: "Suche nach einem Film, Schauspieler, Regisseur oder einfach einem Gefühl. Erinnerst du dich nicht an den Namen? Beschreib, was du weißt — \"Kind allein an Weihnachten,\" \"Pianist im 2. Weltkrieg,\" \"Verfolgungsjagd in Frankreich.\" Wir versuchen es."
+  },
+  search_placeholder: { en: "Search titles, people, themes...", sq: "Kërko tituj, njerëz, tema...", de: "Titel, Personen, Themen suchen..." },
+  btn_search: { en: "SEARCH", sq: "KËRKO", de: "SUCHEN" },
+  tab_titles: { en: "TITLES", sq: "TITUJT", de: "TITEL" },
+  tab_people: { en: "PEOPLE", sq: "NJERËZIT", de: "PERSONEN" },
+  tab_themes: { en: "THEMES", sq: "TEMAT", de: "THEMEN" },
+  genres_title: { en: "BROWSE BY GENRE", sq: "SHFLETO SIPAS ZHANRIT", de: "NACH GENRE STÖBERN" },
+  genres_sub: { en: "Straight to the point. Pick a lane.", sq: "Drejt e në pikë. Zgjidh një drejtim.", de: "Direkt auf den Punkt. Wähl eine Richtung." },
+  curated_title: { en: "HAND-PICKED, NO ALGORITHM", sq: "ZGJEDHUR ME DORË, PA ALGORITËM", de: "HANDVERLESEN, KEIN ALGORITHMUS" },
+  curated_sub: { en: "Lists I actually made. Opinions may bite.", sq: "Lista që i bëra vetë. Mendimet mund të djegin.", de: "Listen, die ich selbst erstellt habe. Meinungen können beißen." },
+  battles_title: { en: "MOVIE BATTLES", sq: "BETEJA FILMASH", de: "FILM-DUELLE" },
+  battles_sub: { en: "Two movies enter, one movie leaves. Tap the one you'd actually watch tonight — the winner faces the next challenger until one movie takes the crown.", sq: "Dy filma hyjnë, një film del. Prek atë që do shikoje sonte — fituesi përballet me sfiduesin tjetër derisa një film merr kurorën.", de: "Zwei Filme treten an, einer geht. Tippe den, den du heute wirklich schauen würdest — der Sieger trifft den nächsten Herausforderer, bis einer die Krone holt." },
+  battle_random: { en: "RANDOM BRACKET", sq: "BLLOK I RASTËSISHËM", de: "ZUFÄLLIGES BRACKET" },
+  battle_custom: { en: "DECIDE FOR ME", sq: "VENDOS PËR MUA", de: "ENTSCHEIDE FÜR MICH" },
+  battle_bracket_label: { en: "How many movies in the bracket?", sq: "Sa filma në bllok?", de: "Wie viele Filme im Bracket?" },
+  battle_size8: { en: "8 MOVIES · 3 ROUNDS", sq: "8 FILMA · 3 RAUNDE", de: "8 FILME · 3 RUNDEN" },
+  battle_size16: { en: "16 MOVIES · 4 ROUNDS", sq: "16 FILMA · 4 RAUNDE", de: "16 FILME · 4 RUNDEN" },
+  battle_help: { en: "Add the movies you're stuck between — as few as 2, as many as 6. Optionally jot down why you'd watch each (or why not). We'll score them on TMDB rating, review count, runtime fit, and your notes, then hand you a verdict.", sq: "Shto filmat mes të cilëve je i pavendosur — nga 2 deri në 6. Opsionalisht shkruaj pse do e shikoje secilin (ose jo). Do i vlerësojmë sipas vlerësimit TMDB, numrit të recensioneve, kohëzgjatjes dhe shënimeve tua, pastaj japim vendimin.", de: "Füge die Filme hinzu, zwischen denen du dich nicht entscheiden kannst — 2 bis 6. Optional kannst du notieren, warum (nicht). Wir bewerten sie nach TMDB-Rating, Anzahl Reviews, Laufzeit und deinen Notizen und liefern dann ein Urteil." },
+  battle_time_label: { en: "Time available tonight (optional)", sq: "Koha e disponueshme sonte (opsionale)", de: "Verfügbare Zeit heute Abend (optional)" },
+  time_nolimit: { en: "NO LIMIT", sq: "PA LIMIT", de: "OHNE LIMIT" },
+  time_1hr: { en: "1 HR", sq: "1 ORË", de: "1 STD" },
+  time_90: { en: "90 MIN", sq: "90 MIN", de: "90 MIN" },
+  time_2hr: { en: "2 HR", sq: "2 ORË", de: "2 STD" },
+  time_3hr: { en: "3 HR", sq: "3 ORË", de: "3 STD" },
+  battle_search_label: { en: "Search and add contenders", sq: "Kërko dhe shto konkurrentë", de: "Kandidaten suchen und hinzufügen" },
+  battle_search_placeholder: { en: "Search a movie to add...", sq: "Kërko një film për të shtuar...", de: "Film suchen zum Hinzufügen..." },
+  battle_start: { en: "START BATTLE ▶", sq: "FILLO BETEJËN ▶", de: "DUELL STARTEN ▶" },
+  battle_hint: { en: "Swipe a poster outward to pick it · or tap · or use ← → arrow keys", sq: "Fërko posterin jashtë për ta zgjedhur · ose prek · ose përdor tastet ← →", de: "Poster nach außen wischen zum Wählen · oder tippen · oder ← → Pfeiltasten" },
+  battle_cancel: { en: "END BATTLE ✕", sq: "MBYLL BETEJËN ✕", de: "DUELL BEENDEN ✕" },
+  champion_eyebrow: { en: "🏆 TONIGHT'S CHAMPION —", sq: "🏆 KAMPIONI I SONTE —", de: "🏆 DER HEUTIGE SIEGER —" },
+  see_details: { en: "SEE FULL DETAILS →", sq: "SHIKO DETAJET →", de: "ALLE DETAILS ANSEHEN →" },
+  save: { en: "☆ SAVE", sq: "☆ RUAJ", de: "☆ SPEICHERN" },
+  rematch: { en: "RUN IT BACK ↻", sq: "PËRSËRIT ↻", de: "NOCHMAL ↻" },
+  verdict_eyebrow: { en: "⚖ THE VERDICT —", sq: "⚖ VENDIMI —", de: "⚖ DAS URTEIL —" },
+  save_winner: { en: "☆ SAVE WINNER", sq: "☆ RUAJ FITUESIN", de: "☆ SIEGER SPEICHERN" },
+  redo: { en: "TWEAK & RE-DECIDE ↺", sq: "NDRYSHO & RIVENDOS ↺", de: "ANPASSEN & NEU ENTSCHEIDEN ↺" },
+  mood_title: { en: "HOW DO WE PICK?", sq: "SI ZGJEDHIM?", de: "WIE WÄHLEN WIR?" },
+  type_movies: { en: "MOVIES", sq: "FILMA", de: "FILME" },
+  type_tv: { en: "TV SHOWS", sq: "SERIALE", de: "SERIEN" },
+  tab_wheel: { en: "SPIN THE WHEEL", sq: "RROTULLO ROTËN", de: "RAD DREHEN" },
+  tab_mood: { en: "PICK A MOOD", sq: "ZGJIDH GJENDJEN", de: "STIMMUNG WÄHLEN" },
+  tab_feeling: { en: "TELL ME HOW YOU FEEL", sq: "MË THUAJ SI NDIHESH", de: "SAG MIR, WIE DU DICH FÜHLST" },
+  spin_btn: { en: "SPIN THE REEL", sq: "RROTULLO", de: "ROLLE DREHEN" },
+  feeling_prompt: { en: "Type how you're feeling, or what kind of thing you're in the mood for:", sq: "Shkruaj si ndihesh, ose çfarë lloj gjëje ke qejf:", de: "Schreib, wie du dich fühlst oder worauf du Lust hast:" },
+  feeling_placeholder: { en: "e.g. stressed, bored, want to laugh, need romance...", sq: "p.sh. i stresuar, i mërzitur, dua të qesh, dua romancë...", de: "z.B. gestresst, gelangweilt, will lachen, brauche Romantik..." },
+  feeling_submit: { en: "FIND IT", sq: "GJEJE", de: "FINDEN" },
+  results_title: { en: "HERE'S THE PICK", sq: "JA ZGJEDHJA", de: "HIER IST DIE WAHL" },
+  spin_again: { en: "NO, NEXT ↻", sq: "JO, TJETRI ↻", de: "NEIN, NÄCHSTER ↻" },
+  results_tip: { en: "Tap any ticket for the full breakdown — trailer, cast, where to stream.", sq: "Prek çdo biletë për detaje të plota — trailer, aktorë, ku të shikosh.", de: "Tippe auf ein Ticket für alle Details — Trailer, Besetzung, Streaming." },
+  watchlist_title: { en: "YOUR WATCHLIST", sq: "LISTA JOTE", de: "DEINE WATCHLIST" },
+  clear_watchlist: { en: "CLEAR ALL", sq: "PASTRO GJITHÇKA", de: "ALLES LÖSCHEN" },
+  watchlist_sub: { en: "Saved on this device. No account, no cloud, nobody watching.", sq: "Ruajtur në këtë pajisje. Pa llogari, pa cloud, askush s'shikon.", de: "Auf diesem Gerät gespeichert. Kein Konto, keine Cloud, niemand schaut zu." },
+  whopicks_title: { en: "WHO PICKS TONIGHT?", sq: "KUSH ZGJEDH SONTE?", de: "WER ENTSCHEIDET HEUTE?" },
+  whopicks_sub: { en: "Watching with family, friends, or your other half? Add everyone's name and let fate settle the argument. Winner picks. No appeals. Flying solo tonight? Skip the names and just hit swipe.", sq: "Po shikon me familjen, miqtë, ose partnerin? Shto emrat e të gjithëve dhe lëre fatin të vendosë. Fituesi zgjedh. Pa apel. Je vetëm sonte? Kalo emrat dhe thjesht fërko.", de: "Schaust du mit Familie, Freunden oder deinem Partner? Namen hinzufügen und das Schicksal entscheiden lassen. Der Gewinner wählt. Kein Einspruch. Allein unterwegs? Namen überspringen und einfach swipen." },
+  player_placeholder: { en: "Add a name...", sq: "Shto një emër...", de: "Namen hinzufügen..." },
+  player_add: { en: "ADD", sq: "SHTO", de: "HINZUFÜGEN" },
+  decide_btn: { en: "DECIDE ▶", sq: "VENDOS ▶", de: "ENTSCHEIDEN ▶" },
+  group_vibe_eyebrow: { en: "WHAT'S THE VIBE?", sq: "ÇFARË GJENDJE?", de: "WELCHE STIMMUNG?" },
+  group_pick_category: { en: "PICK A CATEGORY", sq: "ZGJIDH NJË KATEGORI", de: "KATEGORIE WÄHLEN" },
+  group_genre_sub: { en: "Everyone swipes on the same category — pick whatever the group's actually in the mood for.", sq: "Të gjithë fërkojnë të njëjtën kategori — zgjidh çfarë ka qejf grupi.", de: "Alle swipen dieselbe Kategorie — wähl, worauf die Gruppe wirklich Lust hat." },
+  cancel_session: { en: "CANCEL SESSION ✕", sq: "ANULO SESIONIN ✕", de: "SITZUNG ABBRECHEN ✕" },
+  pass_phone_to: { en: "PASS THE PHONE TO", sq: "JEP TELEFONIN TE", de: "TELEFON WEITERGEBEN AN" },
+  im_ready: { en: "I'M READY", sq: "JAM GATI", de: "ICH BIN BEREIT" },
+  swipe_again: { en: "SWIPE AGAIN", sq: "FËRKO PËRSËRI", de: "NOCHMAL SWIPEN" },
+  footer_brand: { en: "JUST PICK SOMETHING", sq: "THJESHT ZGJIDH DIÇKA", de: "WÄHL EINFACH ETWAS" },
+  footer_brand_desc: { en: "A tiny tool for the eternal question: \"what should we watch?\" Built for the indecisive, by one of them.", sq: "Një mjet i vogël për pyetjen e përjetshme: \"çfarë të shikojmë?\" Ndërtuar për të pavendosurit, nga një prej tyre.", de: "Ein kleines Tool für die ewige Frage: \"Was schauen wir?\" Gebaut für Unentschlossene, von einem von ihnen." },
+  footer_how_title: { en: "HOW IT WORKS", sq: "SI FUNKSIONON", de: "SO FUNKTIONIERT'S" },
+  footer_how_desc: { en: "Search anything, spin the wheel, pick a mood, or type how you feel. We match it against thousands of movies and shows and hand you a shortlist. Tap anything for trailers, cast, and where to stream.", sq: "Kërko çdo gjë, rrotullo rotën, zgjidh një gjendje, ose shkruaj si ndihesh. E krahasojmë me mijëra filma dhe seriale dhe të japim një listë. Prek çdo gjë për trailer, aktorë, dhe ku të shikosh.", de: "Suche alles, dreh das Rad, wähl eine Stimmung oder schreib, wie du dich fühlst. Wir gleichen es mit tausenden Filmen und Serien ab und geben dir eine Auswahl. Tippe für Trailer, Besetzung und Streaming." },
+  footer_region_title: { en: "REGION", sq: "RAJONI", de: "REGION" },
+  footer_region_desc: { en: "Streaming availability changes by country. Set yours here:", sq: "Disponueshmëria e streaming ndryshon sipas vendit. Cakto tëndin këtu:", de: "Die Streaming-Verfügbarkeit variiert je nach Land. Stell deins hier ein:" },
+  footer_lang_title: { en: "LANGUAGE", sq: "GJUHA", de: "SPRACHE" },
+  footer_credits_title: { en: "CREDITS", sq: "FALËNDERIME", de: "CREDITS" },
+  where_to_stream: { en: "WHERE TO STREAM", sq: "KU TË SHIKOSH", de: "WO STREAMEN" },
+  cast: { en: "CAST", sq: "AKTORËT", de: "BESETZUNG" },
+  watch_trailer: { en: "▶ WATCH TRAILER", sq: "▶ SHIKO TRAILERIN", de: "▶ TRAILER ANSEHEN" },
+  cookie_text: { en: "This site uses <strong>localStorage</strong> to save your watchlist, region, and preferences on your device. Nothing is sent to a server. No tracking, no ads.", sq: "Ky sajt përdor <strong>localStorage</strong> për të ruajtur listën tënde, rajonin, dhe preferencat në pajisjen tënde. Asgjë s'dërgohet në server. Pa gjurmim, pa reklama.", de: "Diese Seite nutzt <strong>localStorage</strong>, um deine Watchlist, Region und Einstellungen auf deinem Gerät zu speichern. Nichts wird an einen Server gesendet. Kein Tracking, keine Werbung." },
+  cookie_accept: { en: "GOT IT", sq: "E KUPTOVA", de: "VERSTANDEN" },
+  cookie_decline: { en: "DECLINE", sq: "REFUZO", de: "ABLEHNEN" },
+  tour_skip: { en: "SKIP TOUR", sq: "KALO TURIN", de: "TOUR ÜBERSPRINGEN" },
+  tour_back: { en: "← BACK", sq: "← MBRAPA", de: "← ZURÜCK" },
+  tour_next: { en: "NEXT →", sq: "TJETËR →", de: "WEITER →" }
+};
+
+function applyStaticTranslations() {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    const entry = STATIC_I18N[key];
+    if (entry && entry[LANG]) el.innerHTML = entry[LANG];
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-placeholder");
+    const entry = STATIC_I18N[key];
+    if (entry && entry[LANG]) el.setAttribute("placeholder", entry[LANG]);
+  });
+}
+applyStaticTranslations();
+
+const UI_TXT = {
+  loading: { en: "Loading...", sq: "Duke u ngarkuar...", de: "Lädt..." },
+  no_streaming: { en: "No streaming info for {region}. Try switching region in the footer.", sq: "Pa info streaming për {region}. Provo të ndryshosh rajonin në footer.", de: "Keine Streaming-Infos für {region}. Region unten im Footer wechseln." },
+  load_failed_title: { en: "Couldn't load details", sq: "S'u ngarkuan detajet", de: "Details konnten nicht geladen werden" },
+  load_failed_body: { en: "Something went wrong fetching this title. Try again.", sq: "Diçka shkoi keq gjatë marrjes së këtij titulli. Provo përsëri.", de: "Beim Laden dieses Titels ist etwas schiefgelaufen. Versuch es erneut." }
+};
+function tt(key, vars) {
+  const entry = UI_TXT[key];
+  let str = (entry && (entry[LANG] || entry.en)) || key;
+  if (vars) Object.keys(vars).forEach((k) => { str = str.replace(`{${k}}`, vars[k]); });
+  return str;
+}
+
+const TMDB_LANG_MAP = { en: "en-US", sq: "sq-AL", de: "de-DE" };
+const TMDB_LANG = TMDB_LANG_MAP[LANG] || "en-US";
+
+// ============================================
 // CONFIG
 // ============================================
 const TMDB_API_KEY = "44bcd0f55b115104d880966cb4de1d8c";
@@ -22,84 +161,110 @@ let currentSearchTab = "titles";
 // ============================================
 // MOODS
 // ============================================
-const MOODS = [
-  { label: "Brain Off", sub: "no thinking required", movieGenres: [28, 12], tvGenres: [10759] },
-  { label: "Need To Cry", sub: "full emotional damage", movieGenres: [18], tvGenres: [18] },
-  { label: "Feel Good", sub: "low stakes, high comfort", movieGenres: [35, 10751], tvGenres: [35, 10751] },
-  { label: "Scared Tonight", sub: "sleep with the lights on", movieGenres: [27], tvGenres: [9648] },
-  { label: "Date Night", sub: "something to hold hands to", movieGenres: [10749], tvGenres: [10766] },
-  { label: "Mind Bender", sub: "twists, loops, questions after", movieGenres: [878, 9648], tvGenres: [9648, 10765] },
-  { label: "Just Surprise Me", sub: "fully random, no filter", movieGenres: null, tvGenres: null }
+const MOODS_BY_LANG = {
+  en: [
+    { label: "Brain Off", sub: "no thinking required" },
+    { label: "Need To Cry", sub: "full emotional damage" },
+    { label: "Feel Good", sub: "low stakes, high comfort" },
+    { label: "Scared Tonight", sub: "sleep with the lights on" },
+    { label: "Date Night", sub: "something to hold hands to" },
+    { label: "Mind Bender", sub: "twists, loops, questions after" },
+    { label: "Just Surprise Me", sub: "fully random, no filter" }
+  ],
+  sq: [
+    { label: "Truri Fikur", sub: "s'kërkohet mendim" },
+    { label: "Dua Të Qaj", sub: "dëm emocional total" },
+    { label: "Ndjenja E Mirë", sub: "pa stres, komode" },
+    { label: "Trishtë Sonte", sub: "fli me dritat ndezur" },
+    { label: "Darkë Romantike", sub: "diçka për t'u mbajtur dorë" },
+    { label: "Truri Në Lak", sub: "kthesa, sy hapur pas" },
+    { label: "Më Befaso", sub: "krejt rastësisht, pa filtër" }
+  ],
+  de: [
+    { label: "Gehirn Aus", sub: "kein Nachdenken nötig" },
+    { label: "Muss Weinen", sub: "volle emotionale Wucht" },
+    { label: "Wohlfühlkino", sub: "wenig Risiko, viel Komfort" },
+    { label: "Heute Gruseln", sub: "Licht an lassen zum Schlafen" },
+    { label: "Date Night", sub: "etwas zum Händchenhalten" },
+    { label: "Kopfkino", sub: "Wendungen, Fragen danach" },
+    { label: "Überrasch Mich", sub: "komplett zufällig, kein Filter" }
+  ]
+};
+const MOOD_GENRES = [
+  { movieGenres: [28, 12], tvGenres: [10759] },
+  { movieGenres: [18], tvGenres: [18] },
+  { movieGenres: [35, 10751], tvGenres: [35, 10751] },
+  { movieGenres: [27], tvGenres: [9648] },
+  { movieGenres: [10749], tvGenres: [10766] },
+  { movieGenres: [878, 9648], tvGenres: [9648, 10765] },
+  { movieGenres: null, tvGenres: null }
 ];
+const MOODS = (MOODS_BY_LANG[LANG] || MOODS_BY_LANG.en).map((m, i) => ({ ...m, ...MOOD_GENRES[i] }));
 
 // ============================================
 // GENRES (movie genre IDs from TMDB)
 // ============================================
-const GENRES = [
-  { id: 28,    name: "Action" },
-  { id: 12,    name: "Adventure" },
-  { id: 16,    name: "Animation" },
-  { id: 35,    name: "Comedy" },
-  { id: 80,    name: "Crime" },
-  { id: 99,    name: "Documentary" },
-  { id: 18,    name: "Drama" },
-  { id: 10751, name: "Family" },
-  { id: 14,    name: "Fantasy" },
-  { id: 36,    name: "History" },
-  { id: 27,    name: "Horror" },
-  { id: 10402, name: "Music" },
-  { id: 9648,  name: "Mystery" },
-  { id: 10749, name: "Romance" },
-  { id: 878,   name: "Sci-Fi" },
-  { id: 53,    name: "Thriller" },
-  { id: 10752, name: "War" },
-  { id: 37,    name: "Western" }
-];
+const GENRE_NAMES_BY_LANG = {
+  en: ["Action","Adventure","Animation","Comedy","Crime","Documentary","Drama","Family","Fantasy","History","Horror","Music","Mystery","Romance","Sci-Fi","Thriller","War","Western"],
+  sq: ["Aksion","Aventurë","Animacion","Komedi","Krim","Dokumentar","Dramë","Familje","Fantazi","Histori","Horror","Muzikë","Mister","Romancë","Sci-Fi","Thriller","Luftë","Western"],
+  de: ["Action","Abenteuer","Animation","Komödie","Krimi","Dokumentation","Drama","Familie","Fantasy","Historie","Horror","Musik","Mystery","Liebesfilm","Sci-Fi","Thriller","Krieg","Western"]
+};
+const GENRE_IDS = [28,12,16,35,80,99,18,10751,14,36,27,10402,9648,10749,878,53,10752,37];
+const GENRES = GENRE_IDS.map((id, i) => ({ id, name: (GENRE_NAMES_BY_LANG[LANG] || GENRE_NAMES_BY_LANG.en)[i] }));
 
 // ============================================
 // COLLECTIONS
 // ============================================
-const COLLECTIONS = [
-  { id: "ruined-me", label: "Ruined me for a week",
-    intro: "Don't say I didn't warn you. Have tissues, ice cream, and a hug on standby.",
-    ids: [12477, 334533, 641, 497, 39451, 395992] },
-  { id: "hangover", label: "Sunday hangover watches",
-    intro: "Low effort, high comfort. Nothing here will make you think hard.",
-    ids: [1584, 346648, 120467, 11259, 207932, 9377] },
-  { id: "foreign", label: "Worth the subtitles",
-    intro: "Read a little, get a lot. Non-English films that hit different.",
-    ids: [496243, 194, 670, 129, 598, 1417] },
-  { id: "rewatch", label: "Hits harder the second time",
-    intro: "You watched it once. Watch it again. Different movie now, trust me.",
-    ids: [550, 329865, 1124, 77, 157336, 244786] },
-  { id: "short-sharp", label: "Short and sharp",
-    intro: "Under two hours, still wrecks you. For when you've got a bedtime.",
-    ids: [862, 10386, 137, 4147, 9603, 76] }
+const COLLECTIONS_META = [
+  { id: "ruined-me", ids: [12477, 334533, 641, 497, 39451, 395992],
+    en: { label: "Ruined me for a week", intro: "Don't say I didn't warn you. Have tissues, ice cream, and a hug on standby." },
+    sq: { label: "Më prishi javën", intro: "Mos thuaj s'të paralajmërova. Ki shami, akullore, dhe një përqafim gati." },
+    de: { label: "Hat mich eine Woche fertiggemacht", intro: "Sag nicht, ich hätte dich nicht gewarnt. Taschentücher, Eis und eine Umarmung bereithalten." } },
+  { id: "hangover", ids: [1584, 346648, 120467, 11259, 207932, 9377],
+    en: { label: "Sunday hangover watches", intro: "Low effort, high comfort. Nothing here will make you think hard." },
+    sq: { label: "Për mëngjes të diel", intro: "Pak mund, shumë komoditet. Këtu s'ka gjë që të bën të mendosh shumë." },
+    de: { label: "Sonntags-Kater-Filme", intro: "Wenig Aufwand, viel Komfort. Hier musst du nicht viel nachdenken." } },
+  { id: "foreign", ids: [496243, 194, 670, 129, 598, 1417],
+    en: { label: "Worth the subtitles", intro: "Read a little, get a lot. Non-English films that hit different." },
+    sq: { label: "Ia vlen titrat", intro: "Lexo pak, merr shumë. Filma jo-anglisht që të prekin ndryshe." },
+    de: { label: "Untertitel lohnen sich", intro: "Ein bisschen lesen, viel bekommen. Nicht-englische Filme, die anders treffen." } },
+  { id: "rewatch", ids: [550, 329865, 1124, 77, 157336, 244786],
+    en: { label: "Hits harder the second time", intro: "You watched it once. Watch it again. Different movie now, trust me." },
+    sq: { label: "Godet më fort herën e dytë", intro: "E ke parë një herë. Shikoje përsëri. Është film tjetër tani, më beso." },
+    de: { label: "Trifft beim zweiten Mal härter", intro: "Du hast ihn einmal gesehen. Schau ihn nochmal. Es ist jetzt ein anderer Film, glaub mir." } },
+  { id: "short-sharp", ids: [862, 10386, 137, 4147, 9603, 76],
+    en: { label: "Short and sharp", intro: "Under two hours, still wrecks you. For when you've got a bedtime." },
+    sq: { label: "Shkurtër dhe i mprehtë", intro: "Nën dy orë, prapë të shkatërron. Për kur ke orar gjumi." },
+    de: { label: "Kurz und knackig", intro: "Unter zwei Stunden, macht dich trotzdem fertig. Für wenn du eine Schlafenszeit hast." } }
 ];
+const COLLECTIONS = COLLECTIONS_META.map((c) => ({
+  id: c.id,
+  ids: c.ids,
+  label: (c[LANG] || c.en).label,
+  intro: (c[LANG] || c.en).intro
+}));
 
 // ============================================
 // TOAST POPUP
 // ============================================
-const TOAST_MESSAGES = {
-  search: [
-    "Consulting the projection room...",
-    "Digging through the vault 🎞",
-    "Waking the film critic up...",
-    "The intern is on it...",
-    "Rewinding VHS tapes...",
-    "Asking the ushers..."
-  ],
-  spin: [
-    "The reel is turning...",
-    "Fate is loading...",
-    "Cosmic movie forces at work..."
-  ],
-  fetch: [
-    "Grabbing the reel...",
-    "Rolling the credits back...",
-    "Popping fresh popcorn 🍿"
-  ]
+const TOAST_MESSAGES_BY_LANG = {
+  en: {
+    search: ["Consulting the projection room...","Digging through the vault 🎞","Waking the film critic up...","The intern is on it...","Rewinding VHS tapes...","Asking the ushers..."],
+    spin: ["The reel is turning...","Fate is loading...","Cosmic movie forces at work..."],
+    fetch: ["Grabbing the reel...","Rolling the credits back...","Popping fresh popcorn 🍿"]
+  },
+  sq: {
+    search: ["Duke pyetur sallën e projeksionit...","Duke kërkuar në arkiv 🎞","Duke zgjuar kritikun...","Praktikanti po punon...","Duke rikthyer kasetat VHS...","Duke pyetur biletaristët..."],
+    spin: ["Rrota po kthehet...","Fati po ngarkohet...","Forcat kozmike të filmit në punë..."],
+    fetch: ["Duke marrë filmin...","Duke rikthyer titrat...","Duke bërë kokoshka të freskëta 🍿"]
+  },
+  de: {
+    search: ["Im Vorführraum nachfragen...","Im Archiv wühlen 🎞","Den Filmkritiker wecken...","Der Praktikant kümmert sich...","VHS-Kassetten zurückspulen...","Die Platzanweiser fragen..."],
+    spin: ["Die Rolle dreht sich...","Das Schicksal lädt...","Kosmische Filmkräfte am Werk..."],
+    fetch: ["Die Filmrolle holen...","Den Abspann zurückspulen...","Frisches Popcorn machen 🍿"]
+  }
 };
+const TOAST_MESSAGES = TOAST_MESSAGES_BY_LANG[LANG] || TOAST_MESSAGES_BY_LANG.en;
 
 const toastEl = document.getElementById("toast");
 let toastTimer = null;
@@ -152,7 +317,7 @@ setInterval(() => {
 async function loadHeroBackdrop() {
   const el = document.getElementById("hero-backdrop");
   try {
-    const res = await fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=1`);
+    const res = await fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&page=1`);
     if (!res.ok) return;
     const data = await res.json();
     const shuffled = data.results.sort(() => 0.5 - Math.random()).slice(0, 10);
@@ -164,7 +329,7 @@ async function loadHeroBackdrop() {
     }
 
     for (const movie of shuffled) {
-      const vidRes = await fetch(`${TMDB_BASE}/movie/${movie.id}/videos?api_key=${TMDB_API_KEY}`);
+      const vidRes = await fetch(`${TMDB_BASE}/movie/${movie.id}/videos?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}`);
       if (!vidRes.ok) continue;
       const vidData = await vidRes.json();
       const trailer =
@@ -196,7 +361,7 @@ async function loadTrending() {
   </div>
 `).join('');
   try {
-    const res = await fetch(`${TMDB_BASE}/trending/${currentType}/week?api_key=${TMDB_API_KEY}`);
+    const res = await fetch(`${TMDB_BASE}/trending/${currentType}/week?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}`);
     if (!res.ok) throw new Error("trending fetch failed");
     const data = await res.json();
     strip.innerHTML = "";
@@ -268,8 +433,8 @@ async function runSearch() {
   try {
     // parallel: multi-search + keyword search
     const [multiRes, kwRes] = await Promise.all([
-      fetch(`${TMDB_BASE}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&include_adult=false`),
-      fetch(`${TMDB_BASE}/search/keyword?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`)
+      fetch(`${TMDB_BASE}/search/multi?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&query=${encodeURIComponent(query)}&include_adult=false`),
+      fetch(`${TMDB_BASE}/search/keyword?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&query=${encodeURIComponent(query)}`)
     ]);
     const multi = multiRes.ok ? await multiRes.json() : { results: [] };
     const kw = kwRes.ok ? await kwRes.json() : { results: [] };
@@ -298,7 +463,7 @@ async function runSearch() {
     for (let i = 0; i < Math.min(3, kw.results.length); i++) {
       const keyword = kw.results[i];
       const discoverRes = await fetch(
-        `${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&with_keywords=${keyword.id}&sort_by=popularity.desc&vote_count.gte=50`
+        `${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&with_keywords=${keyword.id}&sort_by=popularity.desc&vote_count.gte=50`
       );
       if (discoverRes.ok) {
         const disc = await discoverRes.json();
@@ -407,7 +572,7 @@ async function loadPersonFilmography(personId, personName) {
   searchContext.textContent = `Loading ${personName}'s filmography...`;
   searchResults.innerHTML = "";
   try {
-    const res = await fetch(`${TMDB_BASE}/person/${personId}/combined_credits?api_key=${TMDB_API_KEY}`);
+    const res = await fetch(`${TMDB_BASE}/person/${personId}/combined_credits?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}`);
     if (!res.ok) throw new Error("filmography fetch failed");
     const data = await res.json();
     // sort by popularity, dedupe, cap at 24
@@ -469,7 +634,7 @@ async function loadGenreBackdrops() {
     const results = await Promise.all(
       GENRES.map((g) =>
         fetch(
-          `${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&with_genres=${g.id}&sort_by=popularity.desc&vote_count.gte=500&page=1`
+          `${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&with_genres=${g.id}&sort_by=popularity.desc&vote_count.gte=500&page=1`
         )
           .then((r) => (r.ok ? r.json() : null))
           .catch(() => null)
@@ -533,7 +698,7 @@ async function loadCollection(collection) {
   try {
     const results = await Promise.all(
       collection.ids.map((id) =>
-        fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_API_KEY}`)
+        fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}`)
           .then((r) => (r.ok ? r.json() : null)).catch(() => null)
       )
     );
@@ -789,6 +954,7 @@ async function fetchAndRender(genreIds, titleText) {
   const endpoint = `${TMDB_BASE}/discover/${currentType}`;
   const params = new URLSearchParams({
     api_key: TMDB_API_KEY,
+      language: TMDB_LANG,
     sort_by: "popularity.desc",
     include_adult: "false",
     "vote_count.gte": "100",
@@ -925,7 +1091,7 @@ async function runCustomSearch() {
   if (q.length < 2) { customSearchResults.innerHTML = ""; return; }
   try {
     const res = await fetch(
-      `${TMDB_BASE}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(q)}&include_adult=false`
+      `${TMDB_BASE}/search/movie?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&query=${encodeURIComponent(q)}&include_adult=false`
     );
     if (!res.ok) return;
     const data = await res.json();
@@ -1161,8 +1327,8 @@ async function startBattle() {
   let pool = [];
   try {
     const [p1, p2] = await Promise.all([
-      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=1`).then((r) => r.json()),
-      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=2`).then((r) => r.json())
+      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&page=1`).then((r) => r.json()),
+      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&page=2`).then((r) => r.json())
     ]);
     pool = [...p1.results, ...p2.results]
       .filter((m) => m.poster_path && m.title)
@@ -1211,7 +1377,7 @@ async function runVerdict() {
     // Fetch full details for each pick to get runtime
     const details = await Promise.all(
       battle.customPicks.map((p) =>
-        fetch(`${TMDB_BASE}/movie/${p.id}?api_key=${TMDB_API_KEY}`)
+        fetch(`${TMDB_BASE}/movie/${p.id}?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}`)
           .then((r) => (r.ok ? r.json() : null))
           .catch(() => null)
       )
@@ -1562,6 +1728,26 @@ regionSelect.addEventListener("change", (e) => {
 });
 
 // ============================================
+// LANGUAGE SWITCHER
+// ============================================
+const langSelect = document.getElementById("lang-select");
+if (langSelect) {
+  langSelect.value = LANG;
+  langSelect.addEventListener("change", (e) => {
+    localStorage.setItem("jps_lang", e.target.value);
+    location.reload();
+  });
+}
+document.querySelectorAll(".lang-btn").forEach((btn) => {
+  if (btn.dataset.lang === LANG) btn.classList.add("active");
+  else btn.classList.remove("active");
+  btn.addEventListener("click", () => {
+    localStorage.setItem("jps_lang", btn.dataset.lang);
+    location.reload();
+  });
+});
+
+// ============================================
 // MODAL
 // ============================================
 const modalBackdrop = document.getElementById("modal-backdrop");
@@ -1592,7 +1778,7 @@ async function openDetails(id, type) {
   const castBlock = document.getElementById("modal-cast-block");
   const castEl = document.getElementById("modal-cast");
 
-  titleEl.textContent = "Loading...";
+  titleEl.textContent = tt("loading");
   taglineEl.textContent = "";
   metaEl.innerHTML = "";
   genresEl.innerHTML = "";
@@ -1605,7 +1791,7 @@ async function openDetails(id, type) {
 
   try {
     const res = await fetch(
-      `${TMDB_BASE}/${type}/${id}?api_key=${TMDB_API_KEY}&append_to_response=videos,credits,watch/providers`
+      `${TMDB_BASE}/${type}/${id}?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&append_to_response=videos,credits,watch/providers`
     );
     if (!res.ok) throw new Error("details fetch failed");
     const d = await res.json();
@@ -1649,7 +1835,7 @@ async function openDetails(id, type) {
         : `<p class="no-providers">Not available to stream in ${currentRegion} right now.</p>`;
     } else {
       providersBlock.hidden = false;
-      providersEl.innerHTML = `<p class="no-providers">No streaming info for ${currentRegion}. Try switching region in the footer.</p>`;
+      providersEl.innerHTML = `<p class="no-providers">${tt("no_streaming", { region: currentRegion })}</p>`;
     }
 
     // cast
@@ -1680,8 +1866,8 @@ async function openDetails(id, type) {
     };
   } catch (err) {
     console.error(err);
-    titleEl.textContent = "Couldn't load details";
-    overviewEl.textContent = "Something went wrong fetching this title. Try again.";
+    titleEl.textContent = tt("load_failed_title");
+    overviewEl.textContent = tt("load_failed_body");
   }
 }
 
@@ -1725,13 +1911,30 @@ function updateGroupSwipeLabel() {
   groupSwipeBtn.textContent = players.length >= 2 ? "SWIPE TOGETHER 💕" : "SWIPE 🎬";
 }
 
-const WINNER_LINES = [
-  "No take-backs. The remote is yours.",
-  "With great power comes great responsibility.",
-  "Everyone else: no complaining allowed.",
-  "Choose wisely. The group is watching.",
-  "Democracy has spoken. Sort of."
-];
+const WINNER_LINES_BY_LANG = {
+  en: [
+    "No take-backs. The remote is yours.",
+    "With great power comes great responsibility.",
+    "Everyone else: no complaining allowed.",
+    "Choose wisely. The group is watching.",
+    "Democracy has spoken. Sort of."
+  ],
+  sq: [
+    "Pa u kthyer prapa. Telekomanda është jotja.",
+    "Me pushtet të madh vjen përgjegjësi e madhe.",
+    "Të tjerët: ndalohet ankimi.",
+    "Zgjidh me kujdes. Grupi po shikon.",
+    "Demokracia foli. Diçka e tillë."
+  ],
+  de: [
+    "Kein Zurück mehr. Die Fernbedienung gehört dir.",
+    "Mit großer Macht kommt große Verantwortung.",
+    "Alle anderen: Meckern verboten.",
+    "Wähl weise. Die Gruppe schaut zu.",
+    "Die Demokratie hat gesprochen. So ungefähr."
+  ]
+};
+const WINNER_LINES = WINNER_LINES_BY_LANG[LANG] || WINNER_LINES_BY_LANG.en;
 
 decideBtn.addEventListener("click", () => {
   decideBtn.disabled = true;
@@ -1768,17 +1971,13 @@ const groupDeckProgress = document.getElementById("group-deck-progress");
 const groupRevealInner = document.getElementById("group-reveal-inner");
 const groupGenreGrid = document.getElementById("group-genre-grid");
 
-const GROUP_GENRES = [
-  { label: "SURPRISE ME", id: null },
-  { label: "ACTION", id: 28 },
-  { label: "COMEDY", id: 35 },
-  { label: "HORROR", id: 27 },
-  { label: "ROMANCE", id: 10749 },
-  { label: "SCI-FI", id: 878 },
-  { label: "THRILLER", id: 53 },
-  { label: "ANIMATION", id: 16 },
-  { label: "DRAMA", id: 18 }
-];
+const GROUP_GENRES_BY_LANG = {
+  en: ["SURPRISE ME","ACTION","COMEDY","HORROR","ROMANCE","SCI-FI","THRILLER","ANIMATION","DRAMA"],
+  sq: ["MË BEFASO","AKSION","KOMEDI","HORROR","ROMANCË","SCI-FI","THRILLER","ANIMACION","DRAMË"],
+  de: ["ÜBERRASCH MICH","ACTION","KOMÖDIE","HORROR","LIEBESFILM","SCI-FI","THRILLER","ANIMATION","DRAMA"]
+};
+const GROUP_GENRE_IDS = [null, 28, 35, 27, 10749, 878, 53, 16, 18];
+const GROUP_GENRES = GROUP_GENRE_IDS.map((id, i) => ({ id, label: (GROUP_GENRES_BY_LANG[LANG] || GROUP_GENRES_BY_LANG.en)[i] }));
 
 const groupSwipe = {
   deck: [],
@@ -1841,10 +2040,12 @@ async function launchGroupDeckLoad() {
       : `${TMDB_BASE}/movie/popular`;
     const paramsA = new URLSearchParams({
       api_key: TMDB_API_KEY,
+      language: TMDB_LANG,
       page: String(Math.floor(Math.random() * 4) + 1)
     });
     const paramsB = new URLSearchParams({
       api_key: TMDB_API_KEY,
+      language: TMDB_LANG,
       page: String(Math.floor(Math.random() * 4) + 1)
     });
     if (groupSwipe.genreId) {
@@ -2157,13 +2358,30 @@ document.getElementById("cookie-decline").addEventListener("click", () => {
 // ============================================
 // ONBOARDING TOUR
 // ============================================
-const TOUR_STEPS = [
-  { title: "WELCOME 🎬", body: "Let me show you around. You've got 5 different ways to land on tonight's pick — takes 20 seconds.", target: null },
-  { title: "FIND ANYTHING", body: "Movies, actors, or vibes. Try 'ww2' or 'tom hanks' or 'kid alone at christmas' — we'll figure it out.", target: "#search-section" },
-  { title: "MOVIE BATTLES", body: "Random bracket for discovery, or DECIDE FOR ME where an algorithm scores movies you're stuck between.", target: "#battles-section" },
-  { title: "WHEEL, MOOD, FEELING", body: "Spin for random. Pick a mood. Or just type how you feel. Three ways to land on tonight's pick.", target: "#mood-section" },
-  { title: "WHO PICKS TONIGHT?", body: "Group can't agree? Add everyone's name. Let fate settle it, or swipe together and find what you all actually like.", target: "#whopicks-section" }
-];
+const TOUR_STEPS_BY_LANG = {
+  en: [
+    { title: "WELCOME 🎬", body: "Let me show you around. You've got 5 different ways to land on tonight's pick — takes 20 seconds.", target: null },
+    { title: "FIND ANYTHING", body: "Movies, actors, or vibes. Try 'ww2' or 'tom hanks' or 'kid alone at christmas' — we'll figure it out.", target: "#search-section" },
+    { title: "MOVIE BATTLES", body: "Random bracket for discovery, or DECIDE FOR ME where an algorithm scores movies you're stuck between.", target: "#battles-section" },
+    { title: "WHEEL, MOOD, FEELING", body: "Spin for random. Pick a mood. Or just type how you feel. Three ways to land on tonight's pick.", target: "#mood-section" },
+    { title: "WHO PICKS TONIGHT?", body: "Group can't agree? Add everyone's name. Let fate settle it, or swipe together and find what you all actually like. Watching solo? Just hit swipe.", target: "#whopicks-section" }
+  ],
+  sq: [
+    { title: "MIRË SE VJEN 🎬", body: "Të tregoj ku çfarë është. Ke 5 mënyra të ndryshme për të zgjedhur pamjen e sonte — zgjat 20 sekonda.", target: null },
+    { title: "GJEJ ÇDO GJË", body: "Filma, aktorë, ose vibe. Provo 'lufta e dytë botërore' ose 'tom hanks' — do ta gjejmë.", target: "#search-section" },
+    { title: "BETEJAT E FILMAVE", body: "Bllok i rastësishëm për zbulim, ose VENDOS PËR MUA ku një algoritëm vlerëson filmat mes të cilëve je i pavendosur.", target: "#battles-section" },
+    { title: "ROTA, GJENDJA, NDJENJA", body: "Rrotullo për rastësi. Zgjidh një gjendje. Ose thjesht shkruaj si ndihesh. Tre mënyra për të gjetur pamjen e sonte.", target: "#mood-section" },
+    { title: "KUSH ZGJEDH SONTE?", body: "Grupi s'bie dakord? Shto emrat e të gjithëve. Lëre fatin të vendosë, ose fërkoni së bashku për të gjetur çfarë ju pëlqen të gjithëve. Po shikon vetëm? Thjesht fërko.", target: "#whopicks-section" }
+  ],
+  de: [
+    { title: "WILLKOMMEN 🎬", body: "Lass mich dir alles zeigen. Du hast 5 verschiedene Wege zur heutigen Wahl — dauert 20 Sekunden.", target: null },
+    { title: "FINDE ALLES", body: "Filme, Schauspieler oder Stimmungen. Probier 'zweiter weltkrieg' oder 'tom hanks' — wir finden es raus.", target: "#search-section" },
+    { title: "FILM-DUELLE", body: "Zufälliges Bracket zum Entdecken, oder ENTSCHEIDE FÜR MICH, wo ein Algorithmus Filme bewertet, zwischen denen du dich nicht entscheiden kannst.", target: "#battles-section" },
+    { title: "RAD, STIMMUNG, GEFÜHL", body: "Dreh das Rad für Zufall. Wähl eine Stimmung. Oder schreib einfach, wie du dich fühlst. Drei Wege zur heutigen Wahl.", target: "#mood-section" },
+    { title: "WER ENTSCHEIDET HEUTE?", body: "Die Gruppe einigt sich nicht? Namen hinzufügen. Das Schicksal entscheiden lassen, oder gemeinsam swipen und finden, was allen gefällt. Allein unterwegs? Einfach swipen.", target: "#whopicks-section" }
+  ]
+};
+const TOUR_STEPS = TOUR_STEPS_BY_LANG[LANG] || TOUR_STEPS_BY_LANG.en;
 
 let tourStep = 0;
 const tourBackdrop = document.getElementById("tour-backdrop");
