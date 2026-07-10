@@ -189,26 +189,44 @@ loadHeroBackdrop();
 // ============================================
 async function loadTrending() {
   const strip = document.getElementById("trending-strip");
-  strip.innerHTML = `<p style="font-family: var(--mono); color: var(--cream-dim);">loading...</p>`;
+  strip.innerHTML = Array(6).fill(`
+  <div class="trending-card">
+    <div class="skeleton" style="width: 140px; height: 210px;"></div>
+    <div class="skeleton skeleton-line" style="width: 80%;"></div>
+  </div>
+`).join('');
   try {
     const res = await fetch(`${TMDB_BASE}/trending/${currentType}/week?api_key=${TMDB_API_KEY}`);
     if (!res.ok) throw new Error("trending fetch failed");
     const data = await res.json();
     strip.innerHTML = "";
-    data.results.slice(0, 12).forEach((item) => {
-      const title = item.title || item.name || "Untitled";
-      const poster = item.poster_path
-        ? `${IMG_BASE}${item.poster_path}`
-        : "https://via.placeholder.com/140x210/382C21/E8B64C?text=No+Poster";
-      const card = document.createElement("button");
-      card.className = "trending-card";
-      card.innerHTML = `
-        <img src="${poster}" alt="${title} poster" loading="lazy">
-        <div class="t-title">${title}</div>
-      `;
-      card.addEventListener("click", () => openDetails(item.id, item.media_type || currentType));
-      strip.appendChild(card);
-    });
+// duplicate the results so the marquee loops seamlessly
+const doubled = [...data.results.slice(0, 12), ...data.results.slice(0, 12)];
+doubled.forEach((item) => {
+  const title = item.title || item.name || "Untitled";
+  const poster = item.poster_path
+    ? `${IMG_BASE}${item.poster_path}`
+    : "https://via.placeholder.com/140x210/382C21/E8B64C?text=No+Poster";
+  const year = (item.release_date || item.first_air_date || "").slice(0, 4);
+  const rating = item.vote_average ? `★ ${item.vote_average.toFixed(1)}` : "";
+  const overview = item.overview
+    ? item.overview.slice(0, 90) + (item.overview.length > 90 ? "..." : "")
+    : "No synopsis available.";
+
+  const card = document.createElement("button");
+  card.className = "trending-card";
+  card.innerHTML = `
+    <img src="${poster}" alt="${title} poster" loading="lazy">
+    <div class="t-title">${title}</div>
+    <div class="t-hover">
+      <strong>${title}</strong>
+      <span>${year || "—"} · ${rating}</span>
+      <p>${overview}</p>
+    </div>
+  `;
+  card.addEventListener("click", () => openDetails(item.id, item.media_type || currentType));
+  strip.appendChild(card);
+});
   } catch (err) {
     console.error(err);
     strip.innerHTML = `<p style="font-family: var(--mono); color: var(--coral);">Couldn't load trending — check your API key.</p>`;
@@ -447,21 +465,33 @@ renderGenreTiles();
 
 async function loadGenreBackdrops() {
   try {
-    // pull popular + top_rated to get wide coverage across genres
-    const [popRes, topRes] = await Promise.all([
-      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=1`),
-      fetch(`${TMDB_BASE}/movie/top_rated?api_key=${TMDB_API_KEY}&page=1`)
-    ]);
-    const pop = popRes.ok ? await popRes.json() : { results: [] };
-    const top = topRes.ok ? await topRes.json() : { results: [] };
-    const pool = [...pop.results, ...top.results].filter((m) => m.backdrop_path);
+    // one targeted fetch per genre, in parallel
+    const results = await Promise.all(
+      GENRES.map((g) =>
+        fetch(
+          `${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&with_genres=${g.id}&sort_by=popularity.desc&vote_count.gte=500&page=1`
+        )
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null)
+      )
+    );
 
     const backdropMap = {};
-    // for each genre, find the first movie in the pool that lists that genre
-    GENRES.forEach((g) => {
-      const match = pool.find((m) => m.genre_ids && m.genre_ids.includes(g.id));
-      if (match) backdropMap[g.id] = match.backdrop_path;
+    const usedBackdrops = new Set();
+
+    GENRES.forEach((g, i) => {
+      const data = results[i];
+      if (!data || !data.results) return;
+      // pick the first result with a backdrop that hasn't been used yet
+      const pick = data.results.find(
+        (m) => m.backdrop_path && !usedBackdrops.has(m.backdrop_path)
+      );
+      if (pick) {
+        backdropMap[g.id] = pick.backdrop_path;
+        usedBackdrops.add(pick.backdrop_path);
+      }
     });
+
     renderGenreTiles(backdropMap);
   } catch (err) {
     console.error("genre backdrops failed:", err);
@@ -494,7 +524,12 @@ function renderCollectionTabs() {
 
 async function loadCollection(collection) {
   collectionIntroEl.textContent = collection.intro;
-  collectionGridEl.innerHTML = `<p style="font-family: var(--mono); color: var(--cream-dim);">loading...</p>`;
+  collectionGridEl.innerHTML = Array(6).fill(`
+  <div class="collection-card">
+    <div class="skeleton skeleton-poster"></div>
+    <div class="skeleton skeleton-line" style="width: 70%; margin-top: 0.5rem;"></div>
+  </div>
+`).join('');
   try {
     const results = await Promise.all(
       collection.ids.map((id) =>
@@ -736,7 +771,17 @@ async function fetchAndRender(genreIds, titleText) {
   const resultsTitle = document.getElementById("results-title");
 
   resultsSection.hidden = false;
-  ticketGrid.innerHTML = `<p style="font-family: var(--mono); color: var(--cream-dim);">Shuffling the reel...</p>`;
+  ticketGrid.innerHTML = Array(6).fill(`
+  <div class="ticket">
+    <div class="skeleton" style="width: 100%; aspect-ratio: 2/3; border-radius: 0;"></div>
+    <div class="info">
+      <div class="skeleton skeleton-line" style="width: 80%;"></div>
+      <div class="skeleton skeleton-line" style="width: 40%; margin-top: 0.6rem;"></div>
+      <div class="skeleton skeleton-line" style="margin-top: 0.6rem;"></div>
+      <div class="skeleton skeleton-line" style="width: 90%; margin-top: 0.3rem;"></div>
+    </div>
+  </div>
+`).join('');
   resultsSection.scrollIntoView({ behavior: "smooth" });
   updateStreakDisplay();
   toast("fetch");
@@ -1623,4 +1668,102 @@ function launchConfetti(targetLayer) {
     layer.appendChild(el);
     setTimeout(() => el.remove(), 3200);
   }
+}
+// ============================================
+// COOKIE / STORAGE CONSENT
+// ============================================
+const cookieBanner = document.getElementById("cookie-banner");
+const cookieChoice = localStorage.getItem("jps_cookie_choice");
+
+if (!cookieChoice) {
+  setTimeout(() => cookieBanner.hidden = false, 1200);
+}
+
+document.getElementById("cookie-accept").addEventListener("click", () => {
+  localStorage.setItem("jps_cookie_choice", "accepted");
+  cookieBanner.hidden = true;
+});
+
+document.getElementById("cookie-decline").addEventListener("click", () => {
+  localStorage.setItem("jps_cookie_choice", "declined");
+  cookieBanner.hidden = true;
+  // wipe stored data if user declines
+  localStorage.removeItem("jps_watchlist");
+  localStorage.removeItem("jps_region");
+  watchlist = [];
+  renderWatchlist();
+});
+// ============================================
+// ONBOARDING TOUR
+// ============================================
+const TOUR_STEPS = [
+  { title: "WELCOME 🎬", body: "Let me show you around. You've got 5 different ways to land on tonight's pick — takes 20 seconds.", target: null },
+  { title: "FIND ANYTHING", body: "Movies, actors, or vibes. Try 'ww2' or 'tom hanks' or 'kid alone at christmas' — we'll figure it out.", target: "#search-section" },
+  { title: "MOVIE BATTLES", body: "Random bracket for discovery, or DECIDE FOR ME where an algorithm scores movies you're stuck between.", target: "#battles-section" },
+  { title: "WHEEL, MOOD, FEELING", body: "Spin for random. Pick a mood. Or just type how you feel. Three ways to land on tonight's pick.", target: "#mood-section" },
+  { title: "WHO PICKS TONIGHT?", body: "Group can't agree? Add everyone's name. Let fate settle it.", target: "#whopicks-section" }
+];
+
+let tourStep = 0;
+const tourBackdrop = document.getElementById("tour-backdrop");
+
+function showTourStep() {
+  const step = TOUR_STEPS[tourStep];
+  const total = TOUR_STEPS.length;
+  document.getElementById("tour-step").textContent = `STEP ${tourStep + 1} OF ${total}`;
+  document.getElementById("tour-title").textContent = step.title;
+  document.getElementById("tour-body").textContent = step.body;
+  document.getElementById("tour-prev").hidden = tourStep === 0;
+  document.getElementById("tour-next").textContent = tourStep === total - 1 ? "GOT IT ✓" : "NEXT →";
+
+  const highlight = document.getElementById("tour-highlight");
+  const card = document.getElementById("tour-card");
+
+  if (step.target) {
+    const el = document.querySelector(step.target);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => {
+        const rect = el.getBoundingClientRect();
+        highlight.hidden = false;
+        highlight.style.top = rect.top + "px";
+        highlight.style.left = rect.left + "px";
+        highlight.style.width = rect.width + "px";
+        highlight.style.height = rect.height + "px";
+        // position card centered horizontally, bottom of screen
+        card.style.top = "auto";
+        card.style.bottom = "24px";
+        card.style.left = "50%";
+        card.style.transform = "translateX(-50%)";
+      }, 500);
+    }
+  } else {
+    highlight.hidden = true;
+    card.style.top = "50%";
+    card.style.left = "50%";
+    card.style.bottom = "auto";
+    card.style.transform = "translate(-50%, -50%)";
+  }
+}
+
+function endTour() {
+  tourBackdrop.hidden = true;
+  localStorage.setItem("jps_tour_seen", "true");
+}
+
+document.getElementById("tour-skip").addEventListener("click", endTour);
+document.getElementById("tour-prev").addEventListener("click", () => {
+  if (tourStep > 0) { tourStep--; showTourStep(); }
+});
+document.getElementById("tour-next").addEventListener("click", () => {
+  if (tourStep < TOUR_STEPS.length - 1) { tourStep++; showTourStep(); }
+  else endTour();
+});
+
+// Show tour on first visit only, after cookie banner
+if (!localStorage.getItem("jps_tour_seen")) {
+  setTimeout(() => {
+    tourBackdrop.hidden = false;
+    showTourStep();
+  }, 2500);
 }
