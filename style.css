@@ -492,6 +492,27 @@ body {
   padding: 2rem 1rem 1rem;
 }
 
+@media (max-width: 600px) {
+  .collection-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.2rem 1rem;
+    padding: 1.6rem 0.5rem 1rem;
+  }
+  .collection-card {
+    padding: 0.45rem 0.45rem 0.15rem;
+  }
+  .collection-card::before {
+    width: 46px;
+    height: 14px;
+    top: -7px;
+  }
+  .collection-card .c-title {
+    font-size: 1.1rem;
+    margin-top: 0.35rem;
+    padding: 0.2rem 0.2rem 0.5rem;
+  }
+}
+
 .collection-card {
   background: var(--cream);
   border: none;
