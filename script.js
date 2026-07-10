@@ -1717,7 +1717,12 @@ function renderChips() {
     playerChips.appendChild(chip);
   });
   decideBtn.disabled = players.length < 2;
-  if (groupSwipeBtn) groupSwipeBtn.disabled = players.length < 2;
+  updateGroupSwipeLabel();
+}
+
+function updateGroupSwipeLabel() {
+  if (!groupSwipeBtn) return;
+  groupSwipeBtn.textContent = players.length >= 2 ? "SWIPE TOGETHER 💕" : "SWIPE 🎬";
 }
 
 const WINNER_LINES = [
@@ -1780,7 +1785,8 @@ const groupSwipe = {
   playerIndex: 0,
   cardIndex: 0,
   genreId: null,
-  likes: {} // { playerName: Set of movie ids }
+  likes: {}, // { playerName: Set of movie ids }
+  sessionPlayers: []
 };
 
 renderGroupGenreChips();
@@ -1801,7 +1807,7 @@ function renderGroupGenreChips() {
 }
 
 groupSwipeBtn.addEventListener("click", () => {
-  if (players.length < 2) return;
+  groupSwipe.sessionPlayers = players.length ? players.slice() : ["You"];
   groupSection.hidden = false;
   groupGenrePane.hidden = false;
   groupPassPane.hidden = true;
@@ -1824,7 +1830,7 @@ async function launchGroupDeckLoad() {
   groupSwipe.playerIndex = 0;
   groupSwipe.cardIndex = 0;
   groupSwipe.likes = {};
-  players.forEach((p) => { groupSwipe.likes[p] = new Set(); });
+  groupSwipe.sessionPlayers.forEach((p) => { groupSwipe.likes[p] = new Set(); });
 
   groupGenreGrid.querySelectorAll(".group-genre-chip").forEach((c) => c.disabled = true);
   toast("fetch", "Building the deck...");
@@ -1875,7 +1881,12 @@ async function launchGroupDeckLoad() {
   groupPassPane.hidden = false;
   groupDeckPane.hidden = true;
   groupRevealPane.hidden = true;
-  showPassScreen();
+
+  if (groupSwipe.sessionPlayers.length < 2) {
+    startDeckForCurrentPlayer();
+  } else {
+    showPassScreen();
+  }
 }
 
 function cancelGroupSwipe() {
@@ -1883,7 +1894,7 @@ function cancelGroupSwipe() {
 }
 
 function showPassScreen() {
-  const name = players[groupSwipe.playerIndex];
+  const name = groupSwipe.sessionPlayers[groupSwipe.playerIndex];
   groupPassName.textContent = name;
   document.getElementById("group-pass-sub").textContent =
     groupSwipe.playerIndex === 0
@@ -1895,13 +1906,17 @@ function showPassScreen() {
   groupRevealPane.hidden = true;
 }
 
-document.getElementById("group-ready-btn").addEventListener("click", () => {
+function startDeckForCurrentPlayer() {
   groupSwipe.cardIndex = 0;
+  groupGenrePane.hidden = true;
   groupPassPane.hidden = true;
   groupDeckPane.hidden = false;
-  groupDeckPlayer.textContent = players[groupSwipe.playerIndex];
+  groupRevealPane.hidden = true;
+  groupDeckPlayer.textContent = groupSwipe.sessionPlayers[groupSwipe.playerIndex];
   renderGroupDeck();
-});
+}
+
+document.getElementById("group-ready-btn").addEventListener("click", startDeckForCurrentPlayer);
 
 function renderGroupDeck() {
   groupDeckStack.innerHTML = "";
@@ -1909,7 +1924,7 @@ function renderGroupDeck() {
 
   if (groupSwipe.cardIndex >= groupSwipe.deck.length) {
     // this player is done
-    if (groupSwipe.playerIndex < players.length - 1) {
+    if (groupSwipe.playerIndex < groupSwipe.sessionPlayers.length - 1) {
       groupSwipe.playerIndex++;
       showPassScreen();
     } else {
@@ -1955,7 +1970,7 @@ document.getElementById("group-nope-btn").addEventListener("click", () => resolv
 function resolveGroupCard(liked) {
   const movie = groupSwipe.deck[groupSwipe.cardIndex];
   if (!movie) return;
-  const player = players[groupSwipe.playerIndex];
+  const player = groupSwipe.sessionPlayers[groupSwipe.playerIndex];
   if (liked) groupSwipe.likes[player].add(movie.id);
   groupSwipe.cardIndex++;
   renderGroupDeck();
@@ -2044,20 +2059,20 @@ async function revealGroupMatch() {
 
   // count votes per movie id
   const tally = {};
-  players.forEach((p) => {
+  groupSwipe.sessionPlayers.forEach((p) => {
     groupSwipe.likes[p].forEach((id) => { tally[id] = (tally[id] || 0) + 1; });
   });
 
   const idsByVotes = Object.entries(tally).sort((a, b) => b[1] - a[1]);
-  const totalPlayers = players.length;
+  const totalPlayers = groupSwipe.sessionPlayers.length;
   const unanimous = idsByVotes.filter(([, count]) => count === totalPlayers);
   const best = unanimous.length ? unanimous : idsByVotes.filter(([, count]) => count === idsByVotes[0]?.[1]);
 
   if (!idsByVotes.length || !best.length) {
     groupRevealInner.innerHTML = `
       <div class="group-no-match">
-        Nobody liked anything the same. Truly a house divided. 😅<br>
-        Try again, or let "Who Picks Tonight" decide for you.
+        ${totalPlayers > 1 ? "Nobody liked anything the same. Truly a house divided. 😅" : "Nothing hit tonight — happens to the best of us. 😅"}<br>
+        Try again${totalPlayers > 1 ? `, or let "Who Picks Tonight" decide for you.` : "."}
       </div>
     `;
     return;
@@ -2068,12 +2083,12 @@ async function revealGroupMatch() {
   const isUnanimous = votes === totalPlayers;
 
   groupRevealInner.innerHTML = `
-    <p class="group-match-eyebrow">${isUnanimous ? "🎉 UNANIMOUS MATCH" : "🎬 CLOSEST MATCH"}</p>
+    <p class="group-match-eyebrow">${isUnanimous ? (totalPlayers > 1 ? "🎉 UNANIMOUS MATCH" : "🎬 TONIGHT'S PICK") : "🎬 CLOSEST MATCH"}</p>
     <div class="group-match-card">
       <img src="${IMG_BASE}${movie.poster_path}" alt="${movie.title}">
       <div>
         <h3>${movie.title}</h3>
-        <div class="group-match-tally">${votes} of ${totalPlayers} liked this</div>
+        <div class="group-match-tally">${totalPlayers > 1 ? `${votes} of ${totalPlayers} liked this` : "You liked this"}</div>
         <p class="group-match-overview">${(movie.overview || "").slice(0, 160)}${(movie.overview || "").length > 160 ? "..." : ""}</p>
       </div>
     </div>
