@@ -146,29 +146,45 @@ setInterval(() => {
 }, 4800);
 
 // ============================================
-// POSTER WALL
 // ============================================
-async function loadPosterWall() {
-  const wall = document.getElementById("poster-wall");
+// HERO BACKDROP
+// ============================================
+async function loadHeroBackdrop() {
+  const el = document.getElementById("hero-backdrop");
   try {
     const res = await fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=1`);
     if (!res.ok) return;
     const data = await res.json();
-    wall.innerHTML = "";
-    const posters = [...data.results, ...data.results]
-      .filter((m) => m.poster_path).slice(0, 28);
-    posters.forEach((m) => {
-      const img = document.createElement("img");
-      img.src = `${IMG_BASE}${m.poster_path}`;
-      img.alt = "";
-      img.loading = "lazy";
-      wall.appendChild(img);
-    });
+    const shuffled = data.results.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+    const withBackdrop = shuffled.find((m) => m.backdrop_path);
+    if (withBackdrop) {
+      el.style.backgroundImage = `url(${BACKDROP_BASE}${withBackdrop.backdrop_path})`;
+      el.classList.add("loaded");
+    }
+
+    for (const movie of shuffled) {
+      const vidRes = await fetch(`${TMDB_BASE}/movie/${movie.id}/videos?api_key=${TMDB_API_KEY}`);
+      if (!vidRes.ok) continue;
+      const vidData = await vidRes.json();
+      const trailer =
+        vidData.results.find((v) => v.site === "YouTube" && v.type === "Trailer") ||
+        vidData.results.find((v) => v.site === "YouTube" && v.type === "Teaser") ||
+        vidData.results.find((v) => v.site === "YouTube");
+      if (trailer) {
+        const iframe = document.createElement("iframe");
+        iframe.className = "hero-video";
+        iframe.src = `https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=1&loop=1&playlist=${trailer.key}&controls=0&showinfo=0&modestbranding=1&iv_load_policy=3&rel=0&disablekb=1&playsinline=1`;
+        iframe.allow = "autoplay; encrypted-media; picture-in-picture";
+        iframe.setAttribute("frameborder", "0");
+        el.appendChild(iframe);
+        el.classList.add("loaded");
+        break;
+      }
+    }
   } catch (_) {}
 }
-loadPosterWall();
-
-// ============================================
+loadHeroBackdrop();
 // TRENDING
 // ============================================
 async function loadTrending() {
@@ -799,9 +815,9 @@ function renderTickets(items) {
 // ============================================
 let battle = {
   mode: "random",         // "random" or "custom"
-  size: 8,                // random mode default
-  customSize: 2,          // custom mode default
-  customPicks: [],        // {id, title, poster_path, vote_average, release_date, whyYes, whyNo}
+  size: 8,                // random mode bracket size
+  timeAvailable: 0,       // custom mode: minutes, 0 = no limit
+  customPicks: [],        // {id, title, poster_path, vote_average, release_date, whyYes, whyNo, ...}
   currentRound: [],
   nextRound: [],
   matchIndex: 0,
@@ -840,18 +856,12 @@ document.querySelectorAll(".battle-size").forEach((btn) => {
   });
 });
 
-// custom size toggle
-document.querySelectorAll(".battle-size-custom").forEach((btn) => {
+// time-available toggle (custom mode)
+document.querySelectorAll(".time-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".battle-size-custom").forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll(".time-btn").forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
-    battle.customSize = parseInt(btn.dataset.size, 10);
-    // if user shrinks bracket size below current picks, trim
-    if (battle.customPicks.length > battle.customSize) {
-      battle.customPicks = battle.customPicks.slice(0, battle.customSize);
-    }
-    renderCustomPicks();
-    updateStartButton();
+    battle.timeAvailable = parseInt(btn.dataset.time, 10);
   });
 });
 
@@ -897,13 +907,12 @@ async function runCustomSearch() {
 }
 
 function addCustomPick(movie) {
-  // dedupe
   if (battle.customPicks.some((p) => p.id === movie.id)) {
-    toast("fetch", `${movie.title} is already in the bracket`);
+    toast("fetch", `${movie.title} is already in the list`);
     return;
   }
-  if (battle.customPicks.length >= battle.customSize) {
-    toast("fetch", `Bracket full — bump the size up or drop one`);
+  if (battle.customPicks.length >= 6) {
+    toast("fetch", `Max 6 contenders — drop one to add another`);
     return;
   }
   battle.customPicks.push({
@@ -911,6 +920,7 @@ function addCustomPick(movie) {
     title: movie.title,
     poster_path: movie.poster_path,
     vote_average: movie.vote_average,
+    vote_count: movie.vote_count,
     release_date: movie.release_date,
     overview: movie.overview,
     whyYes: "",
@@ -925,7 +935,7 @@ function addCustomPick(movie) {
 function renderCustomPicks() {
   const container = document.getElementById("custom-picks");
   const label = document.getElementById("picks-label");
-  label.textContent = `YOUR FIGHTERS — ${battle.customPicks.length} / ${battle.customSize}`;
+  label.textContent = `CONTENDERS — ${battle.customPicks.length}`;
 
   container.innerHTML = "";
   battle.customPicks.forEach((pick, idx) => {
@@ -983,11 +993,11 @@ function updateStartButton() {
     battleStartBtn.disabled = false;
     battleStartBtn.textContent = "START BATTLE ▶";
   } else {
-    const ready = battle.customPicks.length === battle.customSize;
+    const ready = battle.customPicks.length >= 2;
     battleStartBtn.disabled = !ready;
     battleStartBtn.textContent = ready
-      ? "START BATTLE ▶"
-      : `NEED ${battle.customSize - battle.customPicks.length} MORE`;
+      ? "DECIDE FOR ME ⚖"
+      : `ADD ${2 - battle.customPicks.length} MORE`;
   }
 }
 updateStartButton();
@@ -1006,33 +1016,30 @@ document.addEventListener("keydown", (e) => {
 async function startBattle() {
   battleSetupEl.hidden = true;
 
-  let pool = [];
-  let bracketSize;
-
+  // Custom mode → algorithm ranker, not a bracket
   if (battle.mode === "custom") {
-    pool = battle.customPicks.slice().sort(() => 0.5 - Math.random());
-    bracketSize = battle.customSize;
-  } else {
-    toast("fetch", "Building the bracket...");
-    bracketSize = battle.size;
-    try {
-      const [p1, p2] = await Promise.all([
-        fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=1`).then((r) => r.json()),
-        fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=2`).then((r) => r.json())
-      ]);
-      pool = [...p1.results, ...p2.results]
-        .filter((m) => m.poster_path && m.title)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, bracketSize);
-    } catch (err) {
-      console.error(err);
-      toast("fetch", "Bracket failed. Check your API key.");
-      battleSetupEl.hidden = false;
-      return;
-    }
+    return runVerdict();
   }
 
-  if (pool.length < bracketSize) {
+  toast("fetch", "Building the bracket...");
+  let pool = [];
+  try {
+    const [p1, p2] = await Promise.all([
+      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=1`).then((r) => r.json()),
+      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=2`).then((r) => r.json())
+    ]);
+    pool = [...p1.results, ...p2.results]
+      .filter((m) => m.poster_path && m.title)
+      .sort(() => 0.5 - Math.random())
+      .slice(0, battle.size);
+  } catch (err) {
+    console.error(err);
+    toast("fetch", "Bracket failed. Check your API key.");
+    battleSetupEl.hidden = false;
+    return;
+  }
+
+  if (pool.length < battle.size) {
     toast("fetch", "Couldn't build a full bracket.");
     battleSetupEl.hidden = false;
     return;
@@ -1042,12 +1049,180 @@ async function startBattle() {
   battle.nextRound = [];
   battle.matchIndex = 0;
   battle.roundNumber = 1;
-  battle.totalRounds = Math.log2(bracketSize);
+  battle.totalRounds = Math.log2(battle.size);
   battle.active = true;
 
   battleStageEl.hidden = false;
   battleChampionEl.hidden = true;
   showNextMatch();
+}
+
+// ============================================
+// THE VERDICT — algorithmic ranker
+// ============================================
+const battleVerdictEl = document.getElementById("battle-verdict");
+
+async function runVerdict() {
+  toast("fetch", "Weighing the options...");
+  const verdictWinnerEl = document.getElementById("verdict-winner");
+  const verdictRunnersEl = document.getElementById("verdict-runners");
+  verdictWinnerEl.innerHTML = `<p style="font-family: var(--mono); color: var(--cream-dim); padding: 2rem;">Reading the reviews...</p>`;
+  verdictRunnersEl.innerHTML = "";
+  battleVerdictEl.hidden = false;
+  battleVerdictEl.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  try {
+    // Fetch full details for each pick to get runtime
+    const details = await Promise.all(
+      battle.customPicks.map((p) =>
+        fetch(`${TMDB_BASE}/movie/${p.id}?api_key=${TMDB_API_KEY}`)
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null)
+      )
+    );
+
+    // Merge with user's notes
+    const merged = details.map((d, i) => {
+      const base = d || battle.customPicks[i];
+      return {
+        ...base,
+        whyYes: battle.customPicks[i].whyYes,
+        whyNo: battle.customPicks[i].whyNo,
+        poster_path: base.poster_path || battle.customPicks[i].poster_path,
+        title: base.title || battle.customPicks[i].title
+      };
+    });
+
+    const scored = merged
+      .map((m) => ({ ...m, ...scoreMovie(m, battle.timeAvailable) }))
+      .sort((a, b) => b.score - a.score);
+
+    renderVerdict(scored);
+  } catch (err) {
+    console.error(err);
+    verdictWinnerEl.innerHTML = `<p style="font-family: var(--mono); color: var(--coral); padding: 2rem;">Couldn't reach the reviews. Try again.</p>`;
+  }
+}
+
+function scoreMovie(m, maxTime) {
+  let score = 0;
+  const reasons = [];
+  const rating = m.vote_average || 0;
+  const voteCount = m.vote_count || 0;
+  const runtime = m.runtime || 0;
+
+  // 1. TMDB rating (0-45)
+  score += Math.round(rating * 4.5);
+  if (rating >= 8) reasons.push({ type: "pro", text: `Excellent rating (★${rating.toFixed(1)})` });
+  else if (rating >= 7) reasons.push({ type: "pro", text: `Solid rating (★${rating.toFixed(1)})` });
+  else if (rating > 0 && rating < 5.5) reasons.push({ type: "con", text: `Weak rating (★${rating.toFixed(1)})` });
+
+  // 2. Review reputation (0-15)
+  if (voteCount >= 3000) { score += 15; reasons.push({ type: "pro", text: "Well-known — thousands of reviews" }); }
+  else if (voteCount >= 500) score += 8;
+  else if (voteCount >= 50) score += 3;
+  else if (voteCount > 0) reasons.push({ type: "con", text: "Few reviews — a bit of a gamble" });
+
+  // 3. Your pros / cons
+  if (m.whyYes && m.whyYes.trim()) {
+    score += 15;
+    reasons.push({ type: "pro", text: "You wrote real reasons to watch" });
+  }
+  if (m.whyNo && m.whyNo.trim()) {
+    score -= 18;
+    reasons.push({ type: "con", text: "You flagged concerns yourself" });
+  }
+
+  // 4. Runtime fit
+  if (maxTime > 0 && runtime > 0) {
+    if (runtime <= maxTime) {
+      score += 10;
+      reasons.push({ type: "pro", text: `Fits your ${maxTime}-min window (${runtime} min)` });
+    } else if (runtime > maxTime + 20) {
+      score -= 22;
+      reasons.push({ type: "con", text: `Too long — ${runtime} min vs ${maxTime} available` });
+    } else {
+      reasons.push({ type: "neutral", text: `Slightly over your window (${runtime} min)` });
+    }
+  } else if (runtime > 0) {
+    reasons.push({ type: "neutral", text: `${runtime} min runtime` });
+  }
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+  return { score, reasons };
+}
+
+function renderVerdict(scored) {
+  const winner = scored[0];
+  const rest = scored.slice(1);
+  const verdictWinnerEl = document.getElementById("verdict-winner");
+  const verdictRunnersEl = document.getElementById("verdict-runners");
+
+  const poster = winner.poster_path
+    ? `${IMG_BASE}${winner.poster_path}`
+    : "https://via.placeholder.com/500x750/382C21/E8B64C?text=No+Poster";
+
+  const reasonsHtml = winner.reasons
+    .map((r) => `<li class="${r.type}">${r.text}</li>`)
+    .join("");
+
+  verdictWinnerEl.innerHTML = `
+    <img src="${poster}" alt="${winner.title}">
+    <div class="verdict-winner-info">
+      <p class="verdict-rank">WINNER</p>
+      <h3>${winner.title}</h3>
+      <div class="verdict-score">
+        <span class="verdict-score-num">${winner.score}</span>
+        <span class="verdict-score-out">/ 100</span>
+      </div>
+      <ul class="verdict-reasons">${reasonsHtml}</ul>
+    </div>
+  `;
+
+  verdictRunnersEl.innerHTML = "";
+  rest.forEach((movie, i) => {
+    const rankLabels = ["RUNNER-UP", "3RD PLACE", "4TH", "5TH", "6TH"];
+    const rankLabel = rankLabels[i] || `${i + 2}TH`;
+    const rposter = movie.poster_path
+      ? `${IMG_BASE_SM}${movie.poster_path}`
+      : "https://via.placeholder.com/60x90/382C21/E8B64C?text=?";
+    // one-line summary: use the strongest reason
+    const topReason = movie.reasons[0] ? movie.reasons[0].text : "";
+    const runner = document.createElement("button");
+    runner.className = "verdict-runner";
+    runner.innerHTML = `
+      <img src="${rposter}" alt="${movie.title}">
+      <div class="verdict-runner-info">
+        <p class="rank-line">${rankLabel}</p>
+        <p class="r-title">${movie.title}</p>
+        <p class="r-score">${movie.score} / 100</p>
+        <p class="r-reason">${topReason}</p>
+      </div>
+    `;
+    runner.addEventListener("click", () => openDetails(movie.id, "movie"));
+    verdictRunnersEl.appendChild(runner);
+  });
+
+  // Wire up action buttons
+  document.getElementById("verdict-details").onclick = () => openDetails(winner.id, "movie");
+
+  const saveBtn = document.getElementById("verdict-save");
+  const updateSaveBtn = () => {
+    const isSaved = watchlist.some((w) => w.id === winner.id && w.type === "movie");
+    saveBtn.textContent = isSaved ? "★ SAVED" : "☆ SAVE WINNER";
+    saveBtn.classList.toggle("saved", isSaved);
+  };
+  updateSaveBtn();
+  saveBtn.onclick = () => {
+    toggleWatchlist({ id: winner.id, type: "movie", title: winner.title, poster: winner.poster_path });
+    updateSaveBtn();
+  };
+
+  document.getElementById("verdict-redo").onclick = () => {
+    battleVerdictEl.hidden = true;
+    battleSetupEl.hidden = false;
+    battleSetupEl.scrollIntoView({ behavior: "smooth" });
+  };
 }
 
 function showNextMatch() {
@@ -1106,9 +1281,8 @@ function updateBattleProgress() {
   document.getElementById("battle-round-label").textContent = `ROUND ${battle.roundNumber} OF ${battle.totalRounds}`;
   document.getElementById("battle-match-label").textContent = `MATCH ${matchNum} OF ${totalMatchesInRound}`;
 
-  const bracketSize = battle.mode === "custom" ? battle.customSize : battle.size;
-  const totalMatches = bracketSize - 1;
-  const decidedMatches = (bracketSize - battle.currentRound.length) + battle.matchIndex;
+  const totalMatches = battle.size - 1;
+  const decidedMatches = (battle.size - battle.currentRound.length) + battle.matchIndex;
   const pct = (decidedMatches / totalMatches) * 100;
   document.getElementById("battle-progress-fill").style.width = `${pct}%`;
 }
@@ -1185,6 +1359,7 @@ function resetBattle() {
   battleSetupEl.hidden = false;
   battleStageEl.hidden = true;
   battleChampionEl.hidden = true;
+  battleVerdictEl.hidden = true;
 }
 
 // ============================================

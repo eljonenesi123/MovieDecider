@@ -11,9 +11,9 @@
 <body>
 
 <header class="hero">
-  <div class="poster-wall" id="poster-wall" aria-hidden="true"></div>
-  <div class="hero-overlay"></div>
+  <div class="hero-backdrop" id="hero-backdrop"></div>
   <div class="hero-inner">
+    <img src="images/logo.png" alt="Just Pick Something logo" class="hero-logo">
     <p class="eyebrow" id="hero-eyebrow">FOR PEOPLE WHO CAN'T DECIDE —</p>
     <h1 id="flip-headline" class="flip-headline">TONIGHT?</h1>
     <p class="hero-sub">Stop scrolling. Tell us the mood, we'll hand you the pick.</p>
@@ -76,7 +76,7 @@
     <div class="battle-setup" id="battle-setup">
       <div class="battle-mode-toggle">
         <button class="battle-mode active" data-mode="random">RANDOM BRACKET</button>
-        <button class="battle-mode" data-mode="custom">CUSTOM PICKS</button>
+        <button class="battle-mode" data-mode="custom">DECIDE FOR ME</button>
       </div>
 
       <!-- Random mode -->
@@ -88,23 +88,26 @@
         </div>
       </div>
 
-      <!-- Custom mode -->
+      <!-- Custom (algorithm) mode -->
       <div class="battle-mode-pane" id="setup-custom" hidden>
-        <p class="battle-setup-label">Bracket size — pick before you add</p>
-        <div class="battle-size-toggle" id="custom-size-toggle">
-          <button class="battle-size-custom active" data-size="2">2</button>
-          <button class="battle-size-custom" data-size="4">4</button>
-          <button class="battle-size-custom" data-size="8">8</button>
-          <button class="battle-size-custom" data-size="16">16</button>
+        <p class="battle-help">Add the movies you're stuck between — as few as 2, as many as 6. Optionally jot down why you'd watch each (or why not). We'll score them on TMDB rating, review count, runtime fit, and your notes, then hand you a verdict.</p>
+
+        <p class="battle-setup-label">Time available tonight (optional)</p>
+        <div class="battle-size-toggle" id="time-toggle">
+          <button class="time-btn active" data-time="0">NO LIMIT</button>
+          <button class="time-btn" data-time="60">1 HR</button>
+          <button class="time-btn" data-time="90">90 MIN</button>
+          <button class="time-btn" data-time="120">2 HR</button>
+          <button class="time-btn" data-time="180">3 HR</button>
         </div>
 
-        <p class="battle-setup-label">Search and add your fighters</p>
+        <p class="battle-setup-label">Search and add contenders</p>
         <div class="custom-search-row">
           <input type="text" id="custom-search-input" placeholder="Search a movie to add..." />
         </div>
         <div class="custom-search-results" id="custom-search-results"></div>
 
-        <p class="battle-setup-label" id="picks-label">YOUR FIGHTERS — 0 / 2</p>
+        <p class="battle-setup-label" id="picks-label">CONTENDERS — 0</p>
         <div class="custom-picks" id="custom-picks"></div>
       </div>
 
@@ -160,6 +163,17 @@
         <button id="champion-rematch" class="champ-secondary">RUN IT BACK ↻</button>
       </div>
       <div class="confetti-layer" id="champion-confetti" aria-hidden="true"></div>
+    </div>
+    <!-- Verdict (algorithm mode) -->
+    <div class="battle-verdict" id="battle-verdict" hidden>
+      <p class="verdict-eyebrow">⚖ THE VERDICT —</p>
+      <div class="verdict-winner" id="verdict-winner"></div>
+      <div class="verdict-runners" id="verdict-runners"></div>
+      <div class="champion-actions">
+        <button id="verdict-details" class="champ-primary">SEE FULL DETAILS →</button>
+        <button id="verdict-save" class="champ-secondary">☆ SAVE WINNER</button>
+        <button id="verdict-redo" class="champ-secondary">TWEAK & RE-DECIDE ↺</button>
+      </div>
     </div>
   </section>
 
