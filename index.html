@@ -141,26 +141,30 @@
       </div>
       <div class="battle-arena" id="battle-arena">
         <button class="battle-card" id="battle-a" data-side="a">
+          <span class="swipe-stamp stamp-pick" id="battle-a-stamp">PICK</span>
           <span class="battle-notes-chip" id="battle-a-notes-chip" hidden>💭 NOTES</span>
           <img id="battle-a-img" src="" alt="">
           <div class="battle-info">
             <div class="battle-title" id="battle-a-title"></div>
             <div class="battle-meta" id="battle-a-meta"></div>
+            <p class="battle-overview" id="battle-a-overview"></p>
             <div class="battle-notes" id="battle-a-notes" hidden></div>
           </div>
         </button>
         <div class="battle-vs">VS</div>
         <button class="battle-card" id="battle-b" data-side="b">
+          <span class="swipe-stamp stamp-pick" id="battle-b-stamp">PICK</span>
           <span class="battle-notes-chip" id="battle-b-notes-chip" hidden>💭 NOTES</span>
           <img id="battle-b-img" src="" alt="">
           <div class="battle-info">
             <div class="battle-title" id="battle-b-title"></div>
             <div class="battle-meta" id="battle-b-meta"></div>
+            <p class="battle-overview" id="battle-b-overview"></p>
             <div class="battle-notes" id="battle-b-notes" hidden></div>
           </div>
         </button>
       </div>
-      <p class="battle-hint">Tap a poster · or use ← → arrow keys</p>
+      <p class="battle-hint">Swipe a poster outward to pick it · or tap · or use ← → arrow keys</p>
       <button class="battle-cancel" id="battle-cancel">END BATTLE ✕</button>
     </div>
 
@@ -267,9 +271,45 @@
       </div>
       <div class="player-chips" id="player-chips"></div>
 
-      <button class="decide-btn" id="decide-btn" disabled>DECIDE ▶</button>
+      <div class="whopicks-actions">
+        <button class="decide-btn" id="decide-btn" disabled>DECIDE ▶</button>
+        <button class="group-swipe-btn" id="group-swipe-btn" disabled>SWIPE TOGETHER 💕</button>
+      </div>
       <div class="decide-stage" id="decide-stage"></div>
       <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="group-section" id="group-section" hidden>
+    <div class="group-inner">
+
+      <div class="group-pane" id="group-pass-pane">
+        <p class="group-pass-eyebrow">PASS THE PHONE TO</p>
+        <h2 class="group-pass-name" id="group-pass-name">—</h2>
+        <p class="group-pass-sub" id="group-pass-sub">Swipe right on anything you'd watch. Left on anything you wouldn't.</p>
+        <button class="group-ready-btn" id="group-ready-btn">I'M READY</button>
+        <button class="group-cancel-btn" id="group-cancel-btn-pass">CANCEL SESSION ✕</button>
+      </div>
+
+      <div class="group-pane" id="group-deck-pane" hidden>
+        <div class="group-deck-header">
+          <span id="group-deck-player">—</span>
+          <span class="group-deck-progress" id="group-deck-progress">1 / 10</span>
+        </div>
+        <div class="group-deck-stack" id="group-deck-stack"></div>
+        <div class="group-deck-actions">
+          <button class="group-nope-btn" id="group-nope-btn" aria-label="Nope">✕</button>
+          <button class="group-like-btn" id="group-like-btn" aria-label="Like">♥</button>
+        </div>
+        <button class="group-cancel-btn" id="group-cancel-btn-deck">CANCEL SESSION ✕</button>
+      </div>
+
+      <div class="group-pane" id="group-reveal-pane" hidden>
+        <div class="group-reveal-inner" id="group-reveal-inner"></div>
+        <button class="group-restart-btn" id="group-restart-btn">SWIPE AGAIN</button>
+      </div>
+
+      <div class="confetti-layer" id="group-confetti-layer" aria-hidden="true"></div>
     </div>
   </section>
 </main>

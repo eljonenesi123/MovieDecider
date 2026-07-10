@@ -1049,8 +1049,99 @@ updateStartButton();
 
 battleStartBtn.addEventListener("click", startBattle);
 document.getElementById("battle-cancel").addEventListener("click", resetBattle);
-document.getElementById("battle-a").addEventListener("click", () => pickWinner("a"));
-document.getElementById("battle-b").addEventListener("click", () => pickWinner("b"));
+// ============================================
+// SWIPE-TO-PICK — Tinder-style drag gesture on battle cards
+// ============================================
+function attachBattleSwipe(side) {
+  const card = document.getElementById(`battle-${side}`);
+  const stamp = document.getElementById(`battle-${side}-stamp`);
+  const outwardSign = side === "a" ? -1 : 1; // card A lives left → swipes left; card B lives right → swipes right
+  const threshold = 90;
+
+  let dragging = false;
+  let moved = false;
+  let startX = 0, startY = 0, dx = 0, dy = 0;
+
+  function pointFromEvent(e) {
+    if (e.touches && e.touches.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function onDown(e) {
+    if (!battle.active || battleArenaEl.classList.contains("transitioning")) return;
+    dragging = true;
+    moved = false;
+    dx = 0; dy = 0;
+    const p = pointFromEvent(e);
+    startX = p.x;
+    startY = p.y;
+    card.classList.add("dragging");
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    const p = pointFromEvent(e);
+    dx = p.x - startX;
+    dy = p.y - startY;
+    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
+    if (!moved) return;
+
+    // Only hijack the gesture once it's clearly horizontal — otherwise let the page scroll
+    if (Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    if (e.cancelable) e.preventDefault();
+
+    const rotate = dx / 20;
+    card.style.transform = `translate(${dx}px, ${dy * 0.15}px) rotate(${rotate}deg)`;
+
+    const outward = dx * outwardSign;
+    if (stamp) stamp.style.opacity = String(Math.max(0, Math.min(outward / threshold, 1)));
+  }
+
+  function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    card.classList.remove("dragging");
+
+    const outward = dx * outwardSign;
+    const wasSwipe = moved && Math.abs(dx) > Math.abs(dy) * 1.2;
+
+    if (wasSwipe && outward > threshold) {
+      // committed — fling off screen, then resolve
+      card.style.transition = "transform 0.35s ease, opacity 0.35s ease";
+      card.style.transform = `translate(${outwardSign * 500}px, ${dy * 0.15}px) rotate(${outwardSign * 22}deg)`;
+      card.style.opacity = "0";
+      setTimeout(() => {
+        card.style.transition = "";
+        card.style.transform = "";
+        card.style.opacity = "";
+        if (stamp) stamp.style.opacity = "0";
+        pickWinner(side);
+      }, 260);
+      return;
+    }
+
+    // snap back
+    card.style.transition = "transform 0.3s ease";
+    card.style.transform = "";
+    if (stamp) stamp.style.opacity = "0";
+    setTimeout(() => { card.style.transition = ""; }, 300);
+
+    // a tap (no meaningful drag) still counts as picking that side
+    if (!wasSwipe) {
+      pickWinner(side);
+    }
+  }
+
+  card.addEventListener("mousedown", onDown);
+  card.addEventListener("touchstart", onDown, { passive: true });
+  window.addEventListener("mousemove", onMove);
+  window.addEventListener("touchmove", onMove, { passive: false });
+  window.addEventListener("mouseup", onUp);
+  window.addEventListener("touchend", onUp);
+}
+
+attachBattleSwipe("a");
+attachBattleSwipe("b");
 
 document.addEventListener("keydown", (e) => {
   if (!battle.active || !modalBackdrop.hidden) return;
@@ -1292,6 +1383,7 @@ function setBattleCard(side, movie) {
   const img = document.getElementById(`battle-${side}-img`);
   const title = document.getElementById(`battle-${side}-title`);
   const meta = document.getElementById(`battle-${side}-meta`);
+  const overview = document.getElementById(`battle-${side}-overview`);
   const chip = document.getElementById(`battle-${side}-notes-chip`);
   const notes = document.getElementById(`battle-${side}-notes`);
 
@@ -1301,6 +1393,7 @@ function setBattleCard(side, movie) {
   const year = (movie.release_date || "").slice(0, 4);
   const rating = movie.vote_average ? `★ ${movie.vote_average.toFixed(1)}` : "";
   meta.textContent = [year, rating].filter(Boolean).join(" · ");
+  if (overview) overview.textContent = movie.overview || "";
 
   // show pros/cons notes if this movie has any
   const hasNotes = movie.whyYes || movie.whyNo;
@@ -1624,6 +1717,7 @@ function renderChips() {
     playerChips.appendChild(chip);
   });
   decideBtn.disabled = players.length < 2;
+  if (groupSwipeBtn) groupSwipeBtn.disabled = players.length < 2;
 }
 
 const WINNER_LINES = [
@@ -1652,6 +1746,295 @@ decideBtn.addEventListener("click", () => {
     }
   }, 110);
 });
+
+// ============================================
+// GROUP SWIPE MODE — pass-the-phone matching
+// ============================================
+const groupSwipeBtn = document.getElementById("group-swipe-btn");
+const groupSection = document.getElementById("group-section");
+const groupPassPane = document.getElementById("group-pass-pane");
+const groupDeckPane = document.getElementById("group-deck-pane");
+const groupRevealPane = document.getElementById("group-reveal-pane");
+const groupPassName = document.getElementById("group-pass-name");
+const groupDeckStack = document.getElementById("group-deck-stack");
+const groupDeckPlayer = document.getElementById("group-deck-player");
+const groupDeckProgress = document.getElementById("group-deck-progress");
+const groupRevealInner = document.getElementById("group-reveal-inner");
+
+const groupSwipe = {
+  deck: [],
+  playerIndex: 0,
+  cardIndex: 0,
+  likes: {} // { playerName: Set of movie ids }
+};
+
+groupSwipeBtn.addEventListener("click", startGroupSwipe);
+document.getElementById("group-cancel-btn-pass").addEventListener("click", cancelGroupSwipe);
+document.getElementById("group-cancel-btn-deck").addEventListener("click", cancelGroupSwipe);
+document.getElementById("group-restart-btn").addEventListener("click", () => {
+  groupRevealPane.hidden = true;
+  groupSection.hidden = true;
+  playerChips.scrollIntoView({ behavior: "smooth" });
+});
+
+async function startGroupSwipe() {
+  if (players.length < 2) return;
+
+  groupSwipe.playerIndex = 0;
+  groupSwipe.cardIndex = 0;
+  groupSwipe.likes = {};
+  players.forEach((p) => { groupSwipe.likes[p] = new Set(); });
+
+  groupSwipeBtn.disabled = true;
+  groupSwipeBtn.textContent = "LOADING DECK...";
+
+  try {
+    const [p1, p2] = await Promise.all([
+      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=${Math.floor(Math.random() * 4) + 1}`).then((r) => r.json()),
+      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=${Math.floor(Math.random() * 4) + 1}`).then((r) => r.json())
+    ]);
+    const pool = [...(p1.results || []), ...(p2.results || [])]
+      .filter((m) => m.poster_path && m.title)
+      .filter((m, i, arr) => arr.findIndex((x) => x.id === m.id) === i)
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 10);
+
+    if (pool.length < 4) throw new Error("not enough movies");
+    groupSwipe.deck = pool;
+  } catch (err) {
+    console.error(err);
+    toast("fetch", "Couldn't load the deck. Check the API key.");
+    groupSwipeBtn.disabled = false;
+    groupSwipeBtn.textContent = "SWIPE TOGETHER 💕";
+    return;
+  }
+
+  groupSwipeBtn.disabled = false;
+  groupSwipeBtn.textContent = "SWIPE TOGETHER 💕";
+
+  groupSection.hidden = false;
+  groupPassPane.hidden = false;
+  groupDeckPane.hidden = true;
+  groupRevealPane.hidden = true;
+  showPassScreen();
+  groupSection.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function cancelGroupSwipe() {
+  groupSection.hidden = true;
+}
+
+function showPassScreen() {
+  const name = players[groupSwipe.playerIndex];
+  groupPassName.textContent = name;
+  document.getElementById("group-pass-sub").textContent =
+    groupSwipe.playerIndex === 0
+      ? "Swipe right on anything you'd watch. Left on anything you wouldn't."
+      : "Your turn. Swipe right on anything you'd watch, left on anything you wouldn't.";
+  groupPassPane.hidden = false;
+  groupDeckPane.hidden = true;
+  groupRevealPane.hidden = true;
+}
+
+document.getElementById("group-ready-btn").addEventListener("click", () => {
+  groupSwipe.cardIndex = 0;
+  groupPassPane.hidden = true;
+  groupDeckPane.hidden = false;
+  groupDeckPlayer.textContent = players[groupSwipe.playerIndex];
+  renderGroupDeck();
+});
+
+function renderGroupDeck() {
+  groupDeckStack.innerHTML = "";
+  groupDeckProgress.textContent = `${Math.min(groupSwipe.cardIndex + 1, groupSwipe.deck.length)} / ${groupSwipe.deck.length}`;
+
+  if (groupSwipe.cardIndex >= groupSwipe.deck.length) {
+    // this player is done
+    if (groupSwipe.playerIndex < players.length - 1) {
+      groupSwipe.playerIndex++;
+      showPassScreen();
+    } else {
+      revealGroupMatch();
+    }
+    return;
+  }
+
+  // render current + next card (next peeks behind for depth)
+  const upcoming = groupSwipe.deck.slice(groupSwipe.cardIndex, groupSwipe.cardIndex + 2);
+  upcoming.slice().reverse().forEach((movie, revIdx) => {
+    const isTop = revIdx === upcoming.length - 1;
+    const card = document.createElement("div");
+    card.className = "group-card";
+    card.style.zIndex = String(isTop ? 2 : 1);
+    card.style.transform = isTop ? "none" : "scale(0.96) translateY(10px)";
+    card.style.opacity = isTop ? "1" : "0.6";
+
+    const year = (movie.release_date || "").slice(0, 4);
+    const rating = movie.vote_average ? `★ ${movie.vote_average.toFixed(1)}` : "";
+    card.innerHTML = `
+      <span class="group-stamp like" id="group-stamp-like">LIKE</span>
+      <span class="group-stamp nope" id="group-stamp-nope">NOPE</span>
+      <img src="${IMG_BASE}${movie.poster_path}" alt="${movie.title}">
+      <div class="group-card-info">
+        <div class="group-card-title">${movie.title}</div>
+        <div class="group-card-meta">${[year, rating].filter(Boolean).join(" · ")}</div>
+      </div>
+    `;
+
+    if (isTop) attachGroupSwipe(card, movie.id);
+    groupDeckStack.appendChild(card);
+  });
+}
+
+document.getElementById("group-like-btn").addEventListener("click", () => resolveGroupCard(true));
+document.getElementById("group-nope-btn").addEventListener("click", () => resolveGroupCard(false));
+
+function resolveGroupCard(liked) {
+  const movie = groupSwipe.deck[groupSwipe.cardIndex];
+  if (!movie) return;
+  const player = players[groupSwipe.playerIndex];
+  if (liked) groupSwipe.likes[player].add(movie.id);
+  groupSwipe.cardIndex++;
+  renderGroupDeck();
+}
+
+function attachGroupSwipe(card, movieId) {
+  const threshold = 100;
+  let dragging = false, moved = false;
+  let startX = 0, startY = 0, dx = 0, dy = 0;
+
+  const likeStamp = card.querySelector("#group-stamp-like");
+  const nopeStamp = card.querySelector("#group-stamp-nope");
+
+  function point(e) {
+    if (e.touches && e.touches.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function onDown(e) {
+    dragging = true;
+    moved = false;
+    dx = 0; dy = 0;
+    const p = point(e);
+    startX = p.x; startY = p.y;
+    card.classList.add("dragging");
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    const p = point(e);
+    dx = p.x - startX;
+    dy = p.y - startY;
+    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
+    if (!moved) return;
+    if (Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    if (e.cancelable) e.preventDefault();
+
+    const rotate = dx / 18;
+    card.style.transform = `translate(${dx}px, ${dy * 0.15}px) rotate(${rotate}deg)`;
+    if (dx > 0) {
+      likeStamp.style.opacity = String(Math.min(dx / threshold, 1));
+      nopeStamp.style.opacity = "0";
+    } else {
+      nopeStamp.style.opacity = String(Math.min(-dx / threshold, 1));
+      likeStamp.style.opacity = "0";
+    }
+  }
+
+  function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    card.classList.remove("dragging");
+    const wasSwipe = moved && Math.abs(dx) > Math.abs(dy) * 1.2;
+
+    if (wasSwipe && Math.abs(dx) > threshold) {
+      const liked = dx > 0;
+      card.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+      card.style.transform = `translate(${liked ? 600 : -600}px, ${dy * 0.15}px) rotate(${liked ? 25 : -25}deg)`;
+      card.style.opacity = "0";
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchend", onUp);
+      setTimeout(() => resolveGroupCard(liked), 220);
+      return;
+    }
+
+    card.style.transition = "transform 0.3s ease";
+    card.style.transform = "";
+    likeStamp.style.opacity = "0";
+    nopeStamp.style.opacity = "0";
+    setTimeout(() => { card.style.transition = ""; }, 300);
+  }
+
+  card.addEventListener("mousedown", onDown);
+  card.addEventListener("touchstart", onDown, { passive: true });
+  window.addEventListener("mousemove", onMove);
+  window.addEventListener("touchmove", onMove, { passive: false });
+  window.addEventListener("mouseup", onUp);
+  window.addEventListener("touchend", onUp);
+}
+
+async function revealGroupMatch() {
+  groupDeckPane.hidden = true;
+  groupRevealPane.hidden = false;
+
+  // count votes per movie id
+  const tally = {};
+  players.forEach((p) => {
+    groupSwipe.likes[p].forEach((id) => { tally[id] = (tally[id] || 0) + 1; });
+  });
+
+  const idsByVotes = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+  const totalPlayers = players.length;
+  const unanimous = idsByVotes.filter(([, count]) => count === totalPlayers);
+  const best = unanimous.length ? unanimous : idsByVotes.filter(([, count]) => count === idsByVotes[0]?.[1]);
+
+  if (!idsByVotes.length || !best.length) {
+    groupRevealInner.innerHTML = `
+      <div class="group-no-match">
+        Nobody liked anything the same. Truly a house divided. 😅<br>
+        Try again, or let "Who Picks Tonight" decide for you.
+      </div>
+    `;
+    return;
+  }
+
+  const [winningId, votes] = best[Math.floor(Math.random() * best.length)];
+  const movie = groupSwipe.deck.find((m) => String(m.id) === String(winningId));
+  const isUnanimous = votes === totalPlayers;
+
+  groupRevealInner.innerHTML = `
+    <p class="group-match-eyebrow">${isUnanimous ? "🎉 UNANIMOUS MATCH" : "🎬 CLOSEST MATCH"}</p>
+    <div class="group-match-card">
+      <img src="${IMG_BASE}${movie.poster_path}" alt="${movie.title}">
+      <div>
+        <h3>${movie.title}</h3>
+        <div class="group-match-tally">${votes} of ${totalPlayers} liked this</div>
+        <p class="group-match-overview">${(movie.overview || "").slice(0, 160)}${(movie.overview || "").length > 160 ? "..." : ""}</p>
+      </div>
+    </div>
+    <div class="champion-actions">
+      <button class="champ-primary" id="group-match-details">VIEW DETAILS</button>
+      <button class="champ-secondary" id="group-match-save">☆ SAVE</button>
+    </div>
+  `;
+
+  document.getElementById("group-match-details").onclick = () => openDetails(movie.id, "movie");
+  const saveBtn = document.getElementById("group-match-save");
+  const updateSave = () => {
+    const isSaved = watchlist.some((w) => w.id === movie.id && w.type === "movie");
+    saveBtn.textContent = isSaved ? "★ SAVED" : "☆ SAVE";
+    saveBtn.classList.toggle("saved", isSaved);
+  };
+  updateSave();
+  saveBtn.onclick = () => {
+    toggleWatchlist({ id: movie.id, type: "movie", title: movie.title, poster: movie.poster_path });
+    updateSave();
+  };
+
+  if (isUnanimous) launchConfetti(document.getElementById("group-confetti-layer"));
+}
 
 function launchConfetti(targetLayer) {
   const layer = targetLayer || document.getElementById("confetti-layer");
@@ -1701,7 +2084,7 @@ const TOUR_STEPS = [
   { title: "FIND ANYTHING", body: "Movies, actors, or vibes. Try 'ww2' or 'tom hanks' or 'kid alone at christmas' — we'll figure it out.", target: "#search-section" },
   { title: "MOVIE BATTLES", body: "Random bracket for discovery, or DECIDE FOR ME where an algorithm scores movies you're stuck between.", target: "#battles-section" },
   { title: "WHEEL, MOOD, FEELING", body: "Spin for random. Pick a mood. Or just type how you feel. Three ways to land on tonight's pick.", target: "#mood-section" },
-  { title: "WHO PICKS TONIGHT?", body: "Group can't agree? Add everyone's name. Let fate settle it.", target: "#whopicks-section" }
+  { title: "WHO PICKS TONIGHT?", body: "Group can't agree? Add everyone's name. Let fate settle it, or swipe together and find what you all actually like.", target: "#whopicks-section" }
 ];
 
 let tourStep = 0;
