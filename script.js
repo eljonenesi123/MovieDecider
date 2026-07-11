@@ -16,7 +16,7 @@ const STATIC_I18N = {
   hero_sub: { en: "Stop scrolling. Tell us the mood, we'll hand you the pick.", sq: "Mos rrëshqit më. Na thuaj gjendjen, ne të japim zgjedhjen.", de: "Hör auf zu scrollen. Sag uns die Stimmung, wir liefern die Wahl." },
   cta_search: { en: "SEARCH ANYTHING", sq: "KËRKO ÇDO GJË", de: "ALLES DURCHSUCHEN" },
   cta_wheel: { en: "SPIN THE WHEEL →", sq: "RROTULLO ROTËN →", de: "RAD DREHEN →" },
-  cta_swipe: { en: "SWIPE 💕", sq: "FËRKO 💕", de: "SWIPEN 💕" },
+  cta_swipe: { en: "SWIPE", sq: "FËRKO", de: "SWIPEN" },
   trending_title: { en: "HOT RIGHT NOW", sq: "TRENDI I TANI", de: "GERADE ANGESAGT" },
   trending_sub: { en: "trending this week — tap any poster for details", sq: "trendi këtë javë — prek çdo poster për detaje", de: "diese Woche im Trend — für Details antippen" },
   search_title: { en: "FIND ANYTHING", sq: "GJEJ ÇDO GJË", de: "ALLES FINDEN" },
@@ -1910,7 +1910,7 @@ function renderChips() {
 
 function updateGroupSwipeLabel() {
   if (!groupSwipeBtn) return;
-  groupSwipeBtn.textContent = players.length >= 2 ? "SWIPE TOGETHER 💕" : "SWIPE 🎬";
+  groupSwipeBtn.textContent = players.length >= 2 ? "SWIPE TOGETHER" : "SWIPE 🎬";
 }
 
 const WINNER_LINES_BY_LANG = {

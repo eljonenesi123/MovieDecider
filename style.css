@@ -171,9 +171,14 @@ body {
   padding: 0.9rem 1.7rem;
   border-radius: 999px;
   transition: transform 0.15s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
 }
 .cta-primary { background: var(--gold); color: var(--espresso); }
-.cta-secondary { border: 2px solid var(--cream-dim); color: var(--cream); }
+.cta-secondary { background: transparent; border: 2px solid var(--cream-dim); color: var(--cream); }
 .cta-primary:hover, .cta-secondary:hover { transform: scale(1.05); }
 
 .ticket-edge {
