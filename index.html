@@ -6,7 +6,7 @@
 <title>Just Pick Something | Movie & TV Roulette</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=6">
 <meta name="description" content="Can't decide what to watch? Spin the wheel, pick a mood, or let the algorithm decide. Movies, TV, actors, themes — search anything.">
 <meta name="theme-color" content="#2A211A">
 
@@ -338,7 +338,7 @@
 
       <div class="whopicks-actions">
         <button class="decide-btn" id="decide-btn" disabled data-i18n="decide_btn">DECIDE ▶</button>
-        <button class="group-swipe-btn" id="group-swipe-btn">SWIPE 🎬</button>
+        <button class="group-swipe-btn" id="group-swipe-btn"><span id="group-swipe-title" data-i18n="tile_swipe_title">SWIPE TOGETHER</span></button>
       </div>
       <div class="decide-stage" id="decide-stage"></div>
       <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
@@ -386,12 +386,26 @@
     </div>
   </section>
 
-  <section class="whopicks-section" id="imposter-section">
+  <section class="whopicks-section" id="game-corner-section">
     <div class="whopicks-inner">
-      <h2 class="section-title" data-i18n="imposter_title">FIND THE IMPOSTER</h2>
-      <p class="whopicks-sub" data-i18n="imposter_sub">One of you doesn't know the movie. Everyone else does. Pass the phone, keep a straight face, and figure out who's faking it before the timer runs out.</p>
-      <div class="whopicks-actions">
-        <button class="group-swipe-btn" id="imposter-play-btn" data-i18n="imposter_play">PLAY 🕵️</button>
+      <h2 class="section-title" data-i18n="game_corner_title">GAME CORNER</h2>
+      <p class="whopicks-sub" data-i18n="game_corner_sub">Killing time before the movie starts? Play something with the group.</p>
+      <div class="game-tile-row">
+        <button class="game-tile" id="higherlower-play-btn">
+          <span class="tile-icon">📈</span>
+          <span class="tile-title" data-i18n="tile_higherlower_title">HIGHER OR LOWER</span>
+          <span class="tile-sub" data-i18n="tile_higherlower_sub">Guess if the next movie rates higher or lower</span>
+        </button>
+        <button class="game-tile" id="imposter-play-btn">
+          <span class="tile-icon">🕵️</span>
+          <span class="tile-title" data-i18n="tile_imposter_title">FIND THE IMPOSTER</span>
+          <span class="tile-sub" data-i18n="tile_imposter_sub">One of you doesn't know the movie. Figure out who.</span>
+        </button>
+        <button class="game-tile" id="trivia-play-btn">
+          <span class="tile-icon">🧠</span>
+          <span class="tile-title" data-i18n="tile_trivia_title">TRIVIA SHOWDOWN</span>
+          <span class="tile-sub" data-i18n="tile_trivia_sub">5 questions each. Highest score picks the movie.</span>
+        </button>
       </div>
     </div>
   </section>
@@ -424,12 +438,11 @@
         <p class="group-pass-eyebrow" data-i18n="pass_phone_to">PASS THE PHONE TO</p>
         <h2 class="group-pass-name" id="imposter-pass-name">PLAYER 1</h2>
         <div class="imposter-card" id="imposter-card">
-          <div class="imposter-card-inner" id="imposter-card-inner">
-            <div class="imposter-card-face imposter-card-front">
-              <span class="imposter-card-icon">🎬</span>
-              <span data-i18n="imposter_tap_reveal">TAP TO REVEAL YOUR CARD</span>
-            </div>
-            <div class="imposter-card-face imposter-card-back" id="imposter-card-back"></div>
+          <div class="imposter-card-back" id="imposter-card-back"></div>
+          <div class="imposter-card-cover" id="imposter-card-cover">
+            <span class="imposter-card-icon">🎬</span>
+            <span data-i18n="imposter_tap_reveal">SWIPE UP TO REVEAL</span>
+            <span class="imposter-swipe-chevron">↑</span>
           </div>
         </div>
         <button class="group-ready-btn" id="imposter-next-btn" hidden data-i18n="imposter_next">NEXT PLAYER →</button>
@@ -451,6 +464,83 @@
         <button class="group-restart-btn" id="imposter-play-again-btn" data-i18n="imposter_play_again">PLAY AGAIN</button>
       </div>
 
+    </div>
+  </section>
+
+  <section class="group-section" id="higherlower-game-section" hidden>
+    <div class="group-inner">
+
+      <div class="group-pane" id="hl-setup-pane">
+        <p class="group-pass-eyebrow" data-i18n="hl_setup_eyebrow">GAME SETUP</p>
+        <h2 class="group-pass-name" style="font-size: clamp(1.6rem, 6vw, 2.4rem);" data-i18n="hl_setup_title">PICK A CATEGORY</h2>
+        <p class="group-pass-sub" data-i18n="hl_setup_sub">Guess whether the next movie is higher or lower than the one shown. Keep the streak alive.</p>
+        <div class="battle-size-toggle" id="hl-category-toggle">
+          <button class="time-btn active" data-category="vote_average" data-i18n="hl_cat_rating">RATING</button>
+          <button class="time-btn" data-category="popularity" data-i18n="hl_cat_popularity">POPULARITY</button>
+          <button class="time-btn" data-category="year" data-i18n="hl_cat_year">RELEASE YEAR</button>
+        </div>
+        <button class="group-ready-btn" id="hl-start-btn" style="margin-top: 1.8rem;" data-i18n="imposter_start">START GAME ▶</button>
+        <button class="group-cancel-btn" id="hl-cancel-setup" data-i18n="cancel_session">CANCEL SESSION ✕</button>
+      </div>
+
+      <div class="group-pane" id="hl-play-pane" hidden>
+        <div class="hl-score" id="hl-score">STREAK: 0</div>
+        <div class="hl-cards">
+          <div class="hl-card" id="hl-current-card"></div>
+          <div class="hl-guess-row">
+            <button class="hl-guess-btn" id="hl-lower-btn" data-i18n="hl_lower">▼ LOWER</button>
+            <button class="hl-guess-btn" id="hl-higher-btn" data-i18n="hl_higher">▲ HIGHER</button>
+          </div>
+          <div class="hl-card hl-card-next" id="hl-next-card"></div>
+        </div>
+        <button class="group-cancel-btn" id="hl-cancel-play" data-i18n="cancel_session">CANCEL SESSION ✕</button>
+      </div>
+
+      <div class="group-pane" id="hl-gameover-pane" hidden>
+        <div class="group-reveal-inner" id="hl-gameover-inner"></div>
+        <button class="group-restart-btn" id="hl-play-again-btn" data-i18n="imposter_play_again">PLAY AGAIN</button>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="group-section" id="trivia-game-section" hidden>
+    <div class="group-inner">
+
+      <div class="group-pane" id="trivia-setup-pane">
+        <p class="group-pass-eyebrow" data-i18n="trivia_setup_eyebrow">GAME SETUP</p>
+        <h2 class="group-pass-name" style="font-size: clamp(1.6rem, 6vw, 2.4rem);" data-i18n="trivia_setup_title">TRIVIA SHOWDOWN</h2>
+        <p class="group-pass-sub" data-i18n="trivia_setup_sub">Everyone answers the same 5 questions about famous movies and TV shows. Most correct answers wins the remote — ties are broken by fate.</p>
+        <button class="group-ready-btn" id="trivia-start-btn" style="margin-top: 1.8rem;" data-i18n="imposter_start">START GAME ▶</button>
+        <button class="group-cancel-btn" id="trivia-cancel-setup" data-i18n="cancel_session">CANCEL SESSION ✕</button>
+      </div>
+
+      <div class="group-pane" id="trivia-pass-pane" hidden>
+        <p class="group-pass-eyebrow" data-i18n="pass_phone_to">PASS THE PHONE TO</p>
+        <h2 class="group-pass-name" id="trivia-pass-name">—</h2>
+        <p class="group-pass-sub" data-i18n="trivia_pass_sub">Five questions coming up. No googling.</p>
+        <button class="group-ready-btn" id="trivia-ready-btn" data-i18n="im_ready">I'M READY</button>
+        <button class="group-cancel-btn" id="trivia-cancel-pass" data-i18n="cancel_session">CANCEL SESSION ✕</button>
+      </div>
+
+      <div class="group-pane" id="trivia-quiz-pane" hidden>
+        <div class="trivia-quiz-header">
+          <span id="trivia-quiz-player">—</span>
+          <span class="group-deck-progress" id="trivia-quiz-progress">1 / 5</span>
+        </div>
+        <div class="trivia-question-card">
+          <p class="trivia-question-text" id="trivia-question-text"></p>
+          <div class="trivia-options" id="trivia-options"></div>
+        </div>
+        <button class="group-cancel-btn" id="trivia-cancel-quiz" data-i18n="cancel_session">CANCEL SESSION ✕</button>
+      </div>
+
+      <div class="group-pane" id="trivia-reveal-pane" hidden>
+        <div class="group-reveal-inner" id="trivia-reveal-inner"></div>
+        <button class="group-restart-btn" id="trivia-play-again-btn" data-i18n="imposter_play_again">PLAY AGAIN</button>
+      </div>
+
+      <div class="confetti-layer" id="trivia-confetti" aria-hidden="true"></div>
     </div>
   </section>
 </main>
@@ -554,6 +644,6 @@
     </div>
   </div>
 </div>
-<script src="script.js?v=4"></script>
+<script src="script.js?v=6"></script>
 </body>
 </html>

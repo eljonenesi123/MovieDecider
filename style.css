@@ -2089,6 +2089,103 @@ body {
 /* Reveal screen */
 .group-reveal-inner { min-height: 200px; }
 
+/* ---------- TRIVIA SHOWDOWN ---------- */
+
+.trivia-quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  padding: 0 0.4rem;
+}
+
+.trivia-question-card {
+  background: var(--espresso-2);
+  border: 3px solid var(--espresso-2);
+  border-radius: 18px;
+  padding: 1.6rem 1.4rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+.trivia-question-text {
+  font-family: var(--display);
+  font-size: clamp(1.1rem, 4.5vw, 1.5rem);
+  text-transform: uppercase;
+  color: var(--cream);
+  line-height: 1.25;
+  margin-bottom: 1.3rem;
+  text-align: center;
+}
+
+.trivia-options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.7rem;
+}
+
+.trivia-option {
+  font-family: var(--body);
+  font-size: 0.95rem;
+  background: var(--surface);
+  border: 2px solid var(--cream-dim);
+  color: var(--cream);
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+.trivia-option:hover:not(:disabled) { border-color: var(--gold); }
+.trivia-option:disabled { cursor: default; }
+.trivia-option.correct { background: rgba(111, 207, 151, 0.18); border-color: #6FCF97; color: #6FCF97; }
+.trivia-option.wrong { background: rgba(233, 111, 96, 0.15); border-color: var(--coral); color: var(--coral); }
+
+.trivia-leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.4rem;
+}
+
+.trivia-leaderboard-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: var(--espresso-2);
+  border: 2px solid var(--espresso-2);
+  border-radius: 12px;
+  padding: 0.8rem 1.1rem;
+}
+.trivia-leaderboard-row.winner {
+  border-color: var(--gold);
+  box-shadow: 0 0 24px rgba(232, 182, 76, 0.2);
+}
+
+.trivia-leaderboard-rank {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  color: var(--gold);
+  width: 1.6rem;
+  flex-shrink: 0;
+}
+
+.trivia-leaderboard-name {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--cream);
+  flex: 1;
+}
+
+.trivia-leaderboard-score {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--cream-dim);
+}
+.trivia-leaderboard-row.winner .trivia-leaderboard-score { color: var(--gold); }
+
 .group-match-eyebrow {
   font-family: var(--mono);
   font-size: 0.95rem;
@@ -2187,28 +2284,20 @@ body {
 }
 
 .imposter-card {
+  position: relative;
   width: 100%;
   max-width: 300px;
   height: 320px;
   margin: 1.6rem auto;
-  perspective: 1200px;
-  cursor: pointer;
+  border-radius: 16px;
+  overflow: hidden;
 }
-.imposter-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-  transform-style: preserve-3d;
-}
-.imposter-card.flipped .imposter-card-inner { transform: rotateY(180deg); }
 
-.imposter-card-face {
+.imposter-card-back {
   position: absolute;
   inset: 0;
-  backface-visibility: hidden;
   border-radius: 16px;
-  border: 2px solid var(--espresso-2);
+  border: 2px solid var(--gold);
   background: var(--espresso-2);
   display: flex;
   flex-direction: column;
@@ -2217,18 +2306,6 @@ body {
   gap: 0.9rem;
   padding: 1.2rem;
   text-align: center;
-}
-.imposter-card-front {
-  font-family: var(--mono);
-  font-size: 0.85rem;
-  color: var(--cream-dim);
-  letter-spacing: 0.05em;
-}
-.imposter-card-icon { font-size: 2.6rem; }
-
-.imposter-card-back {
-  transform: rotateY(180deg);
-  border-color: var(--gold);
 }
 .imposter-card-back img {
   width: 140px;
@@ -2247,6 +2324,39 @@ body {
   color: var(--cream-dim);
 }
 
+.imposter-card-cover {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  border: 2px solid var(--espresso-2);
+  background: var(--espresso-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1.2rem;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--cream-dim);
+  letter-spacing: 0.05em;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.imposter-card-cover.dragging { cursor: grabbing; }
+.imposter-card-icon { font-size: 2.6rem; }
+.imposter-swipe-chevron {
+  font-size: 1.4rem;
+  color: var(--gold);
+  animation: imposter-chevron-bounce 1.4s ease-in-out infinite;
+}
+@keyframes imposter-chevron-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(-8px); opacity: 1; }
+}
+
 .imposter-timer-display {
   font-family: var(--display);
   font-size: clamp(3rem, 14vw, 4.5rem);
@@ -2260,6 +2370,156 @@ body {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+/* ============================================ */
+/* GAME CHOOSER TILES (Swipe Together / Imposter) */
+/* ============================================ */
+.game-tile-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+.game-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--espresso-2);
+  border: 2px solid var(--espresso-2);
+  border-radius: 18px;
+  padding: 1.6rem 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+.game-tile:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+}
+.game-tile .tile-icon { font-size: 2.2rem; }
+.game-tile .tile-title {
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  color: var(--cream);
+}
+.game-tile .tile-sub {
+  font-family: var(--body);
+  font-size: 0.8rem;
+  color: var(--cream-dim);
+  line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+  .game-tile-row { grid-template-columns: 1fr; }
+}
+
+/* ============================================ */
+/* HIGHER OR LOWER GAME */
+/* ============================================ */
+.hl-score {
+  font-family: var(--mono);
+  color: var(--gold);
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+.hl-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.hl-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--espresso-2);
+  border: 2px solid var(--espresso-2);
+  border-radius: 16px;
+  padding: 1.1rem;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+.hl-card img {
+  width: 120px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.hl-card h3 {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  color: var(--cream);
+  text-transform: uppercase;
+  margin: 0;
+}
+.hl-stat-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--cream-dim);
+  letter-spacing: 0.05em;
+}
+.hl-stat-value {
+  font-family: var(--display);
+  font-size: 2rem;
+  color: var(--gold);
+}
+.hl-stat-value.mystery { color: var(--cream-dim); }
+.hl-card-next.correct { border-color: #6FCF97; }
+.hl-card-next.wrong { border-color: var(--coral); }
+
+.hl-guess-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+}
+.hl-guess-btn {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  padding: 0.85rem 0.5rem;
+  border-radius: 999px;
+  border: 2px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.hl-guess-btn:hover:not(:disabled) { background: var(--gold); color: var(--espresso); }
+.hl-guess-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.hl-final-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 1rem 0;
+}
+.hl-final-streak {
+  font-family: var(--display);
+  font-size: 4rem;
+  color: var(--gold);
+}
+.hl-final-label {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--cream-dim);
+  letter-spacing: 0.05em;
+}
+.hl-final-best {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--cream-dim);
+  margin-top: 0.6rem;
 }
 
 @media (max-width: 500px) {

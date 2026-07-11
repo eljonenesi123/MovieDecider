@@ -117,13 +117,36 @@ const STATIC_I18N = {
   imposter_3min: { en: "3 MIN", sq: "3 MIN", de: "3 MIN" },
   imposter_5min: { en: "5 MIN", sq: "5 MIN", de: "5 MIN" },
   imposter_start: { en: "START GAME ▶", sq: "FILLO LOJËN ▶", de: "SPIEL STARTEN ▶" },
-  imposter_tap_reveal: { en: "TAP TO REVEAL YOUR CARD", sq: "PREK PËR TË ZBULUAR KARTËN", de: "TIPPEN, UM DEINE KARTE ZU ZEIGEN" },
+  imposter_tap_reveal: { en: "SWIPE UP TO REVEAL", sq: "RRËSHQIT LART PËR TË ZBULUAR", de: "NACH OBEN WISCHEN ZUM AUFDECKEN" },
   imposter_next: { en: "NEXT PLAYER →", sq: "LOJTARI TJETËR →", de: "NÄCHSTER SPIELER →" },
   imposter_discuss_eyebrow: { en: "DISCUSS. WHO'S FAKING IT?", sq: "DISKUTONI. KUSH PO BËN SIKUR?", de: "DISKUTIERT. WER SCHAUSPIELERT?" },
   imposter_pause: { en: "PAUSE", sq: "NDALO", de: "PAUSE" },
   imposter_resume: { en: "RESUME", sq: "VAZHDO", de: "FORTSETZEN" },
   imposter_reveal: { en: "END & REVEAL ▶", sq: "MBYLL & ZBULO ▶", de: "BEENDEN & AUFDECKEN ▶" },
-  imposter_play_again: { en: "PLAY AGAIN", sq: "LUAJ PËRSËRI", de: "NOCHMAL SPIELEN" }
+  imposter_play_again: { en: "PLAY AGAIN", sq: "LUAJ PËRSËRI", de: "NOCHMAL SPIELEN" },
+  group_game_label: { en: "— or play a game together —", sq: "— ose luani një lojë së bashku —", de: "— oder spielt zusammen ein Spiel —" },
+  tile_swipe_title: { en: "SWIPE TOGETHER", sq: "FËRKONI SË BASHKU", de: "GEMEINSAM SWIPEN" },
+  tile_swipe_sub: { en: "Find something everyone actually wants to watch", sq: "Gjeni diçka që të gjithëve u pëlqen vërtet", de: "Findet etwas, das alle wirklich schauen wollen" },
+  tile_imposter_title: { en: "FIND THE IMPOSTER", sq: "GJEJ IMPOSTORIN", de: "FINDE DEN HOCHSTAPLER" },
+  tile_imposter_sub: { en: "One of you doesn't know the movie. Figure out who.", sq: "Njëri nga ju s'e di filmin. Gjeni kush.", de: "Einer von euch kennt den Film nicht. Findet raus, wer." },
+  game_corner_title: { en: "GAME CORNER", sq: "KËNDI I LOJËRAVE", de: "SPIELE-ECKE" },
+  game_corner_sub: { en: "Killing time before the movie starts? Play something with the group.", sq: "Po prisni të fillojë filmi? Luani diçka me grupin.", de: "Zeit totschlagen, bevor der Film startet? Spielt etwas mit der Gruppe." },
+  tile_higherlower_title: { en: "HIGHER OR LOWER", sq: "MË LART APO MË POSHTË", de: "HÖHER ODER NIEDRIGER" },
+  tile_higherlower_sub: { en: "Guess if the next movie rates higher or lower", sq: "Gjej nëse filmi tjetër vlerësohet më lart apo më poshtë", de: "Rate, ob der nächste Film höher oder niedriger bewertet ist" },
+  hl_setup_eyebrow: { en: "GAME SETUP", sq: "PËRGATITJA E LOJËS", de: "SPIEL-EINRICHTUNG" },
+  hl_setup_title: { en: "PICK A CATEGORY", sq: "ZGJIDH NJË KATEGORI", de: "KATEGORIE WÄHLEN" },
+  hl_setup_sub: { en: "Guess whether the next movie is higher or lower than the one shown. Keep the streak alive.", sq: "Gjej nëse filmi tjetër është më lart apo më poshtë se ai i treguar. Mbaje serinë gjallë.", de: "Rate, ob der nächste Film höher oder niedriger ist als der gezeigte. Halte die Serie am Leben." },
+  hl_cat_rating: { en: "RATING", sq: "VLERËSIMI", de: "BEWERTUNG" },
+  hl_cat_popularity: { en: "POPULARITY", sq: "POPULLARITETI", de: "POPULARITÄT" },
+  hl_cat_year: { en: "RELEASE YEAR", sq: "VITI I DALJES", de: "ERSCHEINUNGSJAHR" },
+  hl_higher: { en: "▲ HIGHER", sq: "▲ MË LART", de: "▲ HÖHER" },
+  hl_lower: { en: "▼ LOWER", sq: "▼ MË POSHTË", de: "▼ NIEDRIGER" },
+  tile_trivia_title: { en: "TRIVIA SHOWDOWN", sq: "DUEL NJOHURISH", de: "TRIVIA-DUELL" },
+  tile_trivia_sub: { en: "5 questions each. Highest score picks the movie.", sq: "5 pyetje secili. Pikët më të larta zgjedhin filmin.", de: "Je 5 Fragen. Höchste Punktzahl wählt den Film." },
+  trivia_setup_eyebrow: { en: "GAME SETUP", sq: "PËRGATITJA E LOJËS", de: "SPIELEINRICHTUNG" },
+  trivia_setup_title: { en: "TRIVIA SHOWDOWN", sq: "DUEL NJOHURISH", de: "TRIVIA-DUELL" },
+  trivia_setup_sub: { en: "Everyone answers the same 5 questions about famous movies and TV shows. Most correct answers wins the remote — ties are broken by fate.", sq: "Të gjithë përgjigjen të njëjtave 5 pyetje rreth filmave dhe serialeve të njohura. Përgjigjet më të sakta fiton telekomandën — barazimet i zgjidh fati.", de: "Alle beantworten dieselben 5 Fragen zu bekannten Filmen und Serien. Die meisten richtigen Antworten gewinnen die Fernbedienung — bei Gleichstand entscheidet das Schicksal." },
+  trivia_pass_sub: { en: "Five questions coming up. No googling.", sq: "Pesë pyetje po vijnë. Pa googlim.", de: "Fünf Fragen kommen. Kein Googeln." }
 };
 
 function applyStaticTranslations() {
@@ -148,10 +171,19 @@ const UI_TXT = {
   imposter_player_label: { en: "Player", sq: "Lojtari", de: "Spieler" },
   imposter_you_are: { en: "YOU'RE THE IMPOSTER", sq: "TI JE IMPOSTORI", de: "DU BIST DER HOCHSTAPLER" },
   imposter_hint_label: { en: "Hint", sq: "Ndihmë", de: "Hinweis" },
-  imposter_was: { en: "THE IMPOSTER WAS", sq: "IMPOSTORI ISHTE", de: "DER HOCHSTAPLER WAR" }
+  imposter_was: { en: "THE IMPOSTER WAS", sq: "IMPOSTORI ISHTE", de: "DER HOCHSTAPLER WAR" },
+  tile_swipe_title: { en: "SWIPE TOGETHER", sq: "FËRKONI SË BASHKU", de: "GEMEINSAM SWIPEN" },
+  tile_swipe_title_solo: { en: "SWIPE", sq: "FËRKO", de: "SWIPEN" },
+  hl_streak: { en: "STREAK", sq: "SERIA", de: "SERIE" },
+  hl_gameover: { en: "GAME OVER", sq: "LOJA MBAROI", de: "SPIEL VORBEI" },
+  hl_best: { en: "Best", sq: "Rekordi", de: "Bestwert" },
+  trivia_player_label: { en: "Player", sq: "Lojtari", de: "Spieler" },
+  trivia_winner_eyebrow: { en: "🏆 TRIVIA CHAMPION —", sq: "🏆 KAMPIONI I NJOHURIVE —", de: "🏆 TRIVIA-SIEGER —" },
+  trivia_tie_note: { en: "Tied — fate broke it.", sq: "Barazim — fati vendosi.", de: "Unentschieden — das Schicksal entschied." },
+  trivia_score_of: { en: "of 5 correct", sq: "nga 5 saktë", de: "von 5 richtig" }
 };
 function tt(key, vars) {
-  const entry = UI_TXT[key];
+  const entry = UI_TXT[key] || STATIC_I18N[key];
   let str = (entry && (entry[LANG] || entry.en)) || key;
   if (vars) Object.keys(vars).forEach((k) => { str = str.replace(`{${k}}`, vars[k]); });
   return str;
@@ -442,6 +474,62 @@ searchTabs.querySelectorAll(".search-tab").forEach((tab) => {
   });
 });
 
+async function findThemeMatches(query) {
+  const words = query.split(/\s+/).map((w) => w.trim()).filter((w) => w.length > 2);
+  const searchTerms = Array.from(new Set([query, ...words])).slice(0, 6);
+
+  const kwResults = await Promise.all(
+    searchTerms.map((term) =>
+      fetch(`${TMDB_BASE}/search/keyword?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(term)}`)
+        .then((r) => (r.ok ? r.json() : { results: [] }))
+        .catch(() => ({ results: [] }))
+    )
+  );
+
+  const seen = new Set();
+  const keywordIds = [];
+  const keywordNames = {};
+  kwResults.forEach((res) => {
+    (res.results || []).slice(0, 5).forEach((k) => {
+      if (!seen.has(k.id)) {
+        seen.add(k.id);
+        keywordIds.push(k.id);
+        keywordNames[k.id] = k.name;
+      }
+    });
+  });
+
+  if (!keywordIds.length) return { themes: [], matchedKeyword: null };
+
+  async function tryDiscover(idsStr) {
+    const res = await fetch(
+      `${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&with_keywords=${idsStr}&sort_by=popularity.desc&vote_count.gte=20`
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.results || [];
+  }
+
+  // Try the broadest combined match first (OR across the top keyword hits)
+  const topIds = keywordIds.slice(0, 8);
+  let results = await tryDiscover(topIds.join("|"));
+  let matchedKeyword = results.length ? topIds.map((id) => keywordNames[id]).join(", ") : null;
+
+  // Fall back to trying each keyword individually
+  if (!results.length) {
+    for (const id of keywordIds.slice(0, 6)) {
+      const r = await tryDiscover(String(id));
+      if (r.length) {
+        results = r;
+        matchedKeyword = keywordNames[id];
+        break;
+      }
+    }
+  }
+
+  return { themes: results.slice(0, 12).map((m) => ({ ...m, __theme: matchedKeyword })), matchedKeyword };
+}
+
 async function runSearch() {
   const query = searchInput.value.trim();
   if (!query) {
@@ -454,13 +542,12 @@ async function runSearch() {
   searchResults.innerHTML = "";
 
   try {
-    // parallel: multi-search + keyword search
-    const [multiRes, kwRes] = await Promise.all([
+    const [multiRes, themeMatch] = await Promise.all([
       fetch(`${TMDB_BASE}/search/multi?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&query=${encodeURIComponent(query)}&include_adult=false`),
-      fetch(`${TMDB_BASE}/search/keyword?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&query=${encodeURIComponent(query)}`)
+      findThemeMatches(query)
     ]);
     const multi = multiRes.ok ? await multiRes.json() : { results: [] };
-    const kw = kwRes.ok ? await kwRes.json() : { results: [] };
+    const { themes } = themeMatch;
 
     // Titles: filter for real content with posters and enough votes, sort by popularity
     const titles = multi.results
@@ -479,24 +566,6 @@ async function runSearch() {
         r.known_for_department
       )
       .sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
-
-    // Themes: try up to top 3 keywords until one returns real results
-    let themes = [];
-    let matchedKeyword = null;
-    for (let i = 0; i < Math.min(3, kw.results.length); i++) {
-      const keyword = kw.results[i];
-      const discoverRes = await fetch(
-        `${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&with_keywords=${keyword.id}&sort_by=popularity.desc&vote_count.gte=50`
-      );
-      if (discoverRes.ok) {
-        const disc = await discoverRes.json();
-        if (disc.results.length > 0) {
-          matchedKeyword = keyword.name;
-          themes = disc.results.slice(0, 12).map((m) => ({ ...m, __theme: keyword.name }));
-          break;
-        }
-      }
-    }
 
     lastSearchData = { query, titles, people, themes };
     currentSearchTab = "titles";
@@ -1930,8 +1999,9 @@ function renderChips() {
 }
 
 function updateGroupSwipeLabel() {
-  if (!groupSwipeBtn) return;
-  groupSwipeBtn.textContent = players.length >= 2 ? "SWIPE TOGETHER" : "SWIPE 🎬";
+  const titleEl = document.getElementById("group-swipe-title");
+  if (!titleEl) return;
+  titleEl.textContent = players.length >= 2 ? tt("tile_swipe_title") : tt("tile_swipe_title_solo");
 }
 
 const WINNER_LINES_BY_LANG = {
@@ -2489,8 +2559,8 @@ const imposterTimerToggle = document.getElementById("imposter-timer-toggle");
 const imposterStartBtn = document.getElementById("imposter-start-btn");
 
 const imposterPassName = document.getElementById("imposter-pass-name");
-const imposterCard = document.getElementById("imposter-card");
 const imposterCardBack = document.getElementById("imposter-card-back");
+const imposterCardCover = document.getElementById("imposter-card-cover");
 const imposterNextBtn = document.getElementById("imposter-next-btn");
 
 const imposterTimerDisplay = document.getElementById("imposter-timer-display");
@@ -2556,14 +2626,27 @@ document.getElementById("imposter-cancel-setup").addEventListener("click", impos
 document.getElementById("imposter-cancel-pass").addEventListener("click", imposterResetToSetup);
 document.getElementById("imposter-cancel-timer").addEventListener("click", imposterResetToSetup);
 
+let imposterMoviePool = [];
+
+async function fetchMostWatchedPool() {
+  if (imposterMoviePool.length) return imposterMoviePool;
+  const pages = await Promise.all(
+    [1, 2].map((page) =>
+      fetch(`${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&sort_by=vote_count.desc&page=${page}`)
+        .then((r) => r.json())
+        .catch(() => ({ results: [] }))
+    )
+  );
+  const combined = pages.flatMap((d) => d.results || []);
+  imposterMoviePool = combined.filter((m) => m.poster_path && m.title);
+  return imposterMoviePool;
+}
+
 async function startImposterGame() {
   imposterStartBtn.disabled = true;
   toast("fetch");
   try {
-    const page = 1 + Math.floor(Math.random() * 5);
-    const res = await fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&page=${page}`);
-    const data = await res.json();
-    const candidates = (data.results || []).filter((m) => m.poster_path && m.title);
+    const candidates = await fetchMostWatchedPool();
     if (!candidates.length) throw new Error("no candidates");
     imposterGame.movie = candidates[Math.floor(Math.random() * candidates.length)];
   } catch (e) {
@@ -2582,7 +2665,10 @@ imposterStartBtn.addEventListener("click", startImposterGame);
 function showImposterPassScreen() {
   imposterHideAllPanes();
   imposterPassPane.hidden = false;
-  imposterCard.classList.remove("flipped");
+  imposterCardCover.style.transition = "";
+  imposterCardCover.style.transform = "";
+  imposterCardCover.style.opacity = "";
+  imposterCardCover.hidden = false;
   imposterNextBtn.hidden = true;
   imposterPassName.textContent = `${tt("imposter_player_label")} ${imposterGame.currentIndex + 1}`;
 
@@ -2605,11 +2691,79 @@ function showImposterPassScreen() {
   }
 }
 
-imposterCard.addEventListener("click", () => {
-  if (imposterCard.classList.contains("flipped")) return;
-  imposterCard.classList.add("flipped");
-  imposterNextBtn.hidden = false;
-});
+// ============================================
+// SWIPE-UP TO REVEAL — drag gesture on imposter card
+// ============================================
+(function attachImposterSwipe() {
+  const cover = imposterCardCover;
+  const threshold = 90;
+  let dragging = false;
+  let moved = false;
+  let startX = 0, startY = 0, dy = 0;
+
+  function pointFromEvent(e) {
+    if (e.touches && e.touches.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function onDown(e) {
+    if (cover.hidden) return;
+    dragging = true;
+    moved = false;
+    dy = 0;
+    const p = pointFromEvent(e);
+    startX = p.x;
+    startY = p.y;
+    cover.classList.add("dragging");
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    const p = pointFromEvent(e);
+    const dx = p.x - startX;
+    dy = p.y - startY;
+    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
+    if (!moved) return;
+
+    // Only hijack once it's clearly an upward gesture — otherwise let the page scroll
+    if (dy > 0 || Math.abs(dy) < Math.abs(dx) * 1.2) return;
+    if (e.cancelable) e.preventDefault();
+
+    cover.style.transform = `translateY(${dy}px)`;
+    cover.style.opacity = String(Math.max(0, 1 - Math.abs(dy) / (threshold * 2.2)));
+  }
+
+  function revealCard() {
+    cover.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+    cover.style.transform = "translateY(-360px)";
+    cover.style.opacity = "0";
+    imposterNextBtn.hidden = false;
+    setTimeout(() => { cover.hidden = true; }, 300);
+  }
+
+  function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    cover.classList.remove("dragging");
+
+    if (Math.abs(dy) > threshold || !moved) {
+      revealCard();
+      return;
+    }
+
+    cover.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+    cover.style.transform = "";
+    cover.style.opacity = "";
+    setTimeout(() => { cover.style.transition = ""; }, 300);
+  }
+
+  cover.addEventListener("mousedown", onDown);
+  cover.addEventListener("touchstart", onDown, { passive: true });
+  window.addEventListener("mousemove", onMove);
+  window.addEventListener("touchmove", onMove, { passive: false });
+  window.addEventListener("mouseup", onUp);
+  window.addEventListener("touchend", onUp);
+})();
 
 imposterNextBtn.addEventListener("click", () => {
   imposterGame.currentIndex++;
@@ -2686,6 +2840,421 @@ function revealImposter() {
 imposterPlayAgainBtn.addEventListener("click", () => {
   imposterHideAllPanes();
   imposterSetupPane.hidden = false;
+});
+
+// ============================================
+// HIGHER OR LOWER GAME
+// ============================================
+const higherlowerPlayBtn = document.getElementById("higherlower-play-btn");
+const hlGameSection = document.getElementById("higherlower-game-section");
+const hlSetupPane = document.getElementById("hl-setup-pane");
+const hlPlayPane = document.getElementById("hl-play-pane");
+const hlGameoverPane = document.getElementById("hl-gameover-pane");
+const hlCategoryToggle = document.getElementById("hl-category-toggle");
+const hlStartBtn = document.getElementById("hl-start-btn");
+const hlScoreEl = document.getElementById("hl-score");
+const hlCurrentCard = document.getElementById("hl-current-card");
+const hlNextCard = document.getElementById("hl-next-card");
+const hlHigherBtn = document.getElementById("hl-higher-btn");
+const hlLowerBtn = document.getElementById("hl-lower-btn");
+const hlGameoverInner = document.getElementById("hl-gameover-inner");
+const hlPlayAgainBtn = document.getElementById("hl-play-again-btn");
+
+const hlGame = {
+  category: "vote_average",
+  pool: [],
+  poolIndex: 0,
+  current: null,
+  next: null,
+  streak: 0,
+  best: parseInt(localStorage.getItem("jps_hl_best") || "0", 10)
+};
+
+function hlHideAllPanes() {
+  hlSetupPane.hidden = true;
+  hlPlayPane.hidden = true;
+  hlGameoverPane.hidden = true;
+}
+
+function hlResetToSetup() {
+  hlGameSection.hidden = true;
+  hlHideAllPanes();
+  hlSetupPane.hidden = false;
+}
+
+higherlowerPlayBtn.addEventListener("click", () => {
+  hlGameSection.hidden = false;
+  hlHideAllPanes();
+  hlSetupPane.hidden = false;
+  hlGameSection.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+hlCategoryToggle.querySelectorAll(".time-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    hlCategoryToggle.querySelectorAll(".time-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    hlGame.category = btn.dataset.category;
+  });
+});
+
+document.getElementById("hl-cancel-setup").addEventListener("click", hlResetToSetup);
+document.getElementById("hl-cancel-play").addEventListener("click", hlResetToSetup);
+
+function hlStatValue(m, category) {
+  if (category === "vote_average") return m.vote_average || 0;
+  if (category === "popularity") return m.popularity || 0;
+  if (category === "year") return parseInt((m.release_date || "0").slice(0, 4), 10) || 0;
+  return 0;
+}
+function hlStatDisplay(m, category) {
+  if (category === "vote_average") return (m.vote_average || 0).toFixed(1) + " / 10";
+  if (category === "popularity") return Math.round(m.popularity || 0).toLocaleString();
+  if (category === "year") return (m.release_date || "").slice(0, 4) || "—";
+  return "—";
+}
+function hlStatLabelKey(category) {
+  return { vote_average: "hl_cat_rating", popularity: "hl_cat_popularity", year: "hl_cat_year" }[category];
+}
+
+function hlRenderCard(el, movie, category, hideStat) {
+  el.innerHTML = `
+    <img src="${IMG_BASE_SM}${movie.poster_path}" alt="">
+    <h3>${movie.title}</h3>
+    <div class="hl-stat-label">${tt(hlStatLabelKey(category))}</div>
+    <div class="hl-stat-value ${hideStat ? "mystery" : ""}">${hideStat ? "?" : hlStatDisplay(movie, category)}</div>
+  `;
+}
+
+async function fetchHLPool() {
+  const pages = await Promise.all(
+    [1, 2, 3, 4].map((page) =>
+      fetch(`${TMDB_BASE}/discover/movie?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&sort_by=popularity.desc&vote_count.gte=200&page=${page}`)
+        .then((r) => (r.ok ? r.json() : { results: [] }))
+        .catch(() => ({ results: [] }))
+    )
+  );
+  const combined = pages.flatMap((d) => d.results || []).filter((m) => m.poster_path && m.title && m.vote_average);
+  for (let i = combined.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [combined[i], combined[j]] = [combined[j], combined[i]];
+  }
+  return combined;
+}
+
+function updateHLScore() {
+  hlScoreEl.textContent = `${tt("hl_streak")}: ${hlGame.streak}`;
+}
+
+function renderHLRound() {
+  hlRenderCard(hlCurrentCard, hlGame.current, hlGame.category, false);
+  hlRenderCard(hlNextCard, hlGame.next, hlGame.category, true);
+  hlNextCard.classList.remove("correct", "wrong");
+  hlHigherBtn.disabled = false;
+  hlLowerBtn.disabled = false;
+}
+
+async function startHLGame() {
+  hlStartBtn.disabled = true;
+  toast("fetch");
+  hlGame.pool = await fetchHLPool();
+  hlStartBtn.disabled = false;
+  if (hlGame.pool.length < 3) {
+    toast("fetch", tt("load_failed_body"));
+    return;
+  }
+  hlGame.poolIndex = 0;
+  hlGame.streak = 0;
+  hlGame.current = hlGame.pool[hlGame.poolIndex++];
+  hlGame.next = hlGame.pool[hlGame.poolIndex++];
+  hlHideAllPanes();
+  hlPlayPane.hidden = false;
+  updateHLScore();
+  renderHLRound();
+}
+hlStartBtn.addEventListener("click", startHLGame);
+
+function handleHLGuess(direction) {
+  hlHigherBtn.disabled = true;
+  hlLowerBtn.disabled = true;
+
+  const curVal = hlStatValue(hlGame.current, hlGame.category);
+  const nextVal = hlStatValue(hlGame.next, hlGame.category);
+  const actual = nextVal === curVal ? "tie" : nextVal > curVal ? "higher" : "lower";
+  const correct = actual === "tie" || actual === direction;
+
+  hlRenderCard(hlNextCard, hlGame.next, hlGame.category, false);
+  hlNextCard.classList.add(correct ? "correct" : "wrong");
+
+  setTimeout(() => {
+    if (correct) {
+      hlGame.streak++;
+      updateHLScore();
+      hlGame.current = hlGame.next;
+      if (hlGame.poolIndex >= hlGame.pool.length) hlGame.poolIndex = 0;
+      hlGame.next = hlGame.pool[hlGame.poolIndex++];
+      renderHLRound();
+    } else {
+      if (hlGame.streak > hlGame.best) {
+        hlGame.best = hlGame.streak;
+        localStorage.setItem("jps_hl_best", String(hlGame.best));
+      }
+      showHLGameOver();
+    }
+  }, 900);
+}
+hlHigherBtn.addEventListener("click", () => handleHLGuess("higher"));
+hlLowerBtn.addEventListener("click", () => handleHLGuess("lower"));
+
+function showHLGameOver() {
+  hlHideAllPanes();
+  hlGameoverPane.hidden = false;
+  hlGameoverInner.innerHTML = `
+    <p class="group-match-eyebrow">🎬 ${tt("hl_gameover")}</p>
+    <div class="hl-final-score">
+      <div class="hl-final-streak">${hlGame.streak}</div>
+      <div class="hl-final-label">${tt("hl_streak")}</div>
+      <div class="hl-final-best">${tt("hl_best")}: ${hlGame.best}</div>
+    </div>
+  `;
+}
+
+hlPlayAgainBtn.addEventListener("click", () => {
+  hlHideAllPanes();
+  hlSetupPane.hidden = false;
+});
+
+// ============================================
+// TRIVIA SHOWDOWN
+// ============================================
+const TRIVIA_QUESTIONS_BY_LANG = {
+  en: [
+    { q: "In Friends, what fake name does Joey use with women to sound impressive?", options: ["Ken Adams", "Chandler Muriel Bing", "Bruce Willis", "Ross Geller"], correct: 0 },
+    { q: "In Breaking Bad, what is Walter White's cover identity as a meth cook?", options: ["Heisenberg", "Scarface", "The Cook", "El Jefe"], correct: 0 },
+    { q: "What is the name of the coffee shop in Friends?", options: ["Central Perk", "The Grind", "Java Joe's", "Perk Ave"], correct: 0 },
+    { q: "In The Office, what is the name of Dwight's beet farm?", options: ["Schrute Farms", "Beet Haven", "Dunder Acres", "Mifflin Farms"], correct: 0 },
+    { q: "Which house does Harry Potter get sorted into?", options: ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"], correct: 0 },
+    { q: "In Game of Thrones, what is the name of House Stark's home?", options: ["Winterfell", "Casterly Rock", "The Eyrie", "Dragonstone"], correct: 0 },
+    { q: "What object does Rose throw into the ocean at the end of Titanic?", options: ["The Heart of the Ocean necklace", "Jack's sketchbook", "Her engagement ring", "A photograph"], correct: 0 },
+    { q: "In The Matrix, which pill does Neo take to learn the truth?", options: ["The red pill", "The blue pill", "The green pill", "Neither pill"], correct: 0 },
+    { q: "What is the name of the villain in The Lion King?", options: ["Scar", "Mufasa", "Zira", "Shenzi"], correct: 0 },
+    { q: "In Stranger Things, what is the name of the alternate dimension?", options: ["The Upside Down", "The Void", "The Other Side", "Hawkins Lab"], correct: 0 },
+    { q: "Who directed Pulp Fiction?", options: ["Quentin Tarantino", "Martin Scorsese", "David Fincher", "Christopher Nolan"], correct: 0 },
+    { q: "In Squid Game, what is the childhood game played first?", options: ["Red Light, Green Light", "Tug of War", "Marbles", "Dalgona Candy"], correct: 0 },
+    { q: "What is Tony Stark's superhero name?", options: ["Iron Man", "War Machine", "Captain America", "Star-Lord"], correct: 0 },
+    { q: "In The Godfather, what does Michael Corleone say is 'an offer he can't refuse'?", options: ["A threat disguised as a deal", "A wedding invitation", "A business proposal", "A peace treaty"], correct: 0 },
+    { q: "Which actor played the Joker in The Dark Knight (2008)?", options: ["Heath Ledger", "Joaquin Phoenix", "Jared Leto", "Jack Nicholson"], correct: 0 },
+    { q: "In Friends, who was 'on a break' when Ross slept with someone else?", options: ["Ross and Rachel", "Monica and Chandler", "Joey and Rachel", "Phoebe and Mike"], correct: 0 },
+    { q: "What is the name of the ship in Star Wars piloted by Han Solo?", options: ["Millennium Falcon", "Star Destroyer", "X-Wing", "The Executor"], correct: 0 },
+    { q: "In Money Heist (La Casa de Papel), what city does the crew rob a mint in first?", options: ["Madrid", "Barcelona", "Lisbon", "Seville"], correct: 0 },
+    { q: "Who played the lead role of Neo in The Matrix?", options: ["Keanu Reeves", "Brad Pitt", "Tom Cruise", "Will Smith"], correct: 0 },
+    { q: "In Breaking Bad, what is the name of Walter White's brother-in-law, a DEA agent?", options: ["Hank Schrader", "Gus Fring", "Saul Goodman", "Mike Ehrmantraut"], correct: 0 },
+    { q: "What does the acronym in the title WALL-E stand for?", options: ["Waste Allocation Load Lifter Earth-class", "World Alliance Land Lifter Explorer", "Weather And Land Locator", "Waste Assistant Lifting Engine"], correct: 0 },
+    { q: "In Parasite (2019), what does the Kim family do to infiltrate the Park household?", options: ["Pose as unrelated skilled workers", "Rob the house", "Work as security guards", "Become tenants"], correct: 0 },
+    { q: "Which TV show features the fictional restaurant 'The Bear' in Chicago?", options: ["The Bear", "Chef's Table", "Kitchen Nightmares", "The Menu"], correct: 0 },
+    { q: "In Inception, what object does Cobb use to check if he's dreaming?", options: ["A spinning top", "A pocket watch", "A coin", "A photograph"], correct: 0 }
+  ],
+  sq: [
+    { q: "Në Friends, çfarë emri të rremë përdor Joey me gratë për të tingëlluar interesant?", options: ["Ken Adams", "Chandler Muriel Bing", "Bruce Willis", "Ross Geller"], correct: 0 },
+    { q: "Në Breaking Bad, si quhet identiteti i fshehur i Walter White si prodhues droge?", options: ["Heisenberg", "Scarface", "The Cook", "El Jefe"], correct: 0 },
+    { q: "Si quhet kafeneja në Friends?", options: ["Central Perk", "The Grind", "Java Joe's", "Perk Ave"], correct: 0 },
+    { q: "Në The Office, si quhet ferma e panxharit të Dwight-it?", options: ["Schrute Farms", "Beet Haven", "Dunder Acres", "Mifflin Farms"], correct: 0 },
+    { q: "Në cilën shtëpi futet Harry Potter?", options: ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"], correct: 0 },
+    { q: "Në Game of Thrones, si quhet shtëpia e House Stark?", options: ["Winterfell", "Casterly Rock", "The Eyrie", "Dragonstone"], correct: 0 },
+    { q: "Çfarë hedh Rose në oqean në fund të Titanic?", options: ["Gjerdanin 'Heart of the Ocean'", "Fletoren e skicave të Jack-ut", "Unazën e fejesës", "Një fotografi"], correct: 0 },
+    { q: "Në The Matrix, cilën pilulë merr Neo për të mësuar të vërtetën?", options: ["Pilulën e kuqe", "Pilulën blu", "Pilulën jeshile", "Asnjërën"], correct: 0 },
+    { q: "Si quhet i keqi në The Lion King?", options: ["Scar", "Mufasa", "Zira", "Shenzi"], correct: 0 },
+    { q: "Në Stranger Things, si quhet dimensioni alternativ?", options: ["The Upside Down", "The Void", "The Other Side", "Hawkins Lab"], correct: 0 },
+    { q: "Kush e regjisoi Pulp Fiction?", options: ["Quentin Tarantino", "Martin Scorsese", "David Fincher", "Christopher Nolan"], correct: 0 },
+    { q: "Në Squid Game, cili lojë fëmijësh luhet e para?", options: ["Drita e Kuqe, Drita e Gjelbër", "Litar Tërheqës", "Bilardo Fëmijësh", "Ëmbëlsira Dalgona"], correct: 0 },
+    { q: "Si quhet superheroi i Tony Stark-ut?", options: ["Iron Man", "War Machine", "Captain America", "Star-Lord"], correct: 0 },
+    { q: "Në The Godfather, çfarë thotë Michael Corleone se është 'një ofertë që s'mund të refuzohet'?", options: ["Një kërcënim i maskuar si marrëveshje", "Ftesë dasme", "Propozim biznesi", "Marrëveshje paqeje"], correct: 0 },
+    { q: "Cili aktor luajti Joker-in në The Dark Knight (2008)?", options: ["Heath Ledger", "Joaquin Phoenix", "Jared Leto", "Jack Nicholson"], correct: 0 },
+    { q: "Në Friends, kush ishte 'në pushim' kur Ross fjeti me dikë tjetër?", options: ["Ross dhe Rachel", "Monica dhe Chandler", "Joey dhe Rachel", "Phoebe dhe Mike"], correct: 0 },
+    { q: "Si quhet anija në Star Wars që pilotohet nga Han Solo?", options: ["Millennium Falcon", "Star Destroyer", "X-Wing", "The Executor"], correct: 0 },
+    { q: "Në La Casa de Papel, në cilin qytet ekipi grabit monedhat e para?", options: ["Madrid", "Barcelona", "Lisbonë", "Seville"], correct: 0 },
+    { q: "Kush luajti rolin kryesor të Neo-s në The Matrix?", options: ["Keanu Reeves", "Brad Pitt", "Tom Cruise", "Will Smith"], correct: 0 },
+    { q: "Në Breaking Bad, si quhet kunati i Walter White-it, agjent i DEA-s?", options: ["Hank Schrader", "Gus Fring", "Saul Goodman", "Mike Ehrmantraut"], correct: 0 },
+    { q: "Çfarë përfaqëson emri WALL-E?", options: ["Waste Allocation Load Lifter Earth-class", "World Alliance Land Lifter Explorer", "Weather And Land Locator", "Waste Assistant Lifting Engine"], correct: 0 },
+    { q: "Në Parasite (2019), çfarë bën familja Kim për të depërtuar te familja Park?", options: ["Shtiret si punonjës të kualifikuar të palidhur mes tyre", "Grabisin shtëpinë", "Punojnë si roje sigurie", "Bëhen qiramarrës"], correct: 0 },
+    { q: "Cili serial ka restorantin fiktiv 'The Bear' në Çikago?", options: ["The Bear", "Chef's Table", "Kitchen Nightmares", "The Menu"], correct: 0 },
+    { q: "Në Inception, çfarë objekti përdor Cobb për të kontrolluar nëse është duke ëndërruar?", options: ["Një majë rrotulluese", "Një orë xhepi", "Një monedhë", "Një fotografi"], correct: 0 }
+  ]
+};
+const TRIVIA_QUESTIONS = TRIVIA_QUESTIONS_BY_LANG[LANG] || TRIVIA_QUESTIONS_BY_LANG.en;
+
+const triviaPlayBtn = document.getElementById("trivia-play-btn");
+const triviaGameSection = document.getElementById("trivia-game-section");
+const triviaSetupPane = document.getElementById("trivia-setup-pane");
+const triviaPassPane = document.getElementById("trivia-pass-pane");
+const triviaQuizPane = document.getElementById("trivia-quiz-pane");
+const triviaRevealPane = document.getElementById("trivia-reveal-pane");
+const triviaStartBtn = document.getElementById("trivia-start-btn");
+const triviaPassName = document.getElementById("trivia-pass-name");
+const triviaReadyBtn = document.getElementById("trivia-ready-btn");
+const triviaQuizPlayer = document.getElementById("trivia-quiz-player");
+const triviaQuizProgress = document.getElementById("trivia-quiz-progress");
+const triviaQuestionText = document.getElementById("trivia-question-text");
+const triviaOptionsEl = document.getElementById("trivia-options");
+const triviaRevealInner = document.getElementById("trivia-reveal-inner");
+const triviaPlayAgainBtn = document.getElementById("trivia-play-again-btn");
+
+const triviaGame = {
+  sessionPlayers: [],
+  playerIndex: 0,
+  questionIndex: 0,
+  questions: [],
+  scores: {} // { playerName: correctCount }
+};
+
+function triviaHideAllPanes() {
+  triviaSetupPane.hidden = true;
+  triviaPassPane.hidden = true;
+  triviaQuizPane.hidden = true;
+  triviaRevealPane.hidden = true;
+}
+
+function triviaResetToSetup() {
+  triviaGameSection.hidden = true;
+  triviaHideAllPanes();
+  triviaSetupPane.hidden = false;
+}
+
+triviaPlayBtn.addEventListener("click", () => {
+  triviaGameSection.hidden = false;
+  triviaHideAllPanes();
+  triviaSetupPane.hidden = false;
+  triviaGameSection.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+document.getElementById("trivia-cancel-setup").addEventListener("click", triviaResetToSetup);
+document.getElementById("trivia-cancel-pass").addEventListener("click", triviaResetToSetup);
+document.getElementById("trivia-cancel-quiz").addEventListener("click", triviaResetToSetup);
+
+function pickRandomQuestions(count) {
+  const shuffled = TRIVIA_QUESTIONS.slice();
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  // shuffle each question's options too, tracking the new correct index
+  return shuffled.slice(0, count).map((q) => {
+    const optionOrder = q.options.map((opt, i) => ({ opt, isCorrect: i === q.correct }));
+    for (let i = optionOrder.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [optionOrder[i], optionOrder[j]] = [optionOrder[j], optionOrder[i]];
+    }
+    return {
+      q: q.q,
+      options: optionOrder.map((o) => o.opt),
+      correct: optionOrder.findIndex((o) => o.isCorrect)
+    };
+  });
+}
+
+triviaStartBtn.addEventListener("click", () => {
+  triviaGame.sessionPlayers = players.length ? players.slice() : ["You"];
+  triviaGame.playerIndex = 0;
+  triviaGame.scores = {};
+  triviaGame.sessionPlayers.forEach((p) => { triviaGame.scores[p] = 0; });
+  showTriviaPassScreen();
+});
+
+function showTriviaPassScreen() {
+  triviaHideAllPanes();
+  triviaPassPane.hidden = false;
+  triviaPassName.textContent = triviaGame.sessionPlayers[triviaGame.playerIndex];
+}
+
+triviaReadyBtn.addEventListener("click", () => {
+  triviaGame.questionIndex = 0;
+  triviaGame.questions = pickRandomQuestions(5);
+  triviaHideAllPanes();
+  triviaQuizPane.hidden = false;
+  triviaQuizPlayer.textContent = triviaGame.sessionPlayers[triviaGame.playerIndex];
+  renderTriviaQuestion();
+});
+
+function renderTriviaQuestion() {
+  const q = triviaGame.questions[triviaGame.questionIndex];
+  triviaQuizProgress.textContent = `${triviaGame.questionIndex + 1} / ${triviaGame.questions.length}`;
+  triviaQuestionText.textContent = q.q;
+  triviaOptionsEl.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "trivia-option";
+    btn.textContent = opt;
+    btn.addEventListener("click", () => handleTriviaAnswer(i));
+    triviaOptionsEl.appendChild(btn);
+  });
+}
+
+function handleTriviaAnswer(selectedIndex) {
+  const q = triviaGame.questions[triviaGame.questionIndex];
+  const buttons = triviaOptionsEl.querySelectorAll(".trivia-option");
+  buttons.forEach((b) => { b.disabled = true; });
+
+  const correct = selectedIndex === q.correct;
+  buttons[q.correct].classList.add("correct");
+  if (!correct) buttons[selectedIndex].classList.add("wrong");
+
+  if (correct) {
+    const player = triviaGame.sessionPlayers[triviaGame.playerIndex];
+    triviaGame.scores[player]++;
+  }
+  if (navigator.vibrate) navigator.vibrate(correct ? 30 : [60, 40, 60]);
+
+  setTimeout(() => {
+    triviaGame.questionIndex++;
+    if (triviaGame.questionIndex >= triviaGame.questions.length) {
+      triviaGame.playerIndex++;
+      if (triviaGame.playerIndex >= triviaGame.sessionPlayers.length) {
+        revealTriviaResults();
+      } else {
+        showTriviaPassScreen();
+      }
+    } else {
+      renderTriviaQuestion();
+    }
+  }, 1100);
+}
+
+function revealTriviaResults() {
+  triviaHideAllPanes();
+  triviaRevealPane.hidden = false;
+
+  const ranked = triviaGame.sessionPlayers
+    .map((p) => ({ name: p, score: triviaGame.scores[p] }))
+    .sort((a, b) => b.score - a.score);
+
+  const topScore = ranked[0].score;
+  const tiedWinners = ranked.filter((r) => r.score === topScore);
+  const winner = tiedWinners.length > 1
+    ? tiedWinners[Math.floor(Math.random() * tiedWinners.length)]
+    : tiedWinners[0];
+  const wasTie = tiedWinners.length > 1;
+
+  const rows = ranked.map((r, i) => `
+    <div class="trivia-leaderboard-row ${r.name === winner.name ? "winner" : ""}">
+      <span class="trivia-leaderboard-rank">${i === 0 ? "🏆" : i + 1}</span>
+      <span class="trivia-leaderboard-name">${r.name}</span>
+      <span class="trivia-leaderboard-score">${r.score} ${tt("trivia_score_of")}</span>
+    </div>
+  `).join("");
+
+  triviaRevealInner.innerHTML = `
+    <p class="group-match-eyebrow">${tt("trivia_winner_eyebrow")}</p>
+    <div class="trivia-leaderboard">${rows}</div>
+    <p class="group-match-tally">🎬 ${winner.name} ${wasTie ? `— ${tt("trivia_tie_note")}` : ""}</p>
+  `;
+
+  if (triviaGame.sessionPlayers.length > 1) {
+    launchConfetti(document.getElementById("trivia-confetti"));
+  }
+}
+
+triviaPlayAgainBtn.addEventListener("click", () => {
+  triviaHideAllPanes();
+  triviaSetupPane.hidden = false;
 });
 
 // ============================================
