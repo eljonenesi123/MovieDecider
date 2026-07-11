@@ -2,8 +2,8 @@ const CACHE_NAME = "jps-cache-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./style.css",
-  "./script.js",
+  "./style.css?v=3",
+  "./script.js?v=3",
   "./manifest.json",
   "./images/logo.png"
 ];
