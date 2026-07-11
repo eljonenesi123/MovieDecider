@@ -2110,6 +2110,45 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
 }
 
+.trivia-question-media {
+  position: relative;
+  width: 120px;
+  aspect-ratio: 2 / 3;
+  margin: 0 auto 1.2rem;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.trivia-media-skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, var(--surface) 30%, var(--espresso) 50%, var(--surface) 70%);
+  background-size: 200% 100%;
+  animation: trivia-media-shimmer 1.3s ease-in-out infinite;
+}
+
+@keyframes trivia-media-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.trivia-question-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.trivia-solo-hint {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--cream-dim);
+  margin-top: 0.6rem;
+}
+
 .trivia-question-text {
   font-family: var(--display);
   font-size: clamp(1.1rem, 4.5vw, 1.5rem);
@@ -2994,146 +3033,4 @@ button:focus-visible, a:focus-visible,
 .trending-card .t-hover strong {
   font-family: var(--display);
   font-size: 0.95rem;
-}
-/* ---------- GAME CORNER ---------- */
-
-.games-section { padding: 5rem 8vw; }
-
-.game-holo {
-  background: var(--espresso-2);
-  border-radius: 18px;
-  padding: 1.5rem;
-  max-width: 760px;
-}
-
-.holo-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-bottom: 1.4rem;
-}
-.holo-header h3 {
-  font-family: var(--display);
-  font-size: 1.5rem;
-  color: var(--gold);
-  text-transform: uppercase;
-}
-.holo-scores {
-  display: flex;
-  gap: 1.2rem;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--cream-dim);
-}
-.holo-scores strong { color: var(--coral); font-size: 1rem; margin-left: 0.3rem; }
-
-.holo-intro p {
-  color: var(--cream-dim);
-  line-height: 1.5;
-  margin-bottom: 1.4rem;
-}
-.holo-intro strong { color: var(--gold); }
-
-.holo-start {
-  font-family: var(--display);
-  font-size: 1.2rem;
-  letter-spacing: 0.05em;
-  background: var(--gold);
-  color: var(--espresso);
-  border: none;
-  padding: 0.9rem 2.2rem;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: transform 0.15s ease;
-}
-.holo-start:hover { transform: scale(1.05); }
-
-.holo-stage {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.holo-card {
-  background: var(--espresso);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 2px solid var(--surface);
-  transition: border-color 0.3s ease;
-}
-.holo-card.correct { border-color: #6BBF59; }
-.holo-card.wrong { border-color: var(--coral); }
-
-.holo-card img {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  display: block;
-}
-.holo-card-info { padding: 0.7rem 0.8rem 0.9rem; text-align: center; }
-.holo-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--cream);
-  line-height: 1.2;
-  min-height: 2.1em;
-  margin-bottom: 0.4rem;
-}
-.holo-rating {
-  font-family: var(--display);
-  font-size: 1.6rem;
-  color: var(--gold);
-}
-.holo-rating.mystery-mark { color: var(--coral); }
-
-.holo-vs {
-  font-family: var(--display);
-  font-size: 1.6rem;
-  color: var(--coral);
-}
-
-.holo-buttons {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
-.holo-btn {
-  flex: 1;
-  font-family: var(--display);
-  font-size: 1.15rem;
-  letter-spacing: 0.05em;
-  border: none;
-  border-radius: 12px;
-  padding: 1.1rem 0.5rem;
-  cursor: pointer;
-  transition: transform 0.12s ease;
-  min-height: 56px;
-}
-.holo-btn:active { transform: scale(0.96); }
-.holo-btn.higher { background: var(--gold); color: var(--espresso); }
-.holo-btn.lower { background: var(--coral); color: var(--espresso); }
-.holo-btn:disabled { opacity: 0.5; }
-
-.holo-gameover { text-align: center; padding: 1.5rem 0; }
-.holo-go-title {
-  font-family: var(--display);
-  font-size: clamp(2rem, 8vw, 3rem);
-  color: var(--coral);
-  margin-bottom: 0.6rem;
-}
-.holo-go-line {
-  font-family: var(--mono);
-  font-size: 0.9rem;
-  color: var(--cream-dim);
-  margin-bottom: 1.5rem;
-}
-
-@media (max-width: 600px) {
-  .games-section { padding-left: 6vw; padding-right: 6vw; }
-  .holo-vs { font-size: 1.1rem; }
-  .holo-rating { font-size: 1.3rem; }
 }

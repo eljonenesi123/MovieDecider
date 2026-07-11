@@ -146,7 +146,9 @@ const STATIC_I18N = {
   trivia_setup_eyebrow: { en: "GAME SETUP", sq: "PËRGATITJA E LOJËS", de: "SPIELEINRICHTUNG" },
   trivia_setup_title: { en: "TRIVIA SHOWDOWN", sq: "DUEL NJOHURISH", de: "TRIVIA-DUELL" },
   trivia_setup_sub: { en: "Everyone answers the same 5 questions about famous movies and TV shows. Most correct answers wins the remote — ties are broken by fate.", sq: "Të gjithë përgjigjen të njëjtave 5 pyetje rreth filmave dhe serialeve të njohura. Përgjigjet më të sakta fiton telekomandën — barazimet i zgjidh fati.", de: "Alle beantworten dieselben 5 Fragen zu bekannten Filmen und Serien. Die meisten richtigen Antworten gewinnen die Fernbedienung — bei Gleichstand entscheidet das Schicksal." },
-  trivia_pass_sub: { en: "Five questions coming up. No googling.", sq: "Pesë pyetje po vijnë. Pa googlim.", de: "Fünf Fragen kommen. Kein Googeln." }
+  trivia_pass_sub: { en: "Five questions coming up. No googling.", sq: "Pesë pyetje po vijnë. Pa googlim.", de: "Fünf Fragen kommen. Kein Googeln." },
+  trivia_who_playing: { en: "Who's playing?", sq: "Kush po luan?", de: "Wer spielt mit?" },
+  trivia_solo_hint: { en: "Flying solo? Just hit start — you'll quiz yourself.", sq: "Je vetëm? Thjesht fillo — do testosh veten.", de: "Allein unterwegs? Einfach starten — du testest dich selbst." }
 };
 
 function applyStaticTranslations() {
@@ -3028,59 +3030,60 @@ hlPlayAgainBtn.addEventListener("click", () => {
 // ============================================
 const TRIVIA_QUESTIONS_BY_LANG = {
   en: [
-    { q: "In Friends, what fake name does Joey use with women to sound impressive?", options: ["Ken Adams", "Chandler Muriel Bing", "Bruce Willis", "Ross Geller"], correct: 0 },
-    { q: "In Breaking Bad, what is Walter White's cover identity as a meth cook?", options: ["Heisenberg", "Scarface", "The Cook", "El Jefe"], correct: 0 },
-    { q: "What is the name of the coffee shop in Friends?", options: ["Central Perk", "The Grind", "Java Joe's", "Perk Ave"], correct: 0 },
-    { q: "In The Office, what is the name of Dwight's beet farm?", options: ["Schrute Farms", "Beet Haven", "Dunder Acres", "Mifflin Farms"], correct: 0 },
-    { q: "Which house does Harry Potter get sorted into?", options: ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"], correct: 0 },
-    { q: "In Game of Thrones, what is the name of House Stark's home?", options: ["Winterfell", "Casterly Rock", "The Eyrie", "Dragonstone"], correct: 0 },
-    { q: "What object does Rose throw into the ocean at the end of Titanic?", options: ["The Heart of the Ocean necklace", "Jack's sketchbook", "Her engagement ring", "A photograph"], correct: 0 },
-    { q: "In The Matrix, which pill does Neo take to learn the truth?", options: ["The red pill", "The blue pill", "The green pill", "Neither pill"], correct: 0 },
-    { q: "What is the name of the villain in The Lion King?", options: ["Scar", "Mufasa", "Zira", "Shenzi"], correct: 0 },
-    { q: "In Stranger Things, what is the name of the alternate dimension?", options: ["The Upside Down", "The Void", "The Other Side", "Hawkins Lab"], correct: 0 },
-    { q: "Who directed Pulp Fiction?", options: ["Quentin Tarantino", "Martin Scorsese", "David Fincher", "Christopher Nolan"], correct: 0 },
-    { q: "In Squid Game, what is the childhood game played first?", options: ["Red Light, Green Light", "Tug of War", "Marbles", "Dalgona Candy"], correct: 0 },
-    { q: "What is Tony Stark's superhero name?", options: ["Iron Man", "War Machine", "Captain America", "Star-Lord"], correct: 0 },
-    { q: "In The Godfather, what does Michael Corleone say is 'an offer he can't refuse'?", options: ["A threat disguised as a deal", "A wedding invitation", "A business proposal", "A peace treaty"], correct: 0 },
-    { q: "Which actor played the Joker in The Dark Knight (2008)?", options: ["Heath Ledger", "Joaquin Phoenix", "Jared Leto", "Jack Nicholson"], correct: 0 },
-    { q: "In Friends, who was 'on a break' when Ross slept with someone else?", options: ["Ross and Rachel", "Monica and Chandler", "Joey and Rachel", "Phoebe and Mike"], correct: 0 },
-    { q: "What is the name of the ship in Star Wars piloted by Han Solo?", options: ["Millennium Falcon", "Star Destroyer", "X-Wing", "The Executor"], correct: 0 },
-    { q: "In Money Heist (La Casa de Papel), what city does the crew rob a mint in first?", options: ["Madrid", "Barcelona", "Lisbon", "Seville"], correct: 0 },
-    { q: "Who played the lead role of Neo in The Matrix?", options: ["Keanu Reeves", "Brad Pitt", "Tom Cruise", "Will Smith"], correct: 0 },
-    { q: "In Breaking Bad, what is the name of Walter White's brother-in-law, a DEA agent?", options: ["Hank Schrader", "Gus Fring", "Saul Goodman", "Mike Ehrmantraut"], correct: 0 },
-    { q: "What does the acronym in the title WALL-E stand for?", options: ["Waste Allocation Load Lifter Earth-class", "World Alliance Land Lifter Explorer", "Weather And Land Locator", "Waste Assistant Lifting Engine"], correct: 0 },
-    { q: "In Parasite (2019), what does the Kim family do to infiltrate the Park household?", options: ["Pose as unrelated skilled workers", "Rob the house", "Work as security guards", "Become tenants"], correct: 0 },
-    { q: "Which TV show features the fictional restaurant 'The Bear' in Chicago?", options: ["The Bear", "Chef's Table", "Kitchen Nightmares", "The Menu"], correct: 0 },
-    { q: "In Inception, what object does Cobb use to check if he's dreaming?", options: ["A spinning top", "A pocket watch", "A coin", "A photograph"], correct: 0 }
+    { q: "In Friends, what fake name does Joey use with women to sound impressive?", options: ["Ken Adams", "Chandler Muriel Bing", "Bruce Willis", "Ross Geller"], correct: 0, media: { type: "tv", title: "Friends" } },
+    { q: "In Breaking Bad, what is Walter White's cover identity as a meth cook?", options: ["Heisenberg", "Scarface", "The Cook", "El Jefe"], correct: 0, media: { type: "tv", title: "Breaking Bad" } },
+    { q: "What is the name of the coffee shop in Friends?", options: ["Central Perk", "The Grind", "Java Joe's", "Perk Ave"], correct: 0, media: { type: "tv", title: "Friends" } },
+    { q: "In The Office, what is the name of Dwight's beet farm?", options: ["Schrute Farms", "Beet Haven", "Dunder Acres", "Mifflin Farms"], correct: 0, media: { type: "tv", title: "The Office" } },
+    { q: "Which house does Harry Potter get sorted into?", options: ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"], correct: 0, media: { type: "movie", title: "Harry Potter and the Sorcerer's Stone" } },
+    { q: "In Game of Thrones, what is the name of House Stark's home?", options: ["Winterfell", "Casterly Rock", "The Eyrie", "Dragonstone"], correct: 0, media: { type: "tv", title: "Game of Thrones" } },
+    { q: "What object does Rose throw into the ocean at the end of Titanic?", options: ["The Heart of the Ocean necklace", "Jack's sketchbook", "Her engagement ring", "A photograph"], correct: 0, media: { type: "movie", title: "Titanic" } },
+    { q: "In The Matrix, which pill does Neo take to learn the truth?", options: ["The red pill", "The blue pill", "The green pill", "Neither pill"], correct: 0, media: { type: "movie", title: "The Matrix" } },
+    { q: "What is the name of the villain in The Lion King?", options: ["Scar", "Mufasa", "Zira", "Shenzi"], correct: 0, media: { type: "movie", title: "The Lion King" } },
+    { q: "In Stranger Things, what is the name of the alternate dimension?", options: ["The Upside Down", "The Void", "The Other Side", "Hawkins Lab"], correct: 0, media: { type: "tv", title: "Stranger Things" } },
+    { q: "Who directed Pulp Fiction?", options: ["Quentin Tarantino", "Martin Scorsese", "David Fincher", "Christopher Nolan"], correct: 0, media: { type: "movie", title: "Pulp Fiction" } },
+    { q: "In Squid Game, what is the childhood game played first?", options: ["Red Light, Green Light", "Tug of War", "Marbles", "Dalgona Candy"], correct: 0, media: { type: "tv", title: "Squid Game" } },
+    { q: "What is Tony Stark's superhero name?", options: ["Iron Man", "War Machine", "Captain America", "Star-Lord"], correct: 0, media: { type: "movie", title: "Iron Man" } },
+    { q: "In The Godfather, what does Michael Corleone say is 'an offer he can't refuse'?", options: ["A threat disguised as a deal", "A wedding invitation", "A business proposal", "A peace treaty"], correct: 0, media: { type: "movie", title: "The Godfather" } },
+    { q: "Which actor played the Joker in The Dark Knight (2008)?", options: ["Heath Ledger", "Joaquin Phoenix", "Jared Leto", "Jack Nicholson"], correct: 0, media: { type: "movie", title: "The Dark Knight" } },
+    { q: "In Friends, who was 'on a break' when Ross slept with someone else?", options: ["Ross and Rachel", "Monica and Chandler", "Joey and Rachel", "Phoebe and Mike"], correct: 0, media: { type: "tv", title: "Friends" } },
+    { q: "What is the name of the ship in Star Wars piloted by Han Solo?", options: ["Millennium Falcon", "Star Destroyer", "X-Wing", "The Executor"], correct: 0, media: { type: "movie", title: "Star Wars" } },
+    { q: "In Money Heist (La Casa de Papel), what city does the crew rob a mint in first?", options: ["Madrid", "Barcelona", "Lisbon", "Seville"], correct: 0, media: { type: "tv", title: "Money Heist" } },
+    { q: "Who played the lead role of Neo in The Matrix?", options: ["Keanu Reeves", "Brad Pitt", "Tom Cruise", "Will Smith"], correct: 0, media: { type: "movie", title: "The Matrix" } },
+    { q: "In Breaking Bad, what is the name of Walter White's brother-in-law, a DEA agent?", options: ["Hank Schrader", "Gus Fring", "Saul Goodman", "Mike Ehrmantraut"], correct: 0, media: { type: "tv", title: "Breaking Bad" } },
+    { q: "What does the acronym in the title WALL-E stand for?", options: ["Waste Allocation Load Lifter Earth-class", "World Alliance Land Lifter Explorer", "Weather And Land Locator", "Waste Assistant Lifting Engine"], correct: 0, media: { type: "movie", title: "WALL-E" } },
+    { q: "In Parasite (2019), what does the Kim family do to infiltrate the Park household?", options: ["Pose as unrelated skilled workers", "Rob the house", "Work as security guards", "Become tenants"], correct: 0, media: { type: "movie", title: "Parasite" } },
+    { q: "Which TV show features the fictional restaurant 'The Bear' in Chicago?", options: ["The Bear", "Chef's Table", "Kitchen Nightmares", "The Menu"], correct: 0, media: { type: "tv", title: "The Bear" } },
+    { q: "In Inception, what object does Cobb use to check if he's dreaming?", options: ["A spinning top", "A pocket watch", "A coin", "A photograph"], correct: 0, media: { type: "movie", title: "Inception" } }
   ],
   sq: [
-    { q: "Në Friends, çfarë emri të rremë përdor Joey me gratë për të tingëlluar interesant?", options: ["Ken Adams", "Chandler Muriel Bing", "Bruce Willis", "Ross Geller"], correct: 0 },
-    { q: "Në Breaking Bad, si quhet identiteti i fshehur i Walter White si prodhues droge?", options: ["Heisenberg", "Scarface", "The Cook", "El Jefe"], correct: 0 },
-    { q: "Si quhet kafeneja në Friends?", options: ["Central Perk", "The Grind", "Java Joe's", "Perk Ave"], correct: 0 },
-    { q: "Në The Office, si quhet ferma e panxharit të Dwight-it?", options: ["Schrute Farms", "Beet Haven", "Dunder Acres", "Mifflin Farms"], correct: 0 },
-    { q: "Në cilën shtëpi futet Harry Potter?", options: ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"], correct: 0 },
-    { q: "Në Game of Thrones, si quhet shtëpia e House Stark?", options: ["Winterfell", "Casterly Rock", "The Eyrie", "Dragonstone"], correct: 0 },
-    { q: "Çfarë hedh Rose në oqean në fund të Titanic?", options: ["Gjerdanin 'Heart of the Ocean'", "Fletoren e skicave të Jack-ut", "Unazën e fejesës", "Një fotografi"], correct: 0 },
-    { q: "Në The Matrix, cilën pilulë merr Neo për të mësuar të vërtetën?", options: ["Pilulën e kuqe", "Pilulën blu", "Pilulën jeshile", "Asnjërën"], correct: 0 },
-    { q: "Si quhet i keqi në The Lion King?", options: ["Scar", "Mufasa", "Zira", "Shenzi"], correct: 0 },
-    { q: "Në Stranger Things, si quhet dimensioni alternativ?", options: ["The Upside Down", "The Void", "The Other Side", "Hawkins Lab"], correct: 0 },
-    { q: "Kush e regjisoi Pulp Fiction?", options: ["Quentin Tarantino", "Martin Scorsese", "David Fincher", "Christopher Nolan"], correct: 0 },
-    { q: "Në Squid Game, cili lojë fëmijësh luhet e para?", options: ["Drita e Kuqe, Drita e Gjelbër", "Litar Tërheqës", "Bilardo Fëmijësh", "Ëmbëlsira Dalgona"], correct: 0 },
-    { q: "Si quhet superheroi i Tony Stark-ut?", options: ["Iron Man", "War Machine", "Captain America", "Star-Lord"], correct: 0 },
-    { q: "Në The Godfather, çfarë thotë Michael Corleone se është 'një ofertë që s'mund të refuzohet'?", options: ["Një kërcënim i maskuar si marrëveshje", "Ftesë dasme", "Propozim biznesi", "Marrëveshje paqeje"], correct: 0 },
-    { q: "Cili aktor luajti Joker-in në The Dark Knight (2008)?", options: ["Heath Ledger", "Joaquin Phoenix", "Jared Leto", "Jack Nicholson"], correct: 0 },
-    { q: "Në Friends, kush ishte 'në pushim' kur Ross fjeti me dikë tjetër?", options: ["Ross dhe Rachel", "Monica dhe Chandler", "Joey dhe Rachel", "Phoebe dhe Mike"], correct: 0 },
-    { q: "Si quhet anija në Star Wars që pilotohet nga Han Solo?", options: ["Millennium Falcon", "Star Destroyer", "X-Wing", "The Executor"], correct: 0 },
-    { q: "Në La Casa de Papel, në cilin qytet ekipi grabit monedhat e para?", options: ["Madrid", "Barcelona", "Lisbonë", "Seville"], correct: 0 },
-    { q: "Kush luajti rolin kryesor të Neo-s në The Matrix?", options: ["Keanu Reeves", "Brad Pitt", "Tom Cruise", "Will Smith"], correct: 0 },
-    { q: "Në Breaking Bad, si quhet kunati i Walter White-it, agjent i DEA-s?", options: ["Hank Schrader", "Gus Fring", "Saul Goodman", "Mike Ehrmantraut"], correct: 0 },
-    { q: "Çfarë përfaqëson emri WALL-E?", options: ["Waste Allocation Load Lifter Earth-class", "World Alliance Land Lifter Explorer", "Weather And Land Locator", "Waste Assistant Lifting Engine"], correct: 0 },
-    { q: "Në Parasite (2019), çfarë bën familja Kim për të depërtuar te familja Park?", options: ["Shtiret si punonjës të kualifikuar të palidhur mes tyre", "Grabisin shtëpinë", "Punojnë si roje sigurie", "Bëhen qiramarrës"], correct: 0 },
-    { q: "Cili serial ka restorantin fiktiv 'The Bear' në Çikago?", options: ["The Bear", "Chef's Table", "Kitchen Nightmares", "The Menu"], correct: 0 },
-    { q: "Në Inception, çfarë objekti përdor Cobb për të kontrolluar nëse është duke ëndërruar?", options: ["Një majë rrotulluese", "Një orë xhepi", "Një monedhë", "Një fotografi"], correct: 0 }
+    { q: "Në Friends, çfarë emri të rremë përdor Joey me gratë për të tingëlluar interesant?", options: ["Ken Adams", "Chandler Muriel Bing", "Bruce Willis", "Ross Geller"], correct: 0, media: { type: "tv", title: "Friends" } },
+    { q: "Në Breaking Bad, si quhet identiteti i fshehur i Walter White si prodhues droge?", options: ["Heisenberg", "Scarface", "The Cook", "El Jefe"], correct: 0, media: { type: "tv", title: "Breaking Bad" } },
+    { q: "Si quhet kafeneja në Friends?", options: ["Central Perk", "The Grind", "Java Joe's", "Perk Ave"], correct: 0, media: { type: "tv", title: "Friends" } },
+    { q: "Në The Office, si quhet ferma e panxharit të Dwight-it?", options: ["Schrute Farms", "Beet Haven", "Dunder Acres", "Mifflin Farms"], correct: 0, media: { type: "tv", title: "The Office" } },
+    { q: "Në cilën shtëpi futet Harry Potter?", options: ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"], correct: 0, media: { type: "movie", title: "Harry Potter and the Sorcerer's Stone" } },
+    { q: "Në Game of Thrones, si quhet shtëpia e House Stark?", options: ["Winterfell", "Casterly Rock", "The Eyrie", "Dragonstone"], correct: 0, media: { type: "tv", title: "Game of Thrones" } },
+    { q: "Çfarë hedh Rose në oqean në fund të Titanic?", options: ["Gjerdanin 'Heart of the Ocean'", "Fletoren e skicave të Jack-ut", "Unazën e fejesës", "Një fotografi"], correct: 0, media: { type: "movie", title: "Titanic" } },
+    { q: "Në The Matrix, cilën pilulë merr Neo për të mësuar të vërtetën?", options: ["Pilulën e kuqe", "Pilulën blu", "Pilulën jeshile", "Asnjërën"], correct: 0, media: { type: "movie", title: "The Matrix" } },
+    { q: "Si quhet i keqi në The Lion King?", options: ["Scar", "Mufasa", "Zira", "Shenzi"], correct: 0, media: { type: "movie", title: "The Lion King" } },
+    { q: "Në Stranger Things, si quhet dimensioni alternativ?", options: ["The Upside Down", "The Void", "The Other Side", "Hawkins Lab"], correct: 0, media: { type: "tv", title: "Stranger Things" } },
+    { q: "Kush e regjisoi Pulp Fiction?", options: ["Quentin Tarantino", "Martin Scorsese", "David Fincher", "Christopher Nolan"], correct: 0, media: { type: "movie", title: "Pulp Fiction" } },
+    { q: "Në Squid Game, cili lojë fëmijësh luhet e para?", options: ["Drita e Kuqe, Drita e Gjelbër", "Litar Tërheqës", "Bilardo Fëmijësh", "Ëmbëlsira Dalgona"], correct: 0, media: { type: "tv", title: "Squid Game" } },
+    { q: "Si quhet superheroi i Tony Stark-ut?", options: ["Iron Man", "War Machine", "Captain America", "Star-Lord"], correct: 0, media: { type: "movie", title: "Iron Man" } },
+    { q: "Në The Godfather, çfarë thotë Michael Corleone se është 'një ofertë që s'mund të refuzohet'?", options: ["Një kërcënim i maskuar si marrëveshje", "Ftesë dasme", "Propozim biznesi", "Marrëveshje paqeje"], correct: 0, media: { type: "movie", title: "The Godfather" } },
+    { q: "Cili aktor luajti Joker-in në The Dark Knight (2008)?", options: ["Heath Ledger", "Joaquin Phoenix", "Jared Leto", "Jack Nicholson"], correct: 0, media: { type: "movie", title: "The Dark Knight" } },
+    { q: "Në Friends, kush ishte 'në pushim' kur Ross fjeti me dikë tjetër?", options: ["Ross dhe Rachel", "Monica dhe Chandler", "Joey dhe Rachel", "Phoebe dhe Mike"], correct: 0, media: { type: "tv", title: "Friends" } },
+    { q: "Si quhet anija në Star Wars që pilotohet nga Han Solo?", options: ["Millennium Falcon", "Star Destroyer", "X-Wing", "The Executor"], correct: 0, media: { type: "movie", title: "Star Wars" } },
+    { q: "Në La Casa de Papel, në cilin qytet ekipi grabit monedhat e para?", options: ["Madrid", "Barcelona", "Lisbonë", "Seville"], correct: 0, media: { type: "tv", title: "Money Heist" } },
+    { q: "Kush luajti rolin kryesor të Neo-s në The Matrix?", options: ["Keanu Reeves", "Brad Pitt", "Tom Cruise", "Will Smith"], correct: 0, media: { type: "movie", title: "The Matrix" } },
+    { q: "Në Breaking Bad, si quhet kunati i Walter White-it, agjent i DEA-s?", options: ["Hank Schrader", "Gus Fring", "Saul Goodman", "Mike Ehrmantraut"], correct: 0, media: { type: "tv", title: "Breaking Bad" } },
+    { q: "Çfarë përfaqëson emri WALL-E?", options: ["Waste Allocation Load Lifter Earth-class", "World Alliance Land Lifter Explorer", "Weather And Land Locator", "Waste Assistant Lifting Engine"], correct: 0, media: { type: "movie", title: "WALL-E" } },
+    { q: "Në Parasite (2019), çfarë bën familja Kim për të depërtuar te familja Park?", options: ["Shtiret si punonjës të kualifikuar të palidhur mes tyre", "Grabisin shtëpinë", "Punojnë si roje sigurie", "Bëhen qiramarrës"], correct: 0, media: { type: "movie", title: "Parasite" } },
+    { q: "Cili serial ka restorantin fiktiv 'The Bear' në Çikago?", options: ["The Bear", "Chef's Table", "Kitchen Nightmares", "The Menu"], correct: 0, media: { type: "tv", title: "The Bear" } },
+    { q: "Në Inception, çfarë objekti përdor Cobb për të kontrolluar nëse është duke ëndërruar?", options: ["Një majë rrotulluese", "Një orë xhepi", "Një monedhë", "Një fotografi"], correct: 0, media: { type: "movie", title: "Inception" } }
   ]
 };
 const TRIVIA_QUESTIONS = TRIVIA_QUESTIONS_BY_LANG[LANG] || TRIVIA_QUESTIONS_BY_LANG.en;
+const triviaPosterCache = {};
 
 const triviaPlayBtn = document.getElementById("trivia-play-btn");
 const triviaGameSection = document.getElementById("trivia-game-section");
@@ -3097,8 +3100,14 @@ const triviaQuestionText = document.getElementById("trivia-question-text");
 const triviaOptionsEl = document.getElementById("trivia-options");
 const triviaRevealInner = document.getElementById("trivia-reveal-inner");
 const triviaPlayAgainBtn = document.getElementById("trivia-play-again-btn");
+const triviaPlayerInput = document.getElementById("trivia-player-input");
+const triviaPlayerChips = document.getElementById("trivia-player-chips");
+const triviaMediaEl = document.getElementById("trivia-question-media");
+const triviaMediaSkeleton = document.getElementById("trivia-media-skeleton");
+const triviaQuestionImg = document.getElementById("trivia-question-img");
 
 const triviaGame = {
+  players: [],
   sessionPlayers: [],
   playerIndex: 0,
   questionIndex: 0,
@@ -3120,6 +3129,9 @@ function triviaResetToSetup() {
 }
 
 triviaPlayBtn.addEventListener("click", () => {
+  // pre-fill from the "Who Picks Tonight" list if it has names, but keep it independently editable
+  triviaGame.players = players.length ? players.slice() : [];
+  renderTriviaPlayerChips();
   triviaGameSection.hidden = false;
   triviaHideAllPanes();
   triviaSetupPane.hidden = false;
@@ -3129,6 +3141,31 @@ triviaPlayBtn.addEventListener("click", () => {
 document.getElementById("trivia-cancel-setup").addEventListener("click", triviaResetToSetup);
 document.getElementById("trivia-cancel-pass").addEventListener("click", triviaResetToSetup);
 document.getElementById("trivia-cancel-quiz").addEventListener("click", triviaResetToSetup);
+
+// ---- own player list for this game ----
+function renderTriviaPlayerChips() {
+  triviaPlayerChips.innerHTML = "";
+  triviaGame.players.forEach((name, i) => {
+    const chip = document.createElement("button");
+    chip.className = "player-chip";
+    chip.innerHTML = `${name} <span>✕</span>`;
+    chip.title = "Remove";
+    chip.addEventListener("click", () => { triviaGame.players.splice(i, 1); renderTriviaPlayerChips(); });
+    triviaPlayerChips.appendChild(chip);
+  });
+  document.getElementById("trivia-solo-hint").hidden = triviaGame.players.length > 0;
+}
+
+function addTriviaPlayer() {
+  const name = triviaPlayerInput.value.trim();
+  if (!name) return;
+  if (triviaGame.players.includes(name)) { triviaPlayerInput.value = ""; return; }
+  triviaGame.players.push(name);
+  triviaPlayerInput.value = "";
+  renderTriviaPlayerChips();
+}
+document.getElementById("trivia-player-add").addEventListener("click", addTriviaPlayer);
+triviaPlayerInput.addEventListener("keydown", (e) => { if (e.key === "Enter") addTriviaPlayer(); });
 
 function pickRandomQuestions(count) {
   const shuffled = TRIVIA_QUESTIONS.slice();
@@ -3145,6 +3182,7 @@ function pickRandomQuestions(count) {
     }
     return {
       q: q.q,
+      media: q.media,
       options: optionOrder.map((o) => o.opt),
       correct: optionOrder.findIndex((o) => o.isCorrect)
     };
@@ -3152,7 +3190,7 @@ function pickRandomQuestions(count) {
 }
 
 triviaStartBtn.addEventListener("click", () => {
-  triviaGame.sessionPlayers = players.length ? players.slice() : ["You"];
+  triviaGame.sessionPlayers = triviaGame.players.length ? triviaGame.players.slice() : ["You"];
   triviaGame.playerIndex = 0;
   triviaGame.scores = {};
   triviaGame.sessionPlayers.forEach((p) => { triviaGame.scores[p] = 0; });
@@ -3174,6 +3212,25 @@ triviaReadyBtn.addEventListener("click", () => {
   renderTriviaQuestion();
 });
 
+// ---- poster lookup for the movie/show a question is about ----
+async function fetchTriviaPoster(media) {
+  if (!media) return null;
+  const cacheKey = `${media.type}:${media.title}`;
+  if (triviaPosterCache[cacheKey] !== undefined) return triviaPosterCache[cacheKey];
+  try {
+    const res = await fetch(
+      `${TMDB_BASE}/search/${media.type}?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(media.title)}`
+    );
+    const data = await res.json();
+    const posterPath = (data.results && data.results[0] && data.results[0].poster_path) || null;
+    triviaPosterCache[cacheKey] = posterPath;
+    return posterPath;
+  } catch (_) {
+    triviaPosterCache[cacheKey] = null;
+    return null;
+  }
+}
+
 function renderTriviaQuestion() {
   const q = triviaGame.questions[triviaGame.questionIndex];
   triviaQuizProgress.textContent = `${triviaGame.questionIndex + 1} / ${triviaGame.questions.length}`;
@@ -3186,6 +3243,25 @@ function renderTriviaQuestion() {
     btn.addEventListener("click", () => handleTriviaAnswer(i));
     triviaOptionsEl.appendChild(btn);
   });
+
+  // poster: show loading skeleton, swap in the image once fetched (guard against stale async response)
+  const thisQuestionIndex = triviaGame.questionIndex;
+  triviaQuestionImg.hidden = true;
+  triviaQuestionImg.src = "";
+  triviaMediaSkeleton.hidden = false;
+  triviaMediaEl.hidden = !q.media;
+  if (q.media) {
+    fetchTriviaPoster(q.media).then((posterPath) => {
+      if (triviaGame.questionIndex !== thisQuestionIndex) return; // moved on already
+      if (posterPath) {
+        triviaQuestionImg.src = `${IMG_BASE}${posterPath}`;
+        triviaQuestionImg.hidden = false;
+        triviaMediaSkeleton.hidden = true;
+      } else {
+        triviaMediaEl.hidden = true;
+      }
+    });
+  }
 }
 
 function handleTriviaAnswer(selectedIndex) {
@@ -3323,115 +3399,3 @@ if (!isStandalone && installBtn) {
 if (iosInstallClose) {
   iosInstallClose.addEventListener("click", () => { iosInstallBanner.hidden = true; });
 }
-
-// ============================================
-// GAME: HIGHER OR LOWER
-// ============================================
-let holoPool = [];
-let holoKnown = null;
-let holoMystery = null;
-let holoStreak = 0;
-let holoBest = parseInt(localStorage.getItem("jps_holo_best") || "0", 10);
-let holoBusy = false;
-
-document.getElementById("holo-best").textContent = holoBest;
-
-async function holoFetchPool() {
-  const pages = [1, 2, 3];
-  const results = await Promise.all(
-    pages.map((p) =>
-      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=${p}`)
-        .then((r) => (r.ok ? r.json() : { results: [] }))
-        .catch(() => ({ results: [] }))
-    )
-  );
-  holoPool = results
-    .flatMap((r) => r.results)
-    .filter((m) => m.poster_path && m.vote_average > 0 && (m.vote_count || 0) >= 200);
-}
-
-function holoRandomMovie(excludeId) {
-  const options = holoPool.filter((m) => m.id !== excludeId);
-  return options[Math.floor(Math.random() * options.length)];
-}
-
-function holoSetCard(prefix, movie, revealRating) {
-  document.getElementById(`holo-${prefix}-img`).src = `${IMG_BASE}${movie.poster_path}`;
-  document.getElementById(`holo-${prefix}-title`).textContent = movie.title;
-  const ratingEl = document.getElementById(`holo-${prefix}-rating`);
-  if (revealRating) {
-    ratingEl.textContent = `★ ${movie.vote_average.toFixed(1)}`;
-    ratingEl.classList.remove("mystery-mark");
-  } else {
-    ratingEl.textContent = "?";
-    ratingEl.classList.add("mystery-mark");
-  }
-}
-
-async function holoStart() {
-  document.getElementById("holo-intro").hidden = true;
-  document.getElementById("holo-gameover").hidden = true;
-  document.getElementById("holo-stage").hidden = false;
-  holoStreak = 0;
-  document.getElementById("holo-streak").textContent = "0";
-
-  if (holoPool.length === 0) {
-    toast("fetch", "Loading the film vault...");
-    await holoFetchPool();
-  }
-  holoKnown = holoRandomMovie();
-  holoMystery = holoRandomMovie(holoKnown.id);
-  holoSetCard("known", holoKnown, true);
-  holoSetCard("mystery", holoMystery, false);
-}
-
-function holoGuess(guessHigher) {
-  if (holoBusy) return;
-  holoBusy = true;
-
-  const knownCard = document.querySelector(".holo-card.known");
-  const mysteryCard = document.querySelector(".holo-card.mystery");
-
-  holoSetCard("mystery", holoMystery, true);
-
-  const actuallyHigher = holoMystery.vote_average >= holoKnown.vote_average;
-  const correct = guessHigher === actuallyHigher;
-
-  mysteryCard.classList.add(correct ? "correct" : "wrong");
-  if (navigator.vibrate) navigator.vibrate(correct ? 30 : [60, 40, 60]);
-
-  setTimeout(() => {
-    mysteryCard.classList.remove("correct", "wrong");
-    knownCard.classList.remove("correct", "wrong");
-
-    if (correct) {
-      holoStreak++;
-      document.getElementById("holo-streak").textContent = holoStreak;
-      if (holoStreak > holoBest) {
-        holoBest = holoStreak;
-        localStorage.setItem("jps_holo_best", String(holoBest));
-        document.getElementById("holo-best").textContent = holoBest;
-      }
-      holoKnown = holoMystery;
-      holoMystery = holoRandomMovie(holoKnown.id);
-      holoSetCard("known", holoKnown, true);
-      holoSetCard("mystery", holoMystery, false);
-    } else {
-      document.getElementById("holo-stage").hidden = true;
-      document.getElementById("holo-gameover").hidden = false;
-      const lines = [
-        `Streak of ${holoStreak}. The movies won this round.`,
-        `${holoStreak} in a row. Respectable. Not legendary.`,
-        holoStreak >= 10 ? `${holoStreak}?! Okay, film critic.` : `${holoStreak}. We've all been there.`
-      ];
-      document.getElementById("holo-go-line").textContent =
-        lines[Math.floor(Math.random() * lines.length)];
-    }
-    holoBusy = false;
-  }, 1200);
-}
-
-document.getElementById("holo-start").addEventListener("click", holoStart);
-document.getElementById("holo-retry").addEventListener("click", holoStart);
-document.getElementById("holo-higher").addEventListener("click", () => holoGuess(true));
-document.getElementById("holo-lower").addEventListener("click", () => holoGuess(false));
