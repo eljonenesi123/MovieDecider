@@ -212,6 +212,58 @@
     </div>
   </section>
 
+  <section class="games-section" id="games-section">
+    <h2 class="section-title">GAME CORNER</h2>
+    <p class="section-sub">Prove you actually know movies. No stakes, just bragging rights.</p>
+
+    <!-- Higher or Lower -->
+    <div class="game-holo" id="game-holo">
+      <div class="holo-header">
+        <h3>HIGHER OR LOWER</h3>
+        <div class="holo-scores">
+          <span>STREAK <strong id="holo-streak">0</strong></span>
+          <span>BEST <strong id="holo-best">0</strong></span>
+        </div>
+      </div>
+
+      <div class="holo-intro" id="holo-intro">
+        <p>Two movies. Guess if the second one is rated <strong>higher or lower</strong> than the first on TMDB. How long can you last?</p>
+        <button class="holo-start" id="holo-start">PLAY ▶</button>
+      </div>
+
+      <div class="holo-stage" id="holo-stage" hidden>
+        <div class="holo-card known">
+          <img id="holo-known-img" src="" alt="">
+          <div class="holo-card-info">
+            <p class="holo-title" id="holo-known-title"></p>
+            <p class="holo-rating" id="holo-known-rating"></p>
+          </div>
+        </div>
+
+        <div class="holo-vs">VS</div>
+
+        <div class="holo-card mystery">
+          <img id="holo-mystery-img" src="" alt="">
+          <div class="holo-card-info">
+            <p class="holo-title" id="holo-mystery-title"></p>
+            <p class="holo-rating mystery-mark" id="holo-mystery-rating">?</p>
+          </div>
+        </div>
+
+        <div class="holo-buttons">
+          <button class="holo-btn higher" id="holo-higher">▲ HIGHER</button>
+          <button class="holo-btn lower" id="holo-lower">▼ LOWER</button>
+        </div>
+      </div>
+
+      <div class="holo-gameover" id="holo-gameover" hidden>
+        <p class="holo-go-title">GAME OVER</p>
+        <p class="holo-go-line" id="holo-go-line"></p>
+        <button class="holo-start" id="holo-retry">RUN IT BACK ↻</button>
+      </div>
+    </div>
+  </section>
+
   <section class="mood-section" id="mood-section">
     <h2 class="section-title" data-i18n="mood_title">HOW DO WE PICK?</h2>
     <div class="type-toggle">

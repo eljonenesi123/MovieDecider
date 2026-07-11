@@ -2454,7 +2454,21 @@ if (!localStorage.getItem("jps_tour_seen")) {
 // ============================================
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js").catch(() => {});
+    navigator.serviceWorker.register("service-worker.js")
+      .then((reg) => {
+        // check for a new version on open + every 60s while open
+        reg.update();
+        setInterval(() => reg.update(), 60000);
+      })
+      .catch(() => {});
+  });
+
+  // when a new service worker takes control, reload once to load fresh files
+  let swRefreshed = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (swRefreshed) return;
+    swRefreshed = true;
+    window.location.reload();
   });
 }
 
@@ -2501,3 +2515,115 @@ if (!isStandalone && installBtn) {
 if (iosInstallClose) {
   iosInstallClose.addEventListener("click", () => { iosInstallBanner.hidden = true; });
 }
+
+// ============================================
+// GAME: HIGHER OR LOWER
+// ============================================
+let holoPool = [];
+let holoKnown = null;
+let holoMystery = null;
+let holoStreak = 0;
+let holoBest = parseInt(localStorage.getItem("jps_holo_best") || "0", 10);
+let holoBusy = false;
+
+document.getElementById("holo-best").textContent = holoBest;
+
+async function holoFetchPool() {
+  const pages = [1, 2, 3];
+  const results = await Promise.all(
+    pages.map((p) =>
+      fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&page=${p}`)
+        .then((r) => (r.ok ? r.json() : { results: [] }))
+        .catch(() => ({ results: [] }))
+    )
+  );
+  holoPool = results
+    .flatMap((r) => r.results)
+    .filter((m) => m.poster_path && m.vote_average > 0 && (m.vote_count || 0) >= 200);
+}
+
+function holoRandomMovie(excludeId) {
+  const options = holoPool.filter((m) => m.id !== excludeId);
+  return options[Math.floor(Math.random() * options.length)];
+}
+
+function holoSetCard(prefix, movie, revealRating) {
+  document.getElementById(`holo-${prefix}-img`).src = `${IMG_BASE}${movie.poster_path}`;
+  document.getElementById(`holo-${prefix}-title`).textContent = movie.title;
+  const ratingEl = document.getElementById(`holo-${prefix}-rating`);
+  if (revealRating) {
+    ratingEl.textContent = `★ ${movie.vote_average.toFixed(1)}`;
+    ratingEl.classList.remove("mystery-mark");
+  } else {
+    ratingEl.textContent = "?";
+    ratingEl.classList.add("mystery-mark");
+  }
+}
+
+async function holoStart() {
+  document.getElementById("holo-intro").hidden = true;
+  document.getElementById("holo-gameover").hidden = true;
+  document.getElementById("holo-stage").hidden = false;
+  holoStreak = 0;
+  document.getElementById("holo-streak").textContent = "0";
+
+  if (holoPool.length === 0) {
+    toast("fetch", "Loading the film vault...");
+    await holoFetchPool();
+  }
+  holoKnown = holoRandomMovie();
+  holoMystery = holoRandomMovie(holoKnown.id);
+  holoSetCard("known", holoKnown, true);
+  holoSetCard("mystery", holoMystery, false);
+}
+
+function holoGuess(guessHigher) {
+  if (holoBusy) return;
+  holoBusy = true;
+
+  const knownCard = document.querySelector(".holo-card.known");
+  const mysteryCard = document.querySelector(".holo-card.mystery");
+
+  holoSetCard("mystery", holoMystery, true);
+
+  const actuallyHigher = holoMystery.vote_average >= holoKnown.vote_average;
+  const correct = guessHigher === actuallyHigher;
+
+  mysteryCard.classList.add(correct ? "correct" : "wrong");
+  if (navigator.vibrate) navigator.vibrate(correct ? 30 : [60, 40, 60]);
+
+  setTimeout(() => {
+    mysteryCard.classList.remove("correct", "wrong");
+    knownCard.classList.remove("correct", "wrong");
+
+    if (correct) {
+      holoStreak++;
+      document.getElementById("holo-streak").textContent = holoStreak;
+      if (holoStreak > holoBest) {
+        holoBest = holoStreak;
+        localStorage.setItem("jps_holo_best", String(holoBest));
+        document.getElementById("holo-best").textContent = holoBest;
+      }
+      holoKnown = holoMystery;
+      holoMystery = holoRandomMovie(holoKnown.id);
+      holoSetCard("known", holoKnown, true);
+      holoSetCard("mystery", holoMystery, false);
+    } else {
+      document.getElementById("holo-stage").hidden = true;
+      document.getElementById("holo-gameover").hidden = false;
+      const lines = [
+        `Streak of ${holoStreak}. The movies won this round.`,
+        `${holoStreak} in a row. Respectable. Not legendary.`,
+        holoStreak >= 10 ? `${holoStreak}?! Okay, film critic.` : `${holoStreak}. We've all been there.`
+      ];
+      document.getElementById("holo-go-line").textContent =
+        lines[Math.floor(Math.random() * lines.length)];
+    }
+    holoBusy = false;
+  }, 1200);
+}
+
+document.getElementById("holo-start").addEventListener("click", holoStart);
+document.getElementById("holo-retry").addEventListener("click", holoStart);
+document.getElementById("holo-higher").addEventListener("click", () => holoGuess(true));
+document.getElementById("holo-lower").addEventListener("click", () => holoGuess(false));
