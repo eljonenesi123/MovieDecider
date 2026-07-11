@@ -16,8 +16,8 @@ const STATIC_I18N = {
   hero_sub: { en: "Stop scrolling. Tell us the mood, we'll hand you the pick.", sq: "Mos rrëshqit më. Na thuaj gjendjen, ne të japim zgjedhjen.", de: "Hör auf zu scrollen. Sag uns die Stimmung, wir liefern die Wahl." },
   cta_search: { en: "SEARCH ANYTHING", sq: "KËRKO ÇDO GJË", de: "ALLES DURCHSUCHEN" },
   cta_wheel: { en: "SPIN THE WHEEL →", sq: "RROTULLO ROTËN →", de: "RAD DREHEN →" },
-  cta_swipe: { en: "SWIPE MOVIES", sq: "SWIPE FILMA", de: "SWIPEN " },
-  trending_title: { en: "HOT RIGHT NOW", sq: "TRENDI I MOMENTIT", de: "GERADE ANGESAGT" },
+  cta_swipe: { en: "SWIPE 💕", sq: "FËRKO 💕", de: "SWIPEN 💕" },
+  trending_title: { en: "HOT RIGHT NOW", sq: "TRENDI I TANI", de: "GERADE ANGESAGT" },
   trending_sub: { en: "trending this week — tap any poster for details", sq: "trendi këtë javë — prek çdo poster për detaje", de: "diese Woche im Trend — für Details antippen" },
   search_title: { en: "FIND ANYTHING", sq: "GJEJ ÇDO GJË", de: "ALLES FINDEN" },
   search_sub: {
@@ -2445,4 +2445,13 @@ if (!localStorage.getItem("jps_tour_seen")) {
     tourBackdrop.hidden = false;
     showTourStep();
   }, 2500);
+}
+
+// ============================================
+// PWA: register service worker
+// ============================================
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch(() => {});
+  });
 }
