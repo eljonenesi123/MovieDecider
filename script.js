@@ -104,7 +104,9 @@ const STATIC_I18N = {
   cookie_decline: { en: "DECLINE", sq: "REFUZO", de: "ABLEHNEN" },
   tour_skip: { en: "SKIP TOUR", sq: "KALO TURIN", de: "TOUR ÜBERSPRINGEN" },
   tour_back: { en: "← BACK", sq: "← MBRAPA", de: "← ZURÜCK" },
-  tour_next: { en: "NEXT →", sq: "TJETËR →", de: "WEITER →" }
+  tour_next: { en: "NEXT →", sq: "TJETËR →", de: "WEITER →" },
+  install_app: { en: "⬇ DOWNLOAD APP", sq: "⬇ SHKARKO APP", de: "⬇ APP HERUNTERLADEN" },
+  ios_install_text: { en: "Safari doesn't allow one-tap installs. Tap the <strong>Share</strong> button below, then <strong>\"Add to Home Screen.\"</strong>", sq: "Safari s'lejon instalim me një prekje. Prek butonin <strong>Share</strong> poshtë, pastaj <strong>\"Add to Home Screen.\"</strong>", de: "Safari erlaubt keine Ein-Klick-Installation. Tippe unten auf <strong>Teilen</strong>, dann auf <strong>\"Zum Home-Bildschirm.\"</strong>" }
 };
 
 function applyStaticTranslations() {
@@ -2454,4 +2456,48 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("service-worker.js").catch(() => {});
   });
+}
+
+// ============================================
+// PWA: install button
+// ============================================
+const installBtn = document.getElementById("install-app-btn");
+const iosInstallBanner = document.getElementById("ios-install-banner");
+const iosInstallClose = document.getElementById("ios-install-close");
+let deferredInstallPrompt = null;
+
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone =
+  window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+
+if (!isStandalone && installBtn) {
+  if (isIOS) {
+    installBtn.hidden = false;
+  } else {
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      installBtn.hidden = false;
+    });
+  }
+
+  installBtn.addEventListener("click", async () => {
+    if (isIOS) {
+      iosInstallBanner.hidden = false;
+      return;
+    }
+    if (!deferredInstallPrompt) return;
+    installBtn.hidden = true;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+  });
+
+  window.addEventListener("appinstalled", () => {
+    installBtn.hidden = true;
+  });
+}
+
+if (iosInstallClose) {
+  iosInstallClose.addEventListener("click", () => { iosInstallBanner.hidden = true; });
 }
