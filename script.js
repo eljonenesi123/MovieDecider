@@ -106,7 +106,24 @@ const STATIC_I18N = {
   tour_back: { en: "← BACK", sq: "← MBRAPA", de: "← ZURÜCK" },
   tour_next: { en: "NEXT →", sq: "TJETËR →", de: "WEITER →" },
   install_app: { en: "⬇ DOWNLOAD APP", sq: "⬇ SHKARKO APP", de: "⬇ APP HERUNTERLADEN" },
-  ios_install_text: { en: "Safari doesn't allow one-tap installs. Tap the <strong>Share</strong> button below, then <strong>\"Add to Home Screen.\"</strong>", sq: "Safari s'lejon instalim me një prekje. Prek butonin <strong>Share</strong> poshtë, pastaj <strong>\"Add to Home Screen.\"</strong>", de: "Safari erlaubt keine Ein-Klick-Installation. Tippe unten auf <strong>Teilen</strong>, dann auf <strong>\"Zum Home-Bildschirm.\"</strong>" }
+  ios_install_text: { en: "Safari doesn't allow one-tap installs. Tap the <strong>Share</strong> button below, then <strong>\"Add to Home Screen.\"</strong>", sq: "Safari s'lejon instalim me një prekje. Prek butonin <strong>Share</strong> poshtë, pastaj <strong>\"Add to Home Screen.\"</strong>", de: "Safari erlaubt keine Ein-Klick-Installation. Tippe unten auf <strong>Teilen</strong>, dann auf <strong>\"Zum Home-Bildschirm.\"</strong>" },
+  imposter_title: { en: "FIND THE IMPOSTER", sq: "GJEJ IMPOSTORIN", de: "FINDE DEN HOCHSTAPLER" },
+  imposter_sub: { en: "One of you doesn't know the movie. Everyone else does. Pass the phone, keep a straight face, and figure out who's faking it before the timer runs out.", sq: "Njëri nga ju s'e di filmin. Të tjerët e dinë. Jepni telefonin njëri-tjetrit, mbani fytyrë serioze, dhe gjeni kush po bën sikur para se të mbarojë koha.", de: "Einer von euch kennt den Film nicht. Alle anderen schon. Handy weiterreichen, Pokerface aufsetzen und rausfinden, wer schauspielert, bevor die Zeit abläuft." },
+  imposter_play: { en: "PLAY 🕵️", sq: "LUAJ 🕵️", de: "SPIELEN 🕵️" },
+  imposter_setup_eyebrow: { en: "GAME SETUP", sq: "PËRGATITJA E LOJËS", de: "SPIEL-EINRICHTUNG" },
+  imposter_setup_title: { en: "HOW MANY PLAYERS?", sq: "SA LOJTARË?", de: "WIE VIELE SPIELER?" },
+  imposter_timer_label: { en: "Discussion timer", sq: "Koha e diskutimit", de: "Diskussionszeit" },
+  imposter_1min: { en: "1 MIN", sq: "1 MIN", de: "1 MIN" },
+  imposter_3min: { en: "3 MIN", sq: "3 MIN", de: "3 MIN" },
+  imposter_5min: { en: "5 MIN", sq: "5 MIN", de: "5 MIN" },
+  imposter_start: { en: "START GAME ▶", sq: "FILLO LOJËN ▶", de: "SPIEL STARTEN ▶" },
+  imposter_tap_reveal: { en: "TAP TO REVEAL YOUR CARD", sq: "PREK PËR TË ZBULUAR KARTËN", de: "TIPPEN, UM DEINE KARTE ZU ZEIGEN" },
+  imposter_next: { en: "NEXT PLAYER →", sq: "LOJTARI TJETËR →", de: "NÄCHSTER SPIELER →" },
+  imposter_discuss_eyebrow: { en: "DISCUSS. WHO'S FAKING IT?", sq: "DISKUTONI. KUSH PO BËN SIKUR?", de: "DISKUTIERT. WER SCHAUSPIELERT?" },
+  imposter_pause: { en: "PAUSE", sq: "NDALO", de: "PAUSE" },
+  imposter_resume: { en: "RESUME", sq: "VAZHDO", de: "FORTSETZEN" },
+  imposter_reveal: { en: "END & REVEAL ▶", sq: "MBYLL & ZBULO ▶", de: "BEENDEN & AUFDECKEN ▶" },
+  imposter_play_again: { en: "PLAY AGAIN", sq: "LUAJ PËRSËRI", de: "NOCHMAL SPIELEN" }
 };
 
 function applyStaticTranslations() {
@@ -127,7 +144,11 @@ const UI_TXT = {
   loading: { en: "Loading...", sq: "Duke u ngarkuar...", de: "Lädt..." },
   no_streaming: { en: "No streaming info for {region}. Try switching region in the footer.", sq: "Pa info streaming për {region}. Provo të ndryshosh rajonin në footer.", de: "Keine Streaming-Infos für {region}. Region unten im Footer wechseln." },
   load_failed_title: { en: "Couldn't load details", sq: "S'u ngarkuan detajet", de: "Details konnten nicht geladen werden" },
-  load_failed_body: { en: "Something went wrong fetching this title. Try again.", sq: "Diçka shkoi keq gjatë marrjes së këtij titulli. Provo përsëri.", de: "Beim Laden dieses Titels ist etwas schiefgelaufen. Versuch es erneut." }
+  load_failed_body: { en: "Something went wrong fetching this title. Try again.", sq: "Diçka shkoi keq gjatë marrjes së këtij titulli. Provo përsëri.", de: "Beim Laden dieses Titels ist etwas schiefgelaufen. Versuch es erneut." },
+  imposter_player_label: { en: "Player", sq: "Lojtari", de: "Spieler" },
+  imposter_you_are: { en: "YOU'RE THE IMPOSTER", sq: "TI JE IMPOSTORI", de: "DU BIST DER HOCHSTAPLER" },
+  imposter_hint_label: { en: "Hint", sq: "Ndihmë", de: "Hinweis" },
+  imposter_was: { en: "THE IMPOSTER WAS", sq: "IMPOSTORI ISHTE", de: "DER HOCHSTAPLER WAR" }
 };
 function tt(key, vars) {
   const entry = UI_TXT[key];
@@ -2448,6 +2469,224 @@ if (!localStorage.getItem("jps_tour_seen")) {
     showTourStep();
   }, 2500);
 }
+
+// ============================================
+// IMPOSTER GAME
+// ============================================
+const imposterSection = document.getElementById("imposter-section");
+const imposterPlayBtn = document.getElementById("imposter-play-btn");
+const imposterGameSection = document.getElementById("imposter-game-section");
+
+const imposterSetupPane = document.getElementById("imposter-setup-pane");
+const imposterPassPane = document.getElementById("imposter-pass-pane");
+const imposterTimerPane = document.getElementById("imposter-timer-pane");
+const imposterRevealPane = document.getElementById("imposter-reveal-pane");
+
+const imposterCountMinus = document.getElementById("imposter-count-minus");
+const imposterCountPlus = document.getElementById("imposter-count-plus");
+const imposterCountDisplay = document.getElementById("imposter-count-display");
+const imposterTimerToggle = document.getElementById("imposter-timer-toggle");
+const imposterStartBtn = document.getElementById("imposter-start-btn");
+
+const imposterPassName = document.getElementById("imposter-pass-name");
+const imposterCard = document.getElementById("imposter-card");
+const imposterCardBack = document.getElementById("imposter-card-back");
+const imposterNextBtn = document.getElementById("imposter-next-btn");
+
+const imposterTimerDisplay = document.getElementById("imposter-timer-display");
+const imposterPauseBtn = document.getElementById("imposter-pause-btn");
+const imposterRevealBtn = document.getElementById("imposter-reveal-btn");
+const imposterRevealInner = document.getElementById("imposter-reveal-inner");
+const imposterPlayAgainBtn = document.getElementById("imposter-play-again-btn");
+
+const imposterGame = {
+  count: 4,
+  timerSeconds: 180,
+  remaining: 180,
+  timerInterval: null,
+  paused: false,
+  imposterIndex: 0,
+  currentIndex: 0,
+  movie: null
+};
+
+function imposterHideAllPanes() {
+  imposterSetupPane.hidden = true;
+  imposterPassPane.hidden = true;
+  imposterTimerPane.hidden = true;
+  imposterRevealPane.hidden = true;
+}
+
+function imposterResetToSetup() {
+  clearInterval(imposterGame.timerInterval);
+  imposterGameSection.hidden = true;
+  imposterHideAllPanes();
+  imposterSetupPane.hidden = false;
+}
+
+imposterPlayBtn.addEventListener("click", () => {
+  imposterGameSection.hidden = false;
+  imposterHideAllPanes();
+  imposterSetupPane.hidden = false;
+  imposterGameSection.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+imposterCountMinus.addEventListener("click", () => {
+  if (imposterGame.count > 3) {
+    imposterGame.count--;
+    imposterCountDisplay.textContent = imposterGame.count;
+  }
+});
+imposterCountPlus.addEventListener("click", () => {
+  if (imposterGame.count < 10) {
+    imposterGame.count++;
+    imposterCountDisplay.textContent = imposterGame.count;
+  }
+});
+
+imposterTimerToggle.querySelectorAll(".time-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    imposterTimerToggle.querySelectorAll(".time-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    imposterGame.timerSeconds = parseInt(btn.dataset.timer, 10);
+  });
+});
+
+document.getElementById("imposter-cancel-setup").addEventListener("click", imposterResetToSetup);
+document.getElementById("imposter-cancel-pass").addEventListener("click", imposterResetToSetup);
+document.getElementById("imposter-cancel-timer").addEventListener("click", imposterResetToSetup);
+
+async function startImposterGame() {
+  imposterStartBtn.disabled = true;
+  toast("fetch");
+  try {
+    const page = 1 + Math.floor(Math.random() * 5);
+    const res = await fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&language=${TMDB_LANG}&page=${page}`);
+    const data = await res.json();
+    const candidates = (data.results || []).filter((m) => m.poster_path && m.title);
+    if (!candidates.length) throw new Error("no candidates");
+    imposterGame.movie = candidates[Math.floor(Math.random() * candidates.length)];
+  } catch (e) {
+    toast("fetch", tt("load_failed_body"));
+    imposterStartBtn.disabled = false;
+    return;
+  }
+
+  imposterGame.imposterIndex = Math.floor(Math.random() * imposterGame.count);
+  imposterGame.currentIndex = 0;
+  imposterStartBtn.disabled = false;
+  showImposterPassScreen();
+}
+imposterStartBtn.addEventListener("click", startImposterGame);
+
+function showImposterPassScreen() {
+  imposterHideAllPanes();
+  imposterPassPane.hidden = false;
+  imposterCard.classList.remove("flipped");
+  imposterNextBtn.hidden = true;
+  imposterPassName.textContent = `${tt("imposter_player_label")} ${imposterGame.currentIndex + 1}`;
+
+  const m = imposterGame.movie;
+  const isImposter = imposterGame.currentIndex === imposterGame.imposterIndex;
+
+  if (isImposter) {
+    const genreName = (GENRES.find((g) => g.id === (m.genre_ids || [])[0]) || {}).name || "—";
+    const year = (m.release_date || "").slice(0, 4) || "—";
+    imposterCardBack.innerHTML = `
+      <span class="imposter-card-icon">🕵️</span>
+      <strong>${tt("imposter_you_are")}</strong>
+      <p class="imposter-hint">${tt("imposter_hint_label")}: ${genreName} · ${year}</p>
+    `;
+  } else {
+    imposterCardBack.innerHTML = `
+      <img src="${IMG_BASE_SM}${m.poster_path}" alt="">
+      <strong>${m.title}</strong>
+    `;
+  }
+}
+
+imposterCard.addEventListener("click", () => {
+  if (imposterCard.classList.contains("flipped")) return;
+  imposterCard.classList.add("flipped");
+  imposterNextBtn.hidden = false;
+});
+
+imposterNextBtn.addEventListener("click", () => {
+  imposterGame.currentIndex++;
+  if (imposterGame.currentIndex >= imposterGame.count) {
+    startImposterDiscussion();
+  } else {
+    showImposterPassScreen();
+  }
+});
+
+function imposterUpdateTimerDisplay() {
+  const m = Math.floor(imposterGame.remaining / 60);
+  const s = imposterGame.remaining % 60;
+  imposterTimerDisplay.textContent = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+function imposterTick() {
+  imposterGame.remaining--;
+  imposterUpdateTimerDisplay();
+  if (imposterGame.remaining <= 0) {
+    clearInterval(imposterGame.timerInterval);
+    revealImposter();
+  }
+}
+
+function startImposterDiscussion() {
+  imposterHideAllPanes();
+  imposterTimerPane.hidden = false;
+  imposterGame.paused = false;
+
+  if (imposterGame.timerSeconds > 0) {
+    imposterGame.remaining = imposterGame.timerSeconds;
+    imposterUpdateTimerDisplay();
+    imposterPauseBtn.hidden = false;
+    imposterPauseBtn.textContent = tt("imposter_pause");
+    clearInterval(imposterGame.timerInterval);
+    imposterGame.timerInterval = setInterval(imposterTick, 1000);
+  } else {
+    imposterTimerDisplay.textContent = "∞";
+    imposterPauseBtn.hidden = true;
+  }
+}
+
+imposterPauseBtn.addEventListener("click", () => {
+  imposterGame.paused = !imposterGame.paused;
+  if (imposterGame.paused) {
+    clearInterval(imposterGame.timerInterval);
+    imposterPauseBtn.textContent = tt("imposter_resume");
+  } else {
+    imposterPauseBtn.textContent = tt("imposter_pause");
+    imposterGame.timerInterval = setInterval(imposterTick, 1000);
+  }
+});
+
+imposterRevealBtn.addEventListener("click", revealImposter);
+
+function revealImposter() {
+  clearInterval(imposterGame.timerInterval);
+  imposterHideAllPanes();
+  imposterRevealPane.hidden = false;
+  const m = imposterGame.movie;
+  imposterRevealInner.innerHTML = `
+    <p class="group-match-eyebrow">🕵️ ${tt("imposter_was")}</p>
+    <div class="group-match-card">
+      <img src="${IMG_BASE}${m.poster_path}" alt="${m.title}">
+      <div>
+        <h3>${m.title}</h3>
+        <div class="group-match-tally">${tt("imposter_player_label")} ${imposterGame.imposterIndex + 1}</div>
+      </div>
+    </div>
+  `;
+}
+
+imposterPlayAgainBtn.addEventListener("click", () => {
+  imposterHideAllPanes();
+  imposterSetupPane.hidden = false;
+});
 
 // ============================================
 // PWA: register service worker

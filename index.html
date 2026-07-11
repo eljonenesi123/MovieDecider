@@ -6,7 +6,7 @@
 <title>Just Pick Something | Movie & TV Roulette</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 <meta name="description" content="Can't decide what to watch? Spin the wheel, pick a mood, or let the algorithm decide. Movies, TV, actors, themes — search anything.">
 <meta name="theme-color" content="#2A211A">
 
@@ -385,6 +385,74 @@
       <div class="confetti-layer" id="group-confetti-layer" aria-hidden="true"></div>
     </div>
   </section>
+
+  <section class="whopicks-section" id="imposter-section">
+    <div class="whopicks-inner">
+      <h2 class="section-title" data-i18n="imposter_title">FIND THE IMPOSTER</h2>
+      <p class="whopicks-sub" data-i18n="imposter_sub">One of you doesn't know the movie. Everyone else does. Pass the phone, keep a straight face, and figure out who's faking it before the timer runs out.</p>
+      <div class="whopicks-actions">
+        <button class="group-swipe-btn" id="imposter-play-btn" data-i18n="imposter_play">PLAY 🕵️</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="group-section" id="imposter-game-section" hidden>
+    <div class="group-inner">
+
+      <div class="group-pane" id="imposter-setup-pane">
+        <p class="group-pass-eyebrow" data-i18n="imposter_setup_eyebrow">GAME SETUP</p>
+        <h2 class="group-pass-name" style="font-size: clamp(1.6rem, 6vw, 2.4rem);" data-i18n="imposter_setup_title">HOW MANY PLAYERS?</h2>
+        <div class="imposter-stepper">
+          <button class="imposter-step-btn" id="imposter-count-minus" aria-label="Decrease">−</button>
+          <span class="imposter-count" id="imposter-count-display">4</span>
+          <button class="imposter-step-btn" id="imposter-count-plus" aria-label="Increase">+</button>
+        </div>
+
+        <p class="battle-setup-label" data-i18n="imposter_timer_label">Discussion timer</p>
+        <div class="battle-size-toggle" id="imposter-timer-toggle">
+          <button class="time-btn" data-timer="60" data-i18n="imposter_1min">1 MIN</button>
+          <button class="time-btn active" data-timer="180" data-i18n="imposter_3min">3 MIN</button>
+          <button class="time-btn" data-timer="300" data-i18n="imposter_5min">5 MIN</button>
+          <button class="time-btn" data-timer="0" data-i18n="time_nolimit">NO LIMIT</button>
+        </div>
+
+        <button class="group-ready-btn" id="imposter-start-btn" style="margin-top: 1.8rem;" data-i18n="imposter_start">START GAME ▶</button>
+        <button class="group-cancel-btn" id="imposter-cancel-setup" data-i18n="cancel_session">CANCEL SESSION ✕</button>
+      </div>
+
+      <div class="group-pane" id="imposter-pass-pane" hidden>
+        <p class="group-pass-eyebrow" data-i18n="pass_phone_to">PASS THE PHONE TO</p>
+        <h2 class="group-pass-name" id="imposter-pass-name">PLAYER 1</h2>
+        <div class="imposter-card" id="imposter-card">
+          <div class="imposter-card-inner" id="imposter-card-inner">
+            <div class="imposter-card-face imposter-card-front">
+              <span class="imposter-card-icon">🎬</span>
+              <span data-i18n="imposter_tap_reveal">TAP TO REVEAL YOUR CARD</span>
+            </div>
+            <div class="imposter-card-face imposter-card-back" id="imposter-card-back"></div>
+          </div>
+        </div>
+        <button class="group-ready-btn" id="imposter-next-btn" hidden data-i18n="imposter_next">NEXT PLAYER →</button>
+        <button class="group-cancel-btn" id="imposter-cancel-pass" data-i18n="cancel_session">CANCEL SESSION ✕</button>
+      </div>
+
+      <div class="group-pane" id="imposter-timer-pane" hidden>
+        <p class="group-pass-eyebrow" data-i18n="imposter_discuss_eyebrow">DISCUSS. WHO'S FAKING IT?</p>
+        <div class="imposter-timer-display" id="imposter-timer-display">03:00</div>
+        <div class="imposter-timer-actions">
+          <button class="group-cancel-btn" id="imposter-pause-btn" data-i18n="imposter_pause">PAUSE</button>
+          <button class="group-ready-btn" id="imposter-reveal-btn" data-i18n="imposter_reveal">END &amp; REVEAL ▶</button>
+        </div>
+        <button class="group-cancel-btn" id="imposter-cancel-timer" data-i18n="cancel_session">CANCEL SESSION ✕</button>
+      </div>
+
+      <div class="group-pane" id="imposter-reveal-pane" hidden>
+        <div class="group-reveal-inner" id="imposter-reveal-inner"></div>
+        <button class="group-restart-btn" id="imposter-play-again-btn" data-i18n="imposter_play_again">PLAY AGAIN</button>
+      </div>
+
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer">
@@ -486,6 +554,6 @@
     </div>
   </div>
 </div>
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>
