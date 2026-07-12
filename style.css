@@ -327,6 +327,14 @@ body {
 .search-tab:hover { border-color: var(--cream-dim); }
 .search-tab.active { background: var(--coral); border-color: var(--coral); color: var(--espresso); }
 
+.search-context-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .search-context {
   font-family: var(--mono);
   font-size: 0.85rem;
@@ -335,6 +343,21 @@ body {
   margin-bottom: 1.2rem;
   min-height: 1.3rem;
 }
+
+.search-clear-btn {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  background: transparent;
+  border: 2px solid var(--cream-dim);
+  color: var(--cream-dim);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: 1.2rem;
+  white-space: nowrap;
+}
+.search-clear-btn:hover { border-color: var(--coral); color: var(--coral); }
 
 .search-results {
   display: grid;
@@ -874,6 +897,26 @@ body {
   transition: transform 0.15s ease;
 }
 .spin-again:hover { transform: scale(1.05); }
+
+.results-header-actions {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.results-close-btn {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  background: transparent;
+  border: 2px solid var(--cream-dim);
+  color: var(--cream-dim);
+  padding: 0.75rem 1.2rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.results-close-btn:hover { border-color: var(--coral); color: var(--coral); }
 
 .ticket-grid {
   display: grid;
@@ -1465,6 +1508,19 @@ body {
 .champ-primary:hover, .champ-secondary:hover { transform: scale(1.05); }
 .champ-secondary.saved { background: var(--gold); color: var(--espresso); border-color: var(--gold); }
 
+.champ-close {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  padding: 0.8rem 1.4rem;
+  border-radius: 999px;
+  cursor: pointer;
+  background: transparent;
+  border: 2px solid transparent;
+  color: var(--cream-dim);
+  transition: all 0.15s ease;
+}
+.champ-close:hover { border-color: var(--coral); color: var(--coral); }
+
 /* mobile: stay side-by-side, just tighter */
 @media (max-width: 700px) {
   .battle-arena {
@@ -1782,7 +1838,7 @@ body {
   flex-wrap: wrap;
   margin-bottom: 1.2rem;
 }
-#player-input {
+.player-input-row input {
   flex: 1;
   min-width: 200px;
   background: var(--espresso-2);
@@ -1793,9 +1849,9 @@ body {
   font-family: var(--body);
   font-size: 1rem;
 }
-#player-input:focus { outline: none; border-color: var(--gold); }
+.player-input-row input:focus { outline: none; border-color: var(--gold); }
 
-#player-add {
+.player-input-row button {
   font-family: var(--mono);
   background: var(--gold);
   color: var(--espresso);
@@ -1805,7 +1861,7 @@ body {
   cursor: pointer;
   transition: transform 0.15s ease;
 }
-#player-add:hover { transform: scale(1.05); }
+.player-input-row button:hover { transform: scale(1.05); }
 
 .player-chips {
   display: flex;
@@ -1860,6 +1916,22 @@ body {
   text-transform: none;
   margin-top: 0.5rem;
 }
+
+.decide-close-btn {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  text-transform: none;
+  background: transparent;
+  border: 2px solid var(--cream-dim);
+  color: var(--cream-dim);
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.15s ease;
+  display: block;
+}
+.decide-close-btn:hover { border-color: var(--coral); color: var(--coral); }
 
 .whopicks-actions {
   display: flex;
@@ -2291,6 +2363,26 @@ body {
   transition: all 0.15s ease;
 }
 .group-restart-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+.reveal-actions-row {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.group-close-btn {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  background: transparent;
+  border: 2px solid transparent;
+  color: var(--cream-dim);
+  padding: 0.7rem 1.5rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.group-close-btn:hover { border-color: var(--coral); color: var(--coral); }
 
 /* ============================================ */
 /* IMPOSTER GAME */

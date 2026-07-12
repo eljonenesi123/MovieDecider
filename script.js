@@ -105,6 +105,7 @@ const STATIC_I18N = {
   tour_skip: { en: "SKIP TOUR", sq: "KALO TURIN", de: "TOUR ÜBERSPRINGEN" },
   tour_back: { en: "← BACK", sq: "← MBRAPA", de: "← ZURÜCK" },
   tour_next: { en: "NEXT →", sq: "TJETËR →", de: "WEITER →" },
+  close_game: { en: "✕ CLOSE", sq: "✕ MBYLL", de: "✕ SCHLIESSEN" },
   install_app: { en: "⬇ DOWNLOAD APP", sq: "⬇ SHKARKO APP", de: "⬇ APP HERUNTERLADEN" },
   ios_install_text: { en: "Safari doesn't allow one-tap installs. Tap the <strong>Share</strong> button below, then <strong>\"Add to Home Screen.\"</strong>", sq: "Safari s'lejon instalim me një prekje. Prek butonin <strong>Share</strong> poshtë, pastaj <strong>\"Add to Home Screen.\"</strong>", de: "Safari erlaubt keine Ein-Klick-Installation. Tippe unten auf <strong>Teilen</strong>, dann auf <strong>\"Zum Home-Bildschirm.\"</strong>" },
   imposter_title: { en: "FIND THE IMPOSTER", sq: "GJEJ IMPOSTORIN", de: "FINDE DEN HOCHSTAPLER" },
@@ -463,9 +464,19 @@ const searchBtn = document.getElementById("search-btn");
 const searchTabs = document.getElementById("search-tabs");
 const searchContext = document.getElementById("search-context");
 const searchResults = document.getElementById("search-results");
+const searchClearBtn = document.getElementById("search-clear-btn");
 
 searchBtn.addEventListener("click", runSearch);
 searchInput.addEventListener("keydown", (e) => { if (e.key === "Enter") runSearch(); });
+
+searchClearBtn.addEventListener("click", () => {
+  searchInput.value = "";
+  searchTabs.hidden = true;
+  searchContext.textContent = "";
+  searchResults.innerHTML = "";
+  searchClearBtn.hidden = true;
+  lastSearchData = null;
+});
 
 searchTabs.querySelectorAll(".search-tab").forEach((tab) => {
   tab.addEventListener("click", () => {
@@ -540,6 +551,7 @@ async function runSearch() {
   }
   toast("search");
   searchTabs.hidden = false;
+  searchClearBtn.hidden = false;
   searchContext.textContent = `Searching for "${query}"...`;
   searchResults.innerHTML = "";
 
@@ -1004,6 +1016,10 @@ document.getElementById("spin-again").addEventListener("click", () => {
   rejectCount++;
   sessionStorage.setItem("jps_rejects", String(rejectCount));
   fetchAndRender(currentGenres);
+});
+
+document.getElementById("results-close-btn").addEventListener("click", () => {
+  document.getElementById("results-section").hidden = true;
 });
 
 const STREAK_LINES = [
@@ -1619,6 +1635,7 @@ function renderVerdict(scored) {
     battleSetupEl.hidden = false;
     battleSetupEl.scrollIntoView({ behavior: "smooth" });
   };
+  document.getElementById("verdict-close").onclick = () => resetBattle();
 }
 
 function showNextMatch() {
@@ -1748,6 +1765,7 @@ function showChampion(movie) {
   };
 
   rematchBtn.onclick = () => resetBattle();
+  document.getElementById("champion-close").onclick = () => resetBattle();
 
   launchConfetti(document.getElementById("champion-confetti"));
 }
@@ -2044,6 +2062,11 @@ decideBtn.addEventListener("click", () => {
       const winner = players[(cycles - 1) % players.length];
       const line = WINNER_LINES[Math.floor(Math.random() * WINNER_LINES.length)];
       decideStage.innerHTML = `🎬 ${winner} PICKS!<span class="winner-line">${line}</span>`;
+      const decideCloseBtn = document.createElement("button");
+      decideCloseBtn.className = "decide-close-btn";
+      decideCloseBtn.textContent = tt("close_game");
+      decideCloseBtn.addEventListener("click", () => { decideStage.innerHTML = ""; });
+      decideStage.appendChild(decideCloseBtn);
       launchConfetti();
       decideBtn.disabled = false;
     }
@@ -2118,6 +2141,10 @@ document.getElementById("group-restart-btn").addEventListener("click", () => {
   groupRevealPane.hidden = true;
   groupSection.hidden = true;
   playerChips.scrollIntoView({ behavior: "smooth" });
+});
+document.getElementById("group-close-btn").addEventListener("click", () => {
+  groupRevealPane.hidden = true;
+  groupSection.hidden = true;
 });
 
 async function launchGroupDeckLoad() {
@@ -2843,6 +2870,10 @@ imposterPlayAgainBtn.addEventListener("click", () => {
   imposterHideAllPanes();
   imposterSetupPane.hidden = false;
 });
+document.getElementById("imposter-close-btn").addEventListener("click", () => {
+  imposterHideAllPanes();
+  imposterGameSection.hidden = true;
+});
 
 // ============================================
 // HIGHER OR LOWER GAME
@@ -3023,6 +3054,10 @@ function showHLGameOver() {
 hlPlayAgainBtn.addEventListener("click", () => {
   hlHideAllPanes();
   hlSetupPane.hidden = false;
+});
+document.getElementById("hl-close-btn").addEventListener("click", () => {
+  hlHideAllPanes();
+  hlGameSection.hidden = true;
 });
 
 // ============================================
@@ -3331,6 +3366,10 @@ function revealTriviaResults() {
 triviaPlayAgainBtn.addEventListener("click", () => {
   triviaHideAllPanes();
   triviaSetupPane.hidden = false;
+});
+document.getElementById("trivia-close-btn").addEventListener("click", () => {
+  triviaHideAllPanes();
+  triviaGameSection.hidden = true;
 });
 
 // ============================================

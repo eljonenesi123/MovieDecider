@@ -81,7 +81,10 @@
       <button class="search-tab" data-tab="people" data-i18n="tab_people">PEOPLE</button>
       <button class="search-tab" data-tab="themes" data-i18n="tab_themes">THEMES</button>
     </div>
-    <p class="search-context" id="search-context"></p>
+    <div class="search-context-row">
+      <p class="search-context" id="search-context"></p>
+      <button class="search-clear-btn" id="search-clear-btn" hidden data-i18n="close_game">✕ CLOSE</button>
+    </div>
     <div class="search-results" id="search-results"></div>
   </section>
 
@@ -196,6 +199,7 @@
         <button id="champion-details" class="champ-primary" data-i18n="see_details">SEE FULL DETAILS →</button>
         <button id="champion-save" class="champ-secondary" data-i18n="save">☆ SAVE</button>
         <button id="champion-rematch" class="champ-secondary" data-i18n="rematch">RUN IT BACK ↻</button>
+        <button id="champion-close" class="champ-close" data-i18n="close_game">✕ CLOSE</button>
       </div>
       <div class="confetti-layer" id="champion-confetti" aria-hidden="true"></div>
     </div>
@@ -208,6 +212,7 @@
         <button id="verdict-details" class="champ-primary" data-i18n="see_details">SEE FULL DETAILS →</button>
         <button id="verdict-save" class="champ-secondary" data-i18n="save_winner">☆ SAVE WINNER</button>
         <button id="verdict-redo" class="champ-secondary" data-i18n="redo">TWEAK & RE-DECIDE ↺</button>
+        <button id="verdict-close" class="champ-close" data-i18n="close_game">✕ CLOSE</button>
       </div>
     </div>
   </section>
@@ -255,7 +260,10 @@
   <section class="results-section" id="results-section" hidden>
     <div class="results-header">
       <h2 id="results-title" data-i18n="results_title">HERE'S THE PICK</h2>
-      <button class="spin-again" id="spin-again" data-i18n="spin_again">NO, NEXT ↻</button>
+      <div class="results-header-actions">
+        <button class="spin-again" id="spin-again" data-i18n="spin_again">NO, NEXT ↻</button>
+        <button class="results-close-btn" id="results-close-btn" data-i18n="close_game">✕ CLOSE</button>
+      </div>
     </div>
     <div class="results-meta">
       <p class="results-tip" data-i18n="results_tip">Tap any ticket for the full breakdown — trailer, cast, where to stream.</p>
@@ -327,7 +335,10 @@
 
       <div class="group-pane" id="group-reveal-pane" hidden>
         <div class="group-reveal-inner" id="group-reveal-inner"></div>
-        <button class="group-restart-btn" id="group-restart-btn" data-i18n="swipe_again">SWIPE AGAIN</button>
+        <div class="reveal-actions-row">
+          <button class="group-restart-btn" id="group-restart-btn" data-i18n="swipe_again">SWIPE AGAIN</button>
+          <button class="group-close-btn" id="group-close-btn" data-i18n="close_game">✕ CLOSE</button>
+        </div>
       </div>
 
       <div class="confetti-layer" id="group-confetti-layer" aria-hidden="true"></div>
@@ -409,7 +420,10 @@
 
       <div class="group-pane" id="imposter-reveal-pane" hidden>
         <div class="group-reveal-inner" id="imposter-reveal-inner"></div>
-        <button class="group-restart-btn" id="imposter-play-again-btn" data-i18n="imposter_play_again">PLAY AGAIN</button>
+        <div class="reveal-actions-row">
+          <button class="group-restart-btn" id="imposter-play-again-btn" data-i18n="imposter_play_again">PLAY AGAIN</button>
+          <button class="group-close-btn" id="imposter-close-btn" data-i18n="close_game">✕ CLOSE</button>
+        </div>
       </div>
 
     </div>
@@ -446,7 +460,10 @@
 
       <div class="group-pane" id="hl-gameover-pane" hidden>
         <div class="group-reveal-inner" id="hl-gameover-inner"></div>
-        <button class="group-restart-btn" id="hl-play-again-btn" data-i18n="imposter_play_again">PLAY AGAIN</button>
+        <div class="reveal-actions-row">
+          <button class="group-restart-btn" id="hl-play-again-btn" data-i18n="imposter_play_again">PLAY AGAIN</button>
+          <button class="group-close-btn" id="hl-close-btn" data-i18n="close_game">✕ CLOSE</button>
+        </div>
       </div>
 
     </div>
@@ -498,7 +515,10 @@
 
       <div class="group-pane" id="trivia-reveal-pane" hidden>
         <div class="group-reveal-inner" id="trivia-reveal-inner"></div>
-        <button class="group-restart-btn" id="trivia-play-again-btn" data-i18n="imposter_play_again">PLAY AGAIN</button>
+        <div class="reveal-actions-row">
+          <button class="group-restart-btn" id="trivia-play-again-btn" data-i18n="imposter_play_again">PLAY AGAIN</button>
+          <button class="group-close-btn" id="trivia-close-btn" data-i18n="close_game">✕ CLOSE</button>
+        </div>
       </div>
 
       <div class="confetti-layer" id="trivia-confetti" aria-hidden="true"></div>
